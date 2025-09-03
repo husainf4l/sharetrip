@@ -1,0 +1,279 @@
+import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
+import {
+  StarIcon,
+  HeartIcon,
+  ClockIcon,
+  UsersIcon,
+  MapPinIcon,
+  UserGroupIcon,
+} from "@heroicons/react/24/outline";
+import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
+import { createBooking } from "../services/booking";
+
+interface Tour {
+  id: string;
+  title: string;
+  city: string;
+  country: string;
+  priceCents: number;
+  description?: string;
+  rating?: number;
+  reviews?: number;
+  image?: string;
+  badge?: string;
+  duration?: string;
+  groupSize?: string;
+  language?: string;
+  category?: string;
+  isInstantConfirmation?: boolean;
+  isFreeCancellation?: boolean;
+  isSkipTheLine?: boolean;
+  accessibility?: boolean;
+}
+
+export default function TourCard({ tour }: { tour: Tour }) {
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [isBooking, setIsBooking] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
+
+  const rating = tour.rating || 4.5;
+  const reviews = tour.reviews || 100;
+  const image =
+    tour.image ||
+    `https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop&q=80`;
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsWishlisted(!isWishlisted);
+  };
+
+  const handleBookNow = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setIsBooking(true);
+    setBookingError(null);
+
+    try {
+      const result = await createBooking(tour.id, {
+        headcount: 1, // Default to 1 person for quick booking
+        selectedDate: new Date().toISOString().split("T")[0], // Today's date as default
+      });
+
+      if (result.success) {
+        setBookingSuccess(true);
+        // Reset success message after 3 seconds
+        setTimeout(() => setBookingSuccess(false), 3000);
+      } else {
+        setBookingError(result.error || "Failed to book tour");
+      }
+    } catch (error) {
+      setBookingError("An unexpected error occurred");
+    } finally {
+      setIsBooking(false);
+    }
+  };
+
+  return (
+    <Link href={`/tours/${tour.id}`} className="group block">
+      <article className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2 border border-gray-100 hover:border-blue-200">
+        {/* Image Container */}
+        <div className="relative h-64 overflow-hidden">
+          <Image
+            src={image}
+            alt={tour.title}
+            fill
+            className={`object-cover group-hover:scale-110 transition-all duration-700 ${
+              imageLoaded ? "opacity-100" : "opacity-0"
+            }`}
+            onLoad={() => setImageLoaded(true)}
+          />
+
+          {/* Loading skeleton */}
+          {!imageLoaded && (
+            <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
+          )}
+
+          {/* Compact Badge */}
+          {tour.badge && (
+            <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">
+              {tour.badge}
+            </div>
+          )}
+
+          {/* Compact Category Badge */}
+          {tour.category && (
+            <div className="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded text-xs font-medium text-gray-700">
+              {tour.category}
+            </div>
+          )}
+
+          {/* Compact Wishlist Button */}
+          <button
+            onClick={handleWishlist}
+            className="absolute top-8 right-2 p-1.5 bg-white/80 rounded-full hover:bg-white transition-all duration-200 group shadow-md"
+          >
+            {isWishlisted ? (
+              <HeartSolidIcon className="w-5 h-5 text-red-500" />
+            ) : (
+              <HeartIcon className="w-5 h-5 text-gray-600 group-hover:text-red-500 transition-colors" />
+            )}
+          </button>
+
+          {/* Compact Rating Badge */}
+          <div className="absolute bottom-2 left-2 bg-white/90 rounded px-2 py-1 shadow-sm">
+            <div className="flex items-center gap-1">
+              <StarIcon className="w-3 h-3 text-yellow-400 fill-current" />
+              <span className="font-semibold text-xs">{rating.toFixed(1)}</span>
+              <span className="text-gray-500 text-xs">({reviews})</span>
+            </div>
+          </div>
+
+          {/* Quick Info Overlay */}
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <div className="text-white text-center">
+              <div className="flex items-center justify-center gap-4 mb-2">
+                {tour.duration && (
+                  <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+                    <ClockIcon className="w-4 h-4" />
+                    <span className="text-sm font-medium">{tour.duration}</span>
+                  </div>
+                )}
+                {tour.groupSize && (
+                  <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+                    <UsersIcon className="w-4 h-4" />
+                    <span className="text-sm font-medium">
+                      {tour.groupSize}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <button className="bg-white text-gray-900 px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition-colors shadow-lg">
+                View Details
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          {/* Location */}
+          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2 font-medium">
+            <MapPinIcon className="w-4 h-4" />
+            <span>
+              {tour.city}, {tour.country}
+            </span>
+          </div>
+
+          {/* Title */}
+          <h3 className="font-bold text-lg text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+            {tour.title}
+          </h3>
+
+          {/* Description */}
+          {tour.description && (
+            <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
+              {tour.description}
+            </p>
+          )}
+
+          {/* Tour Features */}
+          <div className="mb-4">
+            <div className="flex flex-wrap gap-2 mb-3">
+              {tour.category && (
+                <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                  {tour.category}
+                </span>
+              )}
+              {tour.isInstantConfirmation && (
+                <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">
+                  ⚡ Instant
+                </span>
+              )}
+              {tour.isFreeCancellation && (
+                <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
+                  🎟️ Free cancel
+                </span>
+              )}
+              {tour.isSkipTheLine && (
+                <span className="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">
+                  ⏰ Skip line
+                </span>
+              )}
+            </div>
+            
+            {/* Additional Info Grid */}
+            <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+              {tour.duration && (
+                <div className="flex items-center gap-1">
+                  <ClockIcon className="w-4 h-4 text-gray-400" />
+                  <span>{tour.duration}</span>
+                </div>
+              )}
+              {tour.language && (
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  <span>{tour.language}</span>
+                </div>
+              )}
+              {tour.groupSize && (
+                <div className="flex items-center gap-1">
+                  <UserGroupIcon className="w-4 h-4 text-gray-400" />
+                  <span>Max {tour.groupSize}</span>
+                </div>
+              )}
+              {tour.accessibility && (
+                <div className="flex items-center gap-1">
+                  <span className="text-blue-500">♿</span>
+                  <span>Accessible</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Price and Book Button */}
+          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+            <div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-sm text-gray-500">From</span>
+                <span className="text-2xl font-bold text-gray-900">
+                  ${(tour.priceCents / 100).toFixed(0)}
+                </span>
+              </div>
+              <div className="text-sm text-gray-500">per person</div>
+            </div>
+            <button
+              onClick={handleBookNow}
+              disabled={isBooking}
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed"
+            >
+              {isBooking ? "Booking..." : "Book now"}
+            </button>
+          </div>
+
+          {/* Booking Status Messages */}
+          {bookingSuccess && (
+            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 text-sm font-medium">
+                ✅ Booking successful! Check your email for confirmation.
+              </p>
+            </div>
+          )}
+
+          {bookingError && (
+            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800 text-sm font-medium">
+                ❌ {bookingError}
+              </p>
+            </div>
+          )}
+        </div>
+      </article>
+    </Link>
+  );
+}

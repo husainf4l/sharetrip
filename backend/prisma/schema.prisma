@@ -1,0 +1,273 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// Main user table
+model User {
+    id              String    @id @default(uuid())
+    name            String?
+    email           String?   @unique
+    passwordHash    String?
+    emailVerified   Boolean   @default(false)
+    emailVerifiedAt DateTime?
+    image           String?
+    role            String    @default("traveler")
+    languages       String[]  @default([])
+    ageRange        String?
+    travelStyle     String?
+    createdAt       DateTime  @default(now())
+
+    guideProfile       GuideProfile?
+    preferences        Preference?
+    bookings           Booking[]
+    stories            Story[]
+    embeddings         Embedding[]
+    alerts             Alert[]
+    refreshTokens      RefreshToken[]
+    verificationTokens VerificationToken[]
+    phoneOtps          PhoneOtp[]
+    hostApplication    HostApplication?
+}
+
+model GuideProfile {
+    id              String           @id @default(uuid())
+    user            User             @relation(fields: [userId], references: [id])
+    userId          String           @unique
+    bio             String?
+    kycStatus       String           @default("unverified")
+    payoutMethod    String?
+    stripeAccountId String?
+    ratingAvg       Float?           @default(0)
+    toursCount      Int              @default(0)
+    tours           Tour[]
+    hostApplication HostApplication?
+}
+
+model Tour {
+    id               String       @id @default(uuid())
+    guide            GuideProfile @relation(fields: [guideId], references: [id])
+    guideId          String
+    title            String
+    city             String
+    country          String
+    category         String // SHARE_TRIP, PRIVATE, GROUP, etc.
+    description      String?
+    startTimes       DateTime[]
+    basePrice        Int // Price in cents
+    minGroup         Int
+    maxGroup         Int
+    durationMins     Int
+    language         String
+    languages        String[]     @default([]) // Multi-language support
+    isPayWhatYouWant Boolean      @default(false)
+    status           String       @default("draft")
+    createdAt        DateTime     @default(now())
+
+    // Enhanced filtering fields
+    travelStyles       String[] @default([]) // relaxed, adventurous, foodie, culture, nightlife, family
+    accessibility      String[] @default([]) // wheelchair-friendly, low-walking, kid-friendly, women-only
+    startWindow        String? // morning, afternoon, evening
+    instantBook        Boolean  @default(false)
+    hostRating         Float?   @default(0)
+    cancellationPolicy String   @default("standard") // flexible, standard, strict
+
+    // Deal states
+    isDropIn    Boolean @default(false) // <2h to start
+    isEarlyBird Boolean @default(false) // 1-2 weeks ahead discount
+
+    // Location details
+    latitude     Float?
+    longitude    Float?
+    meetingPoint String?
+
+    // SEO and searchability
+    tags           String[] @default([])
+    searchKeywords String[] @default([])
+
+    media     TourMedia[]
+    bookings  Booking[]
+    groupFill GroupFill?
+    stories   Story[]
+}
+
+model TourMedia {
+    id     String @id @default(uuid())
+    tour   Tour   @relation(fields: [tourId], references: [id])
+    tourId String
+    url    String
+    type   String
+}
+
+model Booking {
+    id             String   @id @default(uuid())
+    tour           Tour     @relation(fields: [tourId], references: [id])
+    tourId         String
+    traveler       User     @relation(fields: [travelerId], references: [id])
+    travelerId     String
+    status         String   @default("pending")
+    priceAtBooking Int
+    headcount      Int      @default(1)
+    createdAt      DateTime @default(now())
+}
+
+model RefreshToken {
+    id           String   @id @default(uuid())
+    user         User     @relation(fields: [userId], references: [id])
+    userId       String
+    tokenHash    String
+    expiresAt    DateTime
+    revoked      Boolean  @default(false)
+    replacedById String?
+    createdAt    DateTime @default(now())
+}
+
+model VerificationToken {
+    id        String   @id @default(uuid())
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+    tokenHash String
+    type      String // email_verify | password_reset
+    expiresAt DateTime
+    used      Boolean  @default(false)
+    createdAt DateTime @default(now())
+}
+
+model PhoneOtp {
+    id        String   @id @default(uuid())
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+    phone     String
+    codeHash  String
+    attempts  Int      @default(0)
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+}
+
+model HostApplication {
+    id              String        @id @default(uuid())
+    user            User          @relation(fields: [userId], references: [id])
+    userId          String        @unique
+    guideProfile    GuideProfile? @relation(fields: [guideProfileId], references: [id])
+    guideProfileId  String?       @unique
+    status          String        @default("draft") // draft | submitted | approved | rejected
+    currentStep     Int           @default(1)
+    phoneVerified   Boolean       @default(false)
+    kycSubmitted    Boolean       @default(false)
+    payoutConnected Boolean       @default(false)
+    data            Json? // saves form draft data across steps
+    createdAt       DateTime      @default(now())
+    updatedAt       DateTime      @updatedAt
+}
+
+model GroupFill {
+    id              String   @id @default(uuid())
+    tour            Tour     @relation(fields: [tourId], references: [id])
+    tourId          String   @unique
+    currentCount    Int      @default(0)
+    targetCount     Int
+    dynamicPrice    Int // Current price in cents based on group size
+    maxGroupPrice   Int // Price at full group in cents
+    priceReductions Json? // Price tier structure
+    spotsLeft       Int      @default(0) // Computed field: targetCount - currentCount
+    updatedAt       DateTime @updatedAt
+    createdAt       DateTime @default(now())
+}
+
+model Story {
+    id        String   @id @default(uuid())
+    tour      Tour     @relation(fields: [tourId], references: [id])
+    tourId    String
+    author    User     @relation(fields: [authorId], references: [id])
+    authorId  String
+    text      String?
+    mediaUrls String[] @default([])
+    createdAt DateTime @default(now())
+}
+
+model Preference {
+    id                 String   @id @default(uuid())
+    user               User     @relation(fields: [userId], references: [id])
+    userId             String   @unique
+    budgetMin          Int?
+    budgetMax          Int?
+    categories         String[] @default([])
+    cities             String[] @default([])
+    countries          String[] @default([])
+    preferredGroupSize String?
+    flexibleDates      Boolean  @default(false)
+
+    // Enhanced filtering preferences
+    preferredLanguages String[] @default([])
+    travelStyles       String[] @default([]) // relaxed, adventurous, foodie, culture, nightlife, family
+    accessibility      String[] @default([]) // wheelchair-friendly, low-walking, kid-friendly, women-only
+    preferredDuration  String[] @default([]) // 30-60m, 1-2h, 3-4h, full-day
+    startWindows       String[] @default([]) // morning, afternoon, evening
+    cancellationPolicy String[] @default([]) // flexible, standard, strict
+    maxBudgetAtFull    Boolean  @default(false) // Consider max price at full group
+    minHostRating      Float?   @default(0)
+    instantBookOnly    Boolean  @default(false)
+
+    // Notification preferences
+    notifyDropIns    Boolean @default(true)
+    notifyEarlyBird  Boolean @default(true)
+    notifyPriceDrops Boolean @default(true)
+
+    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+}
+
+model Alert {
+    id        String   @id @default(uuid())
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+    type      String
+    payload   Json
+    isRead    Boolean  @default(false)
+    createdAt DateTime @default(now())
+}
+
+model Embedding {
+    id        String   @id @default(uuid())
+    ownerType String
+    ownerId   String
+    vector    Bytes
+    metadata  Json?
+    createdAt DateTime @default(now())
+    user      User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+}
+
+model Payout {
+    id          String   @id @default(uuid())
+    guideId     String
+    bookingId   String?
+    amount      Int
+    status      String   @default("pending")
+    externalRef String?
+    createdAt   DateTime @default(now())
+}
+
+model Referral {
+    id             String @id @default(uuid())
+    referrerId     String
+    referredUserId String
+    status         String
+    creditAmount   Int
+}
+
+model AuditLog {
+    id        String   @id @default(uuid())
+    userId    String?
+    action    String
+    entity    String
+    entityId  String
+    before    Json?
+    after     Json?
+    ip        String?
+    userAgent String?
+    createdAt DateTime @default(now())
+}
