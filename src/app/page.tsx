@@ -491,9 +491,7 @@ export default function Home() {
                       </div>
                       <div className="flex items-center">
                         <UserGroupIcon className="w-4 h-4 mr-1.5" />
-                        <span className="font-medium">
-                          {Math.floor(Math.random() * 10) + 5}/15
-                        </span>
+                        <span className="font-medium">8/15</span>
                       </div>
                     </div>
 
