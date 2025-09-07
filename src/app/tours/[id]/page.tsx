@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import AdBanner from "@/components/AdBanner";
+import { ImageGallery, GalleryImage } from "@/components/ImageGallery";
 import {
   StarIcon,
   HeartIcon,
@@ -25,6 +27,8 @@ import {
   ShieldCheckIcon,
   TruckIcon,
   CurrencyDollarIcon,
+  InformationCircleIcon,
+  UserIcon,
 } from "@heroicons/react/24/outline";
 import {
   HeartIcon as HeartSolidIcon,
@@ -44,6 +48,7 @@ interface Tour {
   duration?: string;
   maxGroupSize?: number;
   images?: string[];
+  galleryImages?: GalleryImage[];
   category?: string;
   language?: string;
   host?: {
@@ -108,6 +113,8 @@ export default function TourDetailPage({
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
 
+  const router = useRouter();
+
   // Handle params properly for both Next.js 14 and 15
   const resolvedParams = "then" in params ? use(params) : params;
   const tourId = resolvedParams?.id;
@@ -146,6 +153,42 @@ export default function TourDetailPage({
           return;
         }
 
+        // Create gallery images in the proper format - Using local images
+        const galleryImages: GalleryImage[] = [
+          {
+            id: "1",
+            src: "/images/tour-1.jpg",
+            alt: `${found?.title || "Tour"} - Main experience`,
+            title: `Experience ${found?.title || "this amazing tour"}`,
+            width: 1200,
+            height: 800,
+          },
+          {
+            id: "2",
+            src: "/images/tour-2.jpg",
+            alt: `${found?.title || "Tour"} - Local culture`,
+            title: "Immerse yourself in local culture and traditions",
+            width: 1200,
+            height: 800,
+          },
+          {
+            id: "3",
+            src: "/images/tour-3.jpg",
+            alt: `${found?.title || "Tour"} - Scenic views`,
+            title: "Breathtaking views and photo opportunities",
+            width: 1200,
+            height: 800,
+          },
+          {
+            id: "4",
+            src: "/images/tour-4.jpg",
+            alt: `${found?.title || "Tour"} - Adventure moments`,
+            title: "Unforgettable adventure moments and expert guidance",
+            width: 1200,
+            height: 800,
+          },
+        ];
+
         // Enhanced tour data with more details
         const enhancedTour: Tour = {
           ...(found || data[0]),
@@ -155,13 +198,8 @@ export default function TourDetailPage({
           maxGroupSize: 15,
           category: "Food & Drink",
           language: "English",
-          images: [
-            "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop",
-            "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=800&h=600&fit=crop",
-            "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=600&fit=crop",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop",
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
-          ],
+          images: galleryImages.map((img) => img.src),
+          galleryImages, // Add gallery images for our new component
           description:
             "Embark on an unforgettable culinary journey through the vibrant streets of Lisbon. Discover authentic Portuguese flavors, hidden local gems, and centuries-old traditions that make this city's food scene truly unique. Your expert local guide will take you to the best traditional tascas, pastel de nata bakeries, and fresh seafood markets.",
           host: {
@@ -314,10 +352,13 @@ export default function TourDetailPage({
         specialRequests: "", // Could add a special requests field later
       });
 
-      if (result.success) {
-        setBookingSuccess(true);
-        // Reset success message after 5 seconds
-        setTimeout(() => setBookingSuccess(false), 5000);
+      if (result.success && result.booking) {
+        // Redirect to booking confirmation page
+        router.push(
+          `/bookings/confirmation?bookingId=${
+            result.booking.id || result.booking.bookingId
+          }`
+        );
       } else {
         setBookingError(result.error || "Failed to create booking");
       }
@@ -419,89 +460,95 @@ export default function TourDetailPage({
   return (
     <>
       <div className="min-h-screen bg-white">
-        {/* Hero Section with Image Gallery */}
-        <div className="relative">
-          <div className="relative h-[60vh] lg:h-[70vh] overflow-hidden">
-            <Image
-              src={images[selectedImage]}
-              alt={tour.title}
-              fill
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-
-            {/* Navigation Arrows */}
-            {images.length > 1 && (
-              <>
+        {/* Back Navigation */}
+        <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <Link
+                href="/tours"
+                className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition-colors"
+              >
+                <ChevronLeftIcon className="w-4 h-4" />
+                Back to Tours
+              </Link>
+              <div className="flex items-center gap-4">
                 <button
-                  onClick={() =>
-                    setSelectedImage(
-                      (prev) => (prev - 1 + images.length) % images.length
-                    )
-                  }
-                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all duration-200"
+                  onClick={handleWishlist}
+                  className="p-2 text-gray-600 hover:text-red-500 transition-colors"
                 >
-                  <ChevronLeftIcon className="w-6 h-6" />
+                  {isWishlisted ? (
+                    <HeartSolidIcon className="w-6 h-6 text-red-500" />
+                  ) : (
+                    <HeartIcon className="w-6 h-6" />
+                  )}
                 </button>
-                <button
-                  onClick={() =>
-                    setSelectedImage((prev) => (prev + 1) % images.length)
-                  }
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all duration-200"
-                >
-                  <ChevronRightIcon className="w-6 h-6" />
+                <button className="p-2 text-gray-600 hover:text-blue-500 transition-colors">
+                  <ShareIcon className="w-6 h-6" />
                 </button>
-              </>
-            )}
-
-            {/* Image Counter */}
-            <div className="absolute top-6 left-6 bg-black/60 text-white px-4 py-2 rounded-full text-sm font-medium">
-              <PhotoIcon className="w-4 h-4 inline mr-2" />
-              {selectedImage + 1} / {images.length}
+              </div>
             </div>
-
-            {/* Wishlist Button */}
-            <button
-              onClick={handleWishlist}
-              className="absolute top-6 right-6 p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all duration-200"
-            >
-              {isWishlisted ? (
-                <HeartSolidIcon className="w-6 h-6 text-red-500" />
-              ) : (
-                <HeartIcon className="w-6 h-6" />
-              )}
-            </button>
           </div>
+        </nav>
 
-          {/* Thumbnail Strip */}
-          {images.length > 1 && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 bg-black/40 backdrop-blur-sm rounded-2xl p-2">
-              {images.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedImage(idx)}
-                  className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                    selectedImage === idx
-                      ? "border-white scale-110"
-                      : "border-white/50 hover:border-white/80"
-                  }`}
-                >
-                  <Image
-                    src={img}
-                    alt=""
-                    width={64}
-                    height={64}
-                    className="object-cover w-full h-full"
-                  />
-                </button>
-              ))}
+        {/* GetYourGuide-style Hero Section */}
+        <div className="bg-white">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            {/* Tour Title and Info */}
+            <div className="mb-4">
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <span className="badge-getyourguide">{tour.category}</span>
+                <span className="badge-bestseller">Bestseller</span>
+              </div>
+              <h1 className="text-3xl lg:text-4xl font-bold text-getyourguide-dark mb-4 leading-tight">
+                {tour.title}
+              </h1>
+              <div className="flex flex-wrap items-center gap-4 text-getyourguide-gray mb-4">
+                <div className="flex items-center gap-2">
+                  <MapPinIcon className="w-5 h-5 text-getyourguide-blue" />
+                  <span className="font-medium">
+                    {tour.city}, {tour.country}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <StarSolidIcon
+                        key={i}
+                        className={`w-4 h-4 ${
+                          i < Math.floor(tour.rating || 0)
+                            ? "text-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="font-bold text-getyourguide-dark">
+                    {tour.rating}
+                  </span>
+                  <span className="font-medium">
+                    ({tour.reviews?.toLocaleString()} reviews)
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ClockIcon className="w-5 h-5 text-getyourguide-blue" />
+                  <span className="font-medium">{tour.duration}</span>
+                </div>
+              </div>
             </div>
-          )}
+
+            {/* GetYourGuide-style Image Gallery */}
+            {tour.galleryImages && (
+              <ImageGallery
+                images={tour.galleryImages}
+                showLightbox={true}
+                className="rounded-xl overflow-hidden"
+              />
+            )}
+          </div>
         </div>
 
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          {/* Header Section */}
+          {/* Key Info Section */}
           <div className="py-8 border-b border-gray-200">
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
               <div className="flex-1">
@@ -528,143 +575,89 @@ export default function TourDetailPage({
                   </div>
                 </nav>
 
-                {/* Title and Location */}
-                <div className="mb-4">
-                  <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2 leading-tight">
-                    {tour.title}
-                  </h1>
-                  <div className="flex items-center text-gray-600 mb-3">
-                    <MapPinIcon className="w-5 h-5 mr-2" />
-                    <span className="font-medium">
-                      {tour.city}, {tour.country}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Rating and Reviews */}
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <StarSolidIcon
-                          key={i}
-                          className={`w-5 h-5 ${
-                            i < Math.floor(tour.rating || 0)
-                              ? "text-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <span className="font-bold text-lg">{tour.rating}</span>
-                    <span className="text-gray-600">
-                      ({tour.reviews?.toLocaleString()} reviews)
-                    </span>
-                  </div>
-                  <span className="text-gray-300">•</span>
-                  <span className="text-gray-600 font-medium">
-                    {tour.category}
-                  </span>
-                </div>
-
                 {/* Key Info Badges */}
                 <div className="flex flex-wrap gap-3 mb-6">
-                  <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-2 rounded-full text-sm font-medium">
-                    <ClockIcon className="w-4 h-4" />
+                  <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-3 rounded-full text-sm font-medium">
+                    <ClockIcon className="w-5 h-5" />
                     {tour.duration}
                   </div>
-                  <div className="flex items-center gap-2 bg-green-50 text-green-700 px-3 py-2 rounded-full text-sm font-medium">
-                    <UsersIcon className="w-4 h-4" />
+                  <div className="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-3 rounded-full text-sm font-medium">
+                    <UsersIcon className="w-5 h-5" />
                     Max {tour.maxGroupSize} people
                   </div>
-                  <div className="flex items-center gap-2 bg-purple-50 text-purple-700 px-3 py-2 rounded-full text-sm font-medium">
-                    <GlobeAltIcon className="w-4 h-4" />
+                  <div className="flex items-center gap-2 bg-purple-50 text-purple-700 px-4 py-3 rounded-full text-sm font-medium">
+                    <GlobeAltIcon className="w-5 h-5" />
                     {tour.language}
                   </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-3">
-                  <button className="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-colors">
-                    <ShareIcon className="w-5 h-5" />
-                    Share
-                  </button>
-                  <button
-                    onClick={handleWishlist}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-colors ${
-                      isWishlisted
-                        ? "bg-red-50 text-red-600 hover:bg-red-100"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
-                  >
-                    {isWishlisted ? (
-                      <HeartSolidIcon className="w-5 h-5" />
-                    ) : (
-                      <HeartIcon className="w-5 h-5" />
-                    )}
-                    {isWishlisted ? "Saved" : "Save to wishlist"}
-                  </button>
+                  <div className="flex items-center gap-2 bg-yellow-50 text-yellow-700 px-4 py-3 rounded-full text-sm font-medium">
+                    <StarIcon className="w-5 h-5" />
+                    Highly Rated
+                  </div>
                 </div>
               </div>
 
-              {/* Booking Card */}
+              {/* GetYourGuide-style Booking Card */}
               <div className="lg:w-96">
-                <div className="bg-white border border-gray-200 rounded-2xl shadow-lg p-6 sticky top-6">
+                <div className="card-getyourguide-elevated p-8 sticky top-24 shadow-xl">
                   {/* Price */}
                   <div className="mb-6">
-                    <div className="flex items-baseline gap-2 mb-2">
-                      <span className="text-3xl font-bold text-gray-900">
+                    <div className="flex items-baseline gap-3 mb-2">
+                      <span className="text-4xl font-bold text-getyourguide-dark">
                         ${(tour.priceCents / 100).toFixed(0)}
                       </span>
-                      <span className="text-gray-600">per person</span>
+                      <span className="text-getyourguide-gray font-medium">
+                        per person
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-getyourguide-gray">
                       <StarSolidIcon className="w-4 h-4 text-yellow-400" />
-                      <span>{tour.rating}</span>
+                      <span className="font-semibold">{tour.rating}</span>
                       <span>({tour.reviews?.toLocaleString()} reviews)</span>
                     </div>
                   </div>
 
                   {/* Trust Indicators */}
-                  <div className="flex items-center gap-4 mb-6 text-sm text-gray-600">
-                    <div className="flex items-center gap-1">
-                      <ShieldCheckIcon className="w-4 h-4 text-green-600" />
-                      <span>Free cancellation</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <TruckIcon className="w-4 h-4 text-green-600" />
-                      <span>Pickup available</span>
+                  <div className="bg-green-50 p-4 rounded-xl mb-6">
+                    <div className="flex items-center gap-4 text-sm text-getyourguide-gray">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheckIcon className="w-5 h-5 text-getyourguide-green" />
+                        <span className="font-medium">Free cancellation</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <TruckIcon className="w-5 h-5 text-getyourguide-green" />
+                        <span className="font-medium">Pickup available</span>
+                      </div>
                     </div>
                   </div>
 
                   {/* Date Selection */}
                   <div className="mb-4">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-bold text-getyourguide-dark mb-3">
                       Select date
                     </label>
                     <div className="relative">
-                      <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-getyourguide-blue" />
                       <input
                         type="date"
                         value={selectedDate}
                         onChange={(e) => setSelectedDate(e.target.value)}
                         min={new Date().toISOString().split("T")[0]}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full pl-10 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-getyourguide-blue focus:border-getyourguide-blue transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Guest Selection */}
                   <div className="mb-6">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-bold text-getyourguide-dark mb-3">
                       Number of travelers
                     </label>
                     <div className="relative">
-                      <UsersIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <UsersIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-getyourguide-blue" />
                       <select
                         value={guests}
                         onChange={(e) => setGuests(Number(e.target.value))}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+                        className="w-full pl-10 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-getyourguide-blue focus:border-getyourguide-blue appearance-none transition-all"
                       >
                         {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                           <option key={num} value={num}>
@@ -679,7 +672,7 @@ export default function TourDetailPage({
                   <button
                     onClick={handleBookNow}
                     disabled={isBooking || !selectedDate}
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl text-lg font-bold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed mb-4"
+                    className="w-full btn-getyourguide-primary py-4 text-lg font-bold mb-6 transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
                     {isBooking ? "Creating booking..." : "Book now"}
                   </button>
@@ -798,45 +791,254 @@ export default function TourDetailPage({
                   </div>
                 )}
 
+                {/* What to Expect */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="card-getyourguide p-6">
+                    <h3 className="text-xl font-bold text-getyourguide-dark mb-4 flex items-center gap-2">
+                      <ClockIcon className="w-6 h-6 text-getyourguide-blue" />
+                      What to Expect
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-getyourguide-blue rounded-full mt-2 flex-shrink-0"></div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900 mb-1">
+                            Professional Guide
+                          </h4>
+                          <p className="text-gray-600 text-sm">
+                            Expert local guide with extensive knowledge of the
+                            area
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-getyourguide-green rounded-full mt-2 flex-shrink-0"></div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900 mb-1">
+                            Small Groups
+                          </h4>
+                          <p className="text-gray-600 text-sm">
+                            Intimate experience with maximum{" "}
+                            {tour.maxGroupSize || 12} participants
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-getyourguide-orange rounded-full mt-2 flex-shrink-0"></div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900 mb-1">
+                            All Inclusive
+                          </h4>
+                          <p className="text-gray-600 text-sm">
+                            Everything included - no hidden costs or surprises
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="card-getyourguide p-6">
+                    <h3 className="text-xl font-bold text-getyourguide-dark mb-4 flex items-center gap-2">
+                      <MapPinIcon className="w-6 h-6 text-getyourguide-green" />
+                      Location Details
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-2">
+                          Meeting Point
+                        </h4>
+                        <p className="text-gray-600 text-sm mb-2">
+                          Central location, easy to find
+                        </p>
+                        <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">
+                          📍 Detailed location will be provided after booking
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-2">
+                          Duration
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Approximately {tour.duration} of immersive experience
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-2">
+                          Accessibility
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          Please contact us for accessibility information
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Important Information */}
+                <div className="card-getyourguide p-6">
+                  <h3 className="text-xl font-bold text-getyourguide-dark mb-4 flex items-center gap-2">
+                    <InformationCircleIcon className="w-6 h-6 text-getyourguide-blue" />
+                    Important Information
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-3">
+                        What to Bring
+                      </h4>
+                      <ul className="space-y-2">
+                        <li className="flex items-center gap-2 text-sm text-gray-600">
+                          <CheckIcon className="w-4 h-4 text-green-500" />
+                          Comfortable walking shoes
+                        </li>
+                        <li className="flex items-center gap-2 text-sm text-gray-600">
+                          <CheckIcon className="w-4 h-4 text-green-500" />
+                          Weather-appropriate clothing
+                        </li>
+                        <li className="flex items-center gap-2 text-sm text-gray-600">
+                          <CheckIcon className="w-4 h-4 text-green-500" />
+                          Camera for photos
+                        </li>
+                        <li className="flex items-center gap-2 text-sm text-gray-600">
+                          <CheckIcon className="w-4 h-4 text-green-500" />
+                          Valid ID or passport
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-3">
+                        Know Before You Go
+                      </h4>
+                      <ul className="space-y-2">
+                        <li className="flex items-center gap-2 text-sm text-gray-600">
+                          <InformationCircleIcon className="w-4 h-4 text-blue-500" />
+                          Tour operates rain or shine
+                        </li>
+                        <li className="flex items-center gap-2 text-sm text-gray-600">
+                          <InformationCircleIcon className="w-4 h-4 text-blue-500" />
+                          Please arrive 15 minutes early
+                        </li>
+                        <li className="flex items-center gap-2 text-sm text-gray-600">
+                          <InformationCircleIcon className="w-4 h-4 text-blue-500" />
+                          Minimum age requirement: 12 years
+                        </li>
+                        <li className="flex items-center gap-2 text-sm text-gray-600">
+                          <InformationCircleIcon className="w-4 h-4 text-blue-500" />
+                          Free cancellation up to 24h before
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Safety & Hygiene */}
+                <div className="card-getyourguide p-6 bg-gradient-to-br from-green-50 to-blue-50">
+                  <h3 className="text-xl font-bold text-getyourguide-dark mb-4 flex items-center gap-2">
+                    <ShieldCheckIcon className="w-6 h-6 text-getyourguide-green" />
+                    Safety & Hygiene
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="text-center p-4">
+                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <ShieldCheckIcon className="w-6 h-6 text-green-600" />
+                      </div>
+                      <h4 className="font-semibold text-gray-900 mb-2">
+                        Safety First
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        All safety protocols followed according to local
+                        guidelines
+                      </p>
+                    </div>
+                    <div className="text-center p-4">
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <UsersIcon className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <h4 className="font-semibold text-gray-900 mb-2">
+                        Small Groups
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Limited group sizes for a more personal experience
+                      </p>
+                    </div>
+                    <div className="text-center p-4">
+                      <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <HeartIcon className="w-6 h-6 text-orange-600" />
+                      </div>
+                      <h4 className="font-semibold text-gray-900 mb-2">
+                        Expert Care
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Professional guides trained in safety and first aid
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Host Information */}
                 {tour.host && (
-                  <div className="bg-gray-50 rounded-2xl p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  <div className="card-getyourguide-elevated p-8">
+                    <h3 className="text-xl font-bold text-getyourguide-dark mb-4 flex items-center gap-2">
+                      <UserIcon className="w-6 h-6 text-getyourguide-blue" />
                       Meet your host
                     </h3>
-                    <div className="flex items-start gap-4">
-                      <Image
+                    <div className="flex items-start gap-6">
+                      <img
                         src={tour.host.avatar}
                         alt={tour.host.name}
-                        width={80}
-                        height={80}
-                        className="rounded-full object-cover"
+                        className="w-24 h-24 rounded-full object-cover shadow-lg"
                       />
                       <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center justify-between mb-4">
                           <div>
-                            <h4 className="text-xl font-bold text-gray-900">
+                            <h4 className="text-2xl font-bold text-getyourguide-dark">
                               {tour.host.name}
                             </h4>
-                            <div className="flex items-center gap-1">
-                              <StarSolidIcon className="w-4 h-4 text-yellow-400" />
-                              <span className="font-semibold">
+                            <div className="flex items-center gap-1 mt-1">
+                              <div className="flex">
+                                {[...Array(5)].map((_, i) => (
+                                  <StarSolidIcon
+                                    key={i}
+                                    className="w-4 h-4 text-yellow-400"
+                                  />
+                                ))}
+                              </div>
+                              <span className="font-semibold text-getyourguide-dark ml-1">
                                 {tour.host.rating}
+                              </span>
+                              <span className="text-gray-500">
+                                (127 reviews)
                               </span>
                             </div>
                           </div>
                         </div>
-                        <p className="text-gray-600 mb-3">
+                        <p className="text-gray-600 mb-4 text-lg">
                           Professional local guide with 10+ years of experience
+                          showing visitors the best of {tour.city}. Passionate
+                          about sharing local culture, history, and hidden gems
+                          that only locals know about.
                         </p>
-                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                          <div className="flex items-center gap-1">
-                            <ChatBubbleLeftIcon className="w-4 h-4" />
-                            <span>Responds {tour.host.responseTime}</span>
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div className="flex items-center gap-2 text-gray-600">
+                            <ChatBubbleLeftIcon className="w-5 h-5 text-getyourguide-blue" />
+                            <span className="font-medium">
+                              Responds {tour.host.responseTime}
+                            </span>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <GlobeAltIcon className="w-4 h-4" />
-                            <span>{tour.host.languages.join(", ")}</span>
+                          <div className="flex items-center gap-2 text-gray-600">
+                            <GlobeAltIcon className="w-5 h-5 text-getyourguide-green" />
+                            <span className="font-medium">
+                              {tour.host.languages.join(", ")}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-600">
+                            <StarIcon className="w-5 h-5 text-yellow-500" />
+                            <span className="font-medium">
+                              Highly rated guide
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-600">
+                            <ShieldCheckIcon className="w-5 h-5 text-green-500" />
+                            <span className="font-medium">Verified host</span>
                           </div>
                         </div>
                       </div>
@@ -1009,56 +1211,11 @@ export default function TourDetailPage({
               ))}
             </div>
           </div>
-          
+
           {/* Ad Banner */}
           <AdBanner category={tour?.category?.toLowerCase()} className="mt-8" />
         </div>
       </div>
-
-      {/* Lightbox Modal */}
-      {showLightbox && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
-          <div className="relative max-w-5xl max-h-screen p-4">
-            <button
-              onClick={closeLightbox}
-              className="absolute top-4 right-4 z-10 p-2 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 transition-colors"
-            >
-              <XMarkIcon className="w-6 h-6" />
-            </button>
-
-            <div className="relative">
-              <Image
-                src={images[lightboxImage]}
-                alt={tour.title}
-                width={1200}
-                height={800}
-                className="max-w-full max-h-screen object-contain rounded-lg"
-              />
-
-              {images.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 transition-colors"
-                  >
-                    <ChevronLeftIcon className="w-6 h-6" />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 transition-colors"
-                  >
-                    <ChevronRightIcon className="w-6 h-6" />
-                  </button>
-                </>
-              )}
-
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-full text-sm">
-                {lightboxImage + 1} / {images.length}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

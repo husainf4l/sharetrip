@@ -43,7 +43,7 @@ export default function TravelerDashboard() {
   const [bookings, setBookings] = useState<TravelerBooking[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<
-    "upcoming" | "completed" | "cancelled"
+    "upcoming" | "completed" | "cancelled" | "profile"
   >("upcoming");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -170,8 +170,16 @@ export default function TravelerDashboard() {
                 <MagnifyingGlassIcon className="w-4 h-4 mr-2" />
                 Find Tours
               </Link>
+              <Link href="/dashboard/host" className="btn btn-primary hover-glow">
+                <UserIcon className="w-4 h-4 mr-2" />
+                Become a Host
+              </Link>
               <div className="relative">
-                <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                <button 
+                  onClick={() => setActiveTab("profile" as any)}
+                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Profile"
+                >
                   <UserIcon className="w-6 h-6" />
                 </button>
               </div>
@@ -208,40 +216,69 @@ export default function TravelerDashboard() {
           </div>
         </div>
 
-        {/* Search and Tabs */}
+        {/* Navigation Tabs */}
         <div className="card p-6 mb-6">
-          <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search your bookings..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus-ring"
-              />
+          <div className="flex flex-col space-y-4">
+            {/* Main Navigation */}
+            <div className="flex bg-gray-100 rounded-lg p-1 w-fit">
+              <button
+                onClick={() => setActiveTab("upcoming")}
+                className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+                  ["upcoming", "completed", "cancelled"].includes(activeTab)
+                    ? "bg-white text-blue-600 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                My Bookings
+              </button>
+              <button
+                onClick={() => setActiveTab("profile")}
+                className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+                  activeTab === "profile"
+                    ? "bg-white text-blue-600 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                Profile
+              </button>
             </div>
 
-            {/* Tabs */}
-            <div className="flex bg-gray-100 rounded-lg p-1">
-              {(["upcoming", "completed", "cancelled"] as const).map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                    activeTab === tab
-                      ? "bg-white text-blue-600 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
-                >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                  <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
-                    {bookings.filter((b) => b.status === tab).length}
-                  </span>
-                </button>
-              ))}
-            </div>
+            {/* Booking Status Tabs (only show when on My Bookings) */}
+            {["upcoming", "completed", "cancelled"].includes(activeTab) && (
+              <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
+                {/* Search */}
+                <div className="relative flex-1 max-w-md">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search your bookings..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus-ring"
+                  />
+                </div>
+
+                {/* Status Tabs */}
+                <div className="flex bg-gray-100 rounded-lg p-1">
+                  {(["upcoming", "completed", "cancelled"] as const).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                        activeTab === tab
+                          ? "bg-white text-blue-600 shadow-sm"
+                          : "text-gray-600 hover:text-gray-900"
+                      }`}
+                    >
+                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                      <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                        {bookings.filter((b) => b.status === tab).length}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -419,6 +456,105 @@ export default function TravelerDashboard() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Profile Section */}
+        {activeTab === "profile" && (
+          <div className="space-y-6">
+            <div className="card p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">My Profile</h2>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Personal Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                      <input
+                        type="text"
+                        value={user?.name || ""}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus-ring"
+                        readOnly
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                      <input
+                        type="email"
+                        value={user?.email || ""}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus-ring"
+                        readOnly
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Account Type</label>
+                      <input
+                        type="text"
+                        value={user?.role || "Traveler"}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus-ring"
+                        readOnly
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Account Stats */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-gray-900">Account Statistics</h3>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-blue-50 p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {bookings.filter((b) => b.status === "completed").length}
+                      </div>
+                      <div className="text-sm text-blue-700">Tours Completed</div>
+                    </div>
+                    
+                    <div className="bg-green-50 p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-green-600">
+                        {new Set(bookings.map((b) => b.location)).size}
+                      </div>
+                      <div className="text-sm text-green-700">Cities Explored</div>
+                    </div>
+                    
+                    <div className="bg-purple-50 p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-purple-600">
+                        ${bookings.reduce((sum, b) => sum + b.totalPrice, 0)}
+                      </div>
+                      <div className="text-sm text-purple-700">Total Spent</div>
+                    </div>
+                    
+                    <div className="bg-orange-50 p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-orange-600">
+                        {bookings.filter((b) => b.rating && b.rating >= 4).length}
+                      </div>
+                      <div className="text-sm text-orange-700">5★ Reviews</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="mt-6 pt-6 border-t border-gray-200 flex gap-4">
+                <button className="btn btn-primary hover-glow">
+                  Edit Profile
+                </button>
+                <Link href="/dashboard/host" className="btn btn-outline hover-lift">
+                  Become a Host
+                </Link>
+                <button 
+                  onClick={logout}
+                  className="btn btn-outline text-red-600 border-red-300 hover:bg-red-50"
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

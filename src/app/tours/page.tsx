@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import SearchHero from "@/components/SearchHero";
 import FiltersSidebar from "@/components/FiltersSidebar";
 import TourCard from "@/components/TourCard";
 import AdBanner from "@/components/AdBanner";
@@ -47,6 +46,7 @@ export default function ToursPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
   const [urlCategory, setUrlCategory] = useState<string>("");
+  const [searchInput, setSearchInput] = useState("");
   const itemsPerPage = 12;
 
   // Ref to store current filtered results for sorting without dependency issues
@@ -149,9 +149,24 @@ export default function ToursPage() {
   const handleSearch = useCallback(
     (searchParams: Record<string, string>) => {
       setSearchQuery(searchParams.destination || "");
+      setSearchInput(searchParams.destination || "");
       load(searchParams);
     },
     [load]
+  );
+
+  const handleGallerySearch = useCallback(() => {
+    if (searchInput.trim()) {
+      handleSearch({ destination: searchInput.trim() });
+    }
+  }, [searchInput, handleSearch]);
+
+  const handleQuickFilter = useCallback(
+    (filter: string) => {
+      setSearchInput(filter);
+      handleSearch({ destination: filter });
+    },
+    [handleSearch]
   );
 
   const handleFiltersChange = useCallback(
@@ -258,10 +273,151 @@ export default function ToursPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
       <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Compact Search Hero */}
-        <div className="glass-elevated p-4 mb-8 animate-fade-up">
-          <SearchHero onSearch={handleSearch} />
-        </div>
+        {/* Gallery Hero Section */}
+        <section className="mb-12">
+          {/* Gallery Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {/* Large Featured Image */}
+            <div className="lg:col-span-2 lg:row-span-2 relative group cursor-pointer overflow-hidden rounded-3xl">
+              <div className="aspect-[4/3] lg:aspect-[16/9] relative">
+                <img
+                  src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop"
+                  alt="Scenic landscape"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute bottom-6 left-6 text-white">
+                  <h3 className="text-2xl font-bold mb-2">Explore Nature</h3>
+                  <p className="text-sm opacity-90">Adventure awaits</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Medium Image */}
+            <div className="relative group cursor-pointer overflow-hidden rounded-3xl">
+              <div className="aspect-square relative">
+                <img
+                  src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&h=600&fit=crop"
+                  alt="Cultural experience"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <h4 className="text-lg font-bold">Culture</h4>
+                  <p className="text-xs opacity-90">Rich heritage</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Small Image 1 */}
+            <div className="relative group cursor-pointer overflow-hidden rounded-3xl">
+              <div className="aspect-square relative">
+                <img
+                  src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=600&fit=crop"
+                  alt="Nightlife"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <h4 className="text-lg font-bold">Nightlife</h4>
+                  <p className="text-xs opacity-90">Vibrant scenes</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Medium Image 2 */}
+            <div className="md:col-span-2 lg:col-span-1 relative group cursor-pointer overflow-hidden rounded-3xl">
+              <div className="aspect-[2/1] relative">
+                <img
+                  src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=400&fit=crop"
+                  alt="Food experience"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <h4 className="text-lg font-bold">Culinary</h4>
+                  <p className="text-xs opacity-90">Local flavors</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Small Image 2 */}
+            <div className="md:col-span-2 lg:col-span-1 relative group cursor-pointer overflow-hidden rounded-3xl">
+              <div className="aspect-[2/1] relative">
+                <img
+                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop"
+                  alt="Adventure"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <h4 className="text-lg font-bold">Adventure</h4>
+                  <p className="text-xs opacity-90">Thrilling experiences</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Search Bar Overlay */}
+          <div className="relative -mt-16 z-10">
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20">
+                <div className="text-center mb-6">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                    Find your next adventure
+                  </h2>
+                  <p className="text-gray-600">
+                    Discover unique experiences around the world
+                  </p>
+                </div>
+
+                {/* Quick Search */}
+                <div className="flex flex-wrap gap-3 justify-center mb-6">
+                  {[
+                    "Food tours",
+                    "Walking tours",
+                    "Museums",
+                    "Cultural sites",
+                    "Day trips",
+                    "Adventure",
+                    "Nightlife",
+                    "Photography",
+                  ].map((filter) => (
+                    <button
+                      key={filter}
+                      onClick={() => handleQuickFilter(filter)}
+                      className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Main Search Bar */}
+                <div className="flex gap-4">
+                  <input
+                    type="text"
+                    placeholder="Where are you going?"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        handleGallerySearch();
+                      }
+                    }}
+                    className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <button
+                    onClick={handleGallerySearch}
+                    className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl"
+                  >
+                    Search
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Enhanced Results Header */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-4">

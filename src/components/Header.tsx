@@ -12,6 +12,7 @@ import {
   MusicalNoteIcon,
   SunIcon,
   StarIcon,
+  TicketIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -586,6 +587,13 @@ export default function Header() {
               >
                 <MapPinIcon className="h-6 w-6" />
                 <span className="text-xs mt-1">Explore</span>
+              </Link>
+              <Link
+                href="/bookings"
+                className="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-gray-50"
+              >
+                <TicketIcon className="h-6 w-6" />
+                <span className="text-xs mt-1">Bookings</span>
               </Link>
               <Link
                 href="/become-host"

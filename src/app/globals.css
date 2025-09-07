@@ -1,19 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  /* Enhanced Color System */
+  /* GetYourGuide Color System */
   --background: #ffffff;
-  --foreground: #0f172a;
-  --surface: #f8fafc;
+  --foreground: #1c2024;
+  --surface: #f7f8fa;
   --surface-elevated: #ffffff;
-  --border: #e2e8f0;
-  --border-hover: #cbd5e1;
-  --muted: #64748b;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
+  --border: #e1e4e8;
+  --border-hover: #c6cbd1;
+  --muted: #6e7681;
+  --accent: #ff6b35;
+  --accent-hover: #e8521c;
+  --secondary: #00aa6c;
+  --secondary-hover: #008f5a;
+  --tertiary: #0f7be8;
+  --tertiary-hover: #0d6cd1;
+  --success: #00aa6c;
+  --warning: #ffc107;
+  --error: #dc3545;
+  --getyourguide-orange: #ff6b35;
+  --getyourguide-green: #00aa6c;
+  --getyourguide-blue: #0f7be8;
+  --getyourguide-dark: #1c2024;
+  --getyourguide-gray: #6e7681;
   
   /* Modern Gradient System */
   --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -228,27 +237,95 @@ input::placeholder, textarea::placeholder {
 }
 
 .btn-primary {
-  background: var(--gradient-primary);
+  background: var(--getyourguide-orange);
   color: white;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
-  filter: brightness(1.1);
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
 
 .btn-secondary {
-  background: var(--gradient-secondary);
+  background: var(--getyourguide-green);
   color: white;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 2px 8px rgba(0, 170, 108, 0.2);
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
 }
 
 .btn-secondary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
-  filter: brightness(1.1);
+  background: var(--secondary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 170, 108, 0.3);
+}
+
+/* GetYourGuide-specific button styles */
+.btn-getyourguide {
+  background: var(--getyourguide-orange);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 12px 24px;
+  font-size: 16px;
+  line-height: 1.2;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-getyourguide:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.btn-getyourguide-primary {
+  background: var(--getyourguide-orange);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  padding: 16px 32px;
+  font-size: 18px;
+  line-height: 1.2;
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.25);
+  transition: all 0.3s ease;
+  text-transform: none;
+}
+
+.btn-getyourguide-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 6px 24px rgba(255, 107, 53, 0.4);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.btn-getyourguide-outline {
+  background: white;
+  color: var(--getyourguide-dark);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 12px 16px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-getyourguide-outline:hover {
+  border-color: var(--getyourguide-orange);
+  color: var(--getyourguide-orange);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .btn-accent {
@@ -752,6 +829,31 @@ input::placeholder, textarea::placeholder {
   border-color: rgba(0, 0, 0, 0.12);
 }
 
+/* Button Size Variants */
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.btn-md {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.btn-xl {
+  padding: 1.25rem 2.5rem;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
 /* Modern Button Variants */
 .btn-minimal {
   background: rgba(0, 0, 0, 0.9);
@@ -774,4 +876,244 @@ input::placeholder, textarea::placeholder {
 .btn-minimal:active {
   transform: translateY(0);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* GetYourGuide Card Styles */
+.card-getyourguide {
+  background: #ffffff;
+  border: 1px solid #e1e4e8;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.card-getyourguide:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  border-color: #c6cbd1;
+}
+
+.card-getyourguide-elevated {
+  background: #ffffff;
+  border: 1px solid #e1e4e8;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.card-getyourguide-elevated:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+/* GetYourGuide Badge Styles */
+.badge-getyourguide {
+  background: var(--getyourguide-orange);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.badge-bestseller {
+  background: var(--getyourguide-green);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-new {
+  background: var(--getyourguide-blue);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Toggle Checkbox Styles */
+.toggle-checkbox {
+  appearance: none;
+  width: 3rem;
+  height: 1.5rem;
+  background: #e5e7eb;
+  border-radius: 1.5rem;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-checkbox:checked {
+  background: #3b82f6;
+}
+
+.toggle-checkbox::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-checkbox:checked::before {
+  transform: translateX(1.5rem);
+}
+
+/* Image Gallery Styles */
+.image-gallery {
+  width: 100%;
+}
+
+/* Custom border width for GetYourGuide style */
+.border-3 {
+  border-width: 3px;
+}
+
+/* GetYourGuide Color Utilities */
+.text-getyourguide-orange {
+  color: var(--getyourguide-orange);
+}
+
+.text-getyourguide-green {
+  color: var(--getyourguide-green);
+}
+
+.text-getyourguide-blue {
+  color: var(--getyourguide-blue);
+}
+
+.text-getyourguide-dark {
+  color: var(--getyourguide-dark);
+}
+
+.text-getyourguide-gray {
+  color: var(--getyourguide-gray);
+}
+
+.bg-getyourguide-orange {
+  background-color: var(--getyourguide-orange);
+}
+
+.bg-getyourguide-green {
+  background-color: var(--getyourguide-green);
+}
+
+.bg-getyourguide-blue {
+  background-color: var(--getyourguide-blue);
+}
+
+.border-getyourguide-orange {
+  border-color: var(--getyourguide-orange);
+}
+
+.border-getyourguide-green {
+  border-color: var(--getyourguide-green);
+}
+
+.border-getyourguide-blue {
+  border-color: var(--getyourguide-blue);
+}
+
+.ring-getyourguide-blue {
+  --tw-ring-color: var(--getyourguide-blue);
+}
+
+/* Hide scrollbar for thumbnail strip */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth scrolling for thumbnails */
+.thumbnail-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Custom focus styles for gallery */
+.gallery-focus:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  border-radius: 0.75rem;
+}
+
+/* Lightbox backdrop blur */
+.lightbox-backdrop {
+  backdrop-filter: blur(8px);
+}
+
+/* Touch interaction improvements */
+.touch-action-pan-y {
+  touch-action: pan-y;
+}
+
+/* Gallery transitions */
+.gallery-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Loading shimmer effect */
+@keyframes gallery-shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.gallery-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: gallery-shimmer 1.5s infinite;
+}
+
+/* Mobile touch feedback */
+@media (max-width: 768px) {
+  .gallery-touch-feedback:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease-out;
+  }
+}
+
+/* Improved mobile navigation */
+.mobile-nav-button {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mobile-nav-button:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.mobile-nav-button:active {
+  transform: scale(0.95);
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .image-gallery * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

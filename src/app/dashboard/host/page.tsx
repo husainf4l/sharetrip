@@ -88,6 +88,12 @@ export default function HostDashboard() {
   >("overview");
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Debug logging
+  console.log("HostDashboard - User:", user);
+  console.log("HostDashboard - Loading:", loading);
+  console.log("HostDashboard - Tours:", tours);
+  console.log("HostDashboard - Stats:", stats);
+
   // Mock data for demo
   useEffect(() => {
     const mockTours: HostTour[] = [
@@ -606,11 +612,11 @@ export default function HostDashboard() {
 
                           <div className="lg:text-right flex lg:flex-col gap-2">
                             <Link
-                              href={`/dashboard/host/tours/${tour.id}/edit`}
+                              href={`/dashboard/host/tours/${tour.id}`}
                               className="btn btn-outline btn-sm hover-lift"
                             >
-                              <PencilIcon className="w-4 h-4 mr-2" />
-                              Edit
+                              <EyeIcon className="w-4 h-4 mr-2" />
+                              View Details
                             </Link>
                             <Link
                               href={`/dashboard/host/tours/${tour.id}/bookings`}
