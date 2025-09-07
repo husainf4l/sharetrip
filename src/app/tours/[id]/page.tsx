@@ -97,10 +97,7 @@ export default function TourDetailPage({
   params: Promise<{ id: string }> | { id: string };
 }) {
   const [tour, setTour] = useState<Tour | null>(null);
-  const [selectedImage, setSelectedImage] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const [showLightbox, setShowLightbox] = useState(false);
-  const [lightboxImage, setLightboxImage] = useState(0);
   const [selectedDate, setSelectedDate] = useState("");
   const [guests, setGuests] = useState(2);
   const [similarTours, setSimilarTours] = useState<SimilarTour[]>([]);
@@ -306,30 +303,10 @@ export default function TourDetailPage({
       }
     }
     load();
-  }, [tourId]);
+  }, [tourId]); // tourId already contains the resolved params.id value
 
   const handleWishlist = () => {
     setIsWishlisted(!isWishlisted);
-  };
-
-  const openLightbox = (index: number) => {
-    setLightboxImage(index);
-    setShowLightbox(true);
-  };
-
-  const closeLightbox = () => {
-    setShowLightbox(false);
-  };
-
-  const nextImage = () => {
-    setLightboxImage((prev) => (prev + 1) % (tour?.images?.length || 1));
-  };
-
-  const prevImage = () => {
-    setLightboxImage(
-      (prev) =>
-        (prev - 1 + (tour?.images?.length || 1)) % (tour?.images?.length || 1)
-    );
   };
 
   const calculateTotal = () => {
@@ -440,7 +417,7 @@ export default function TourDetailPage({
             Tour not found
           </h2>
           <p className="text-gray-600 mb-4">
-            The tour you're looking for doesn't exist.
+            The tour you&apos;re looking for doesn&apos;t exist.
           </p>
           <Link
             href="/tours"
@@ -462,28 +439,28 @@ export default function TourDetailPage({
       <div className="min-h-screen bg-white">
         {/* Back Navigation */}
         <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
-          <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 lg:py-4">
             <div className="flex items-center justify-between">
               <Link
                 href="/tours"
-                className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition-colors text-sm lg:text-base"
               >
                 <ChevronLeftIcon className="w-4 h-4" />
                 Back to Tours
               </Link>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 lg:gap-4">
                 <button
                   onClick={handleWishlist}
                   className="p-2 text-gray-600 hover:text-red-500 transition-colors"
                 >
                   {isWishlisted ? (
-                    <HeartSolidIcon className="w-6 h-6 text-red-500" />
+                    <HeartSolidIcon className="w-5 h-5 lg:w-6 lg:h-6 text-red-500" />
                   ) : (
-                    <HeartIcon className="w-6 h-6" />
+                    <HeartIcon className="w-5 h-5 lg:w-6 lg:h-6" />
                   )}
                 </button>
                 <button className="p-2 text-gray-600 hover:text-blue-500 transition-colors">
-                  <ShareIcon className="w-6 h-6" />
+                  <ShareIcon className="w-5 h-5 lg:w-6 lg:h-6" />
                 </button>
               </div>
             </div>
@@ -492,66 +469,77 @@ export default function TourDetailPage({
 
         {/* GetYourGuide-style Hero Section */}
         <div className="bg-white">
-          <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
             {/* Tour Title and Info */}
-            <div className="mb-4">
+            <div className="mb-4 lg:mb-6 animate-fade-up">
               <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="badge-getyourguide">{tour.category}</span>
-                <span className="badge-bestseller">Bestseller</span>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  {tour.category}
+                </span>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-red-500 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  ⭐ Bestseller
+                </span>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-green-700 bg-green-100 border border-green-300 shadow-sm">
+                  🎯 Recommended
+                </span>
               </div>
-              <h1 className="text-3xl lg:text-4xl font-bold text-getyourguide-dark mb-4 leading-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-3 lg:mb-4 leading-tight tracking-tight">
                 {tour.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-4 text-getyourguide-gray mb-4">
-                <div className="flex items-center gap-2">
-                  <MapPinIcon className="w-5 h-5 text-getyourguide-blue" />
-                  <span className="font-medium">
+              <div className="flex flex-wrap items-center gap-3 lg:gap-6 text-sm lg:text-base text-gray-600 mb-4">
+                <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-full border border-blue-200 hover:bg-blue-100 transition-colors">
+                  <MapPinIcon className="w-4 h-4 lg:w-5 lg:h-5 text-blue-600" />
+                  <span className="font-semibold text-blue-800">
                     {tour.city}, {tour.country}
                   </span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2 bg-yellow-50 px-3 py-2 rounded-full border border-yellow-200 hover:bg-yellow-100 transition-colors">
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
                       <StarSolidIcon
                         key={i}
-                        className={`w-4 h-4 ${
+                        className={`w-3 h-3 lg:w-4 lg:h-4 ${
                           i < Math.floor(tour.rating || 0)
-                            ? "text-yellow-400"
+                            ? "text-yellow-500"
                             : "text-gray-300"
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="font-bold text-getyourguide-dark">
+                  <span className="font-bold text-yellow-800">
                     {tour.rating}
                   </span>
-                  <span className="font-medium">
+                  <span className="font-medium text-yellow-700">
                     ({tour.reviews?.toLocaleString()} reviews)
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <ClockIcon className="w-5 h-5 text-getyourguide-blue" />
-                  <span className="font-medium">{tour.duration}</span>
+                <div className="flex items-center gap-2 bg-green-50 px-3 py-2 rounded-full border border-green-200 hover:bg-green-100 transition-colors">
+                  <ClockIcon className="w-4 h-4 lg:w-5 lg:h-5 text-green-600" />
+                  <span className="font-semibold text-green-800">
+                    {tour.duration}
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* GetYourGuide-style Image Gallery */}
             {tour.galleryImages && (
-              <ImageGallery
-                images={tour.galleryImages}
-                showLightbox={true}
-                className="rounded-xl overflow-hidden"
-              />
+              <div className="animate-scale-in">
+                <ImageGallery
+                  images={tour.galleryImages}
+                  showLightbox={true}
+                  className="rounded-2xl overflow-hidden shadow-2xl border border-gray-200 mb-6 lg:mb-8 hover:shadow-3xl transition-all duration-500"
+                />
+              </div>
             )}
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Key Info Section */}
-          <div className="py-8 border-b border-gray-200">
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-              <div className="flex-1">
+          <div className="py-6 lg:py-8 border-b border-gray-200">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-8">
+              <div className="flex-1 min-w-0">
                 {/* Breadcrumb */}
                 <nav className="mb-4">
                   <div className="flex items-center space-x-2 text-sm text-gray-600">
@@ -576,119 +564,180 @@ export default function TourDetailPage({
                 </nav>
 
                 {/* Key Info Badges */}
-                <div className="flex flex-wrap gap-3 mb-6">
-                  <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-3 rounded-full text-sm font-medium">
-                    <ClockIcon className="w-5 h-5" />
-                    {tour.duration}
+                <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 lg:mb-6">
+                  <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-2 lg:px-4 lg:py-3 rounded-full text-sm font-medium">
+                    <ClockIcon className="w-4 h-4 lg:w-5 lg:h-5" />
+                    <span className="hidden sm:inline">{tour.duration}</span>
+                    <span className="sm:hidden">
+                      {tour.duration?.split(" ")[0]}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-3 rounded-full text-sm font-medium">
-                    <UsersIcon className="w-5 h-5" />
-                    Max {tour.maxGroupSize} people
+                  <div className="flex items-center gap-2 bg-green-50 text-green-700 px-3 py-2 lg:px-4 lg:py-3 rounded-full text-sm font-medium">
+                    <UsersIcon className="w-4 h-4 lg:w-5 lg:h-5" />
+                    <span className="hidden sm:inline">
+                      Max {tour.maxGroupSize} people
+                    </span>
+                    <span className="sm:hidden">Max {tour.maxGroupSize}</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-purple-50 text-purple-700 px-4 py-3 rounded-full text-sm font-medium">
-                    <GlobeAltIcon className="w-5 h-5" />
+                  <div className="flex items-center gap-2 bg-purple-50 text-purple-700 px-3 py-2 lg:px-4 lg:py-3 rounded-full text-sm font-medium">
+                    <GlobeAltIcon className="w-4 h-4 lg:w-5 lg:h-5" />
                     {tour.language}
                   </div>
-                  <div className="flex items-center gap-2 bg-yellow-50 text-yellow-700 px-4 py-3 rounded-full text-sm font-medium">
-                    <StarIcon className="w-5 h-5" />
-                    Highly Rated
+                  <div className="flex items-center gap-2 bg-yellow-50 text-yellow-700 px-3 py-2 lg:px-4 lg:py-3 rounded-full text-sm font-medium">
+                    <StarIcon className="w-4 h-4 lg:w-5 lg:h-5" />
+                    <span className="hidden sm:inline">Highly Rated</span>
+                    <span className="sm:hidden">Top Rated</span>
                   </div>
                 </div>
               </div>
 
               {/* GetYourGuide-style Booking Card */}
-              <div className="lg:w-96">
-                <div className="card-getyourguide-elevated p-8 sticky top-24 shadow-xl">
-                  {/* Price */}
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-3 mb-2">
-                      <span className="text-4xl font-bold text-getyourguide-dark">
+              <div className="lg:w-96 lg:flex-shrink-0">
+                <div className="sticky top-24 bg-white/95 rounded-3xl shadow-2xl border border-gray-100 p-6 lg:p-8 hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-1 backdrop-blur-sm">
+                  {/* Price Section with Enhanced Styling */}
+                  <div className="mb-4 lg:mb-6 p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl border border-blue-100">
+                    <div className="flex items-baseline gap-2 lg:gap-3 mb-2">
+                      <span className="text-3xl lg:text-4xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                         ${(tour.priceCents / 100).toFixed(0)}
                       </span>
-                      <span className="text-getyourguide-gray font-medium">
+                      <span className="text-gray-600 font-medium text-sm lg:text-base">
                         per person
                       </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-getyourguide-gray">
-                      <StarSolidIcon className="w-4 h-4 text-yellow-400" />
-                      <span className="font-semibold">{tour.rating}</span>
-                      <span>({tour.reviews?.toLocaleString()} reviews)</span>
-                    </div>
-                  </div>
-
-                  {/* Trust Indicators */}
-                  <div className="bg-green-50 p-4 rounded-xl mb-6">
-                    <div className="flex items-center gap-4 text-sm text-getyourguide-gray">
-                      <div className="flex items-center gap-2">
-                        <ShieldCheckIcon className="w-5 h-5 text-getyourguide-green" />
-                        <span className="font-medium">Free cancellation</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <TruckIcon className="w-5 h-5 text-getyourguide-green" />
-                        <span className="font-medium">Pickup available</span>
+                      <div className="ml-auto bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">
+                        💰 Best Price
                       </div>
                     </div>
-                  </div>
-
-                  {/* Date Selection */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-bold text-getyourguide-dark mb-3">
-                      Select date
-                    </label>
-                    <div className="relative">
-                      <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-getyourguide-blue" />
-                      <input
-                        type="date"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        min={new Date().toISOString().split("T")[0]}
-                        className="w-full pl-10 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-getyourguide-blue focus:border-getyourguide-blue transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Guest Selection */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-bold text-getyourguide-dark mb-3">
-                      Number of travelers
-                    </label>
-                    <div className="relative">
-                      <UsersIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-getyourguide-blue" />
-                      <select
-                        value={guests}
-                        onChange={(e) => setGuests(Number(e.target.value))}
-                        className="w-full pl-10 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-getyourguide-blue focus:border-getyourguide-blue appearance-none transition-all"
-                      >
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                          <option key={num} value={num}>
-                            {num} {num === 1 ? "traveler" : "travelers"}
-                          </option>
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <StarSolidIcon
+                            key={i}
+                            className="w-4 h-4 text-yellow-400"
+                          />
                         ))}
-                      </select>
+                      </div>
+                      <span className="font-bold text-gray-900">
+                        {tour.rating}
+                      </span>
+                      <span className="text-gray-600">
+                        ({tour.reviews?.toLocaleString()} reviews)
+                      </span>
                     </div>
                   </div>
 
-                  {/* Book Now Button */}
+                  {/* Trust Indicators with Premium Styling */}
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-2xl mb-4 lg:mb-6 border border-green-200">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 lg:gap-4 text-sm">
+                      <div className="flex items-center gap-2 text-green-700">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                          <ShieldCheckIcon className="w-4 h-4 text-white" />
+                        </div>
+                        <span className="font-semibold">Free cancellation</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-green-700">
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                          <TruckIcon className="w-4 h-4 text-white" />
+                        </div>
+                        <span className="font-semibold">Pickup included</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Enhanced Form Fields */}
+                  <div className="space-y-4 mb-6">
+                    {/* Date Selection */}
+                    <div>
+                      <label className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-3">
+                        <CalendarIcon className="w-4 h-4 text-blue-600" />
+                        Select your date
+                      </label>
+                      <div className="relative">
+                        <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-600 z-10" />
+                        <input
+                          type="date"
+                          value={selectedDate}
+                          onChange={(e) => setSelectedDate(e.target.value)}
+                          min={new Date().toISOString().split("T")[0]}
+                          className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-base font-medium bg-white hover:border-blue-300 hover:shadow-lg"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Guest Selection */}
+                    <div>
+                      <label className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-3">
+                        <UsersIcon className="w-4 h-4 text-purple-600" />
+                        Number of travelers
+                      </label>
+                      <div className="relative">
+                        <UsersIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-600 z-10" />
+                        <select
+                          value={guests}
+                          onChange={(e) => setGuests(Number(e.target.value))}
+                          className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-100 focus:border-purple-500 appearance-none transition-all duration-300 text-base font-medium bg-white hover:border-purple-300 hover:shadow-lg cursor-pointer"
+                        >
+                          {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+                            <option key={num} value={num}>
+                              {num} {num === 1 ? "traveler" : "travelers"}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <svg
+                            className="w-5 h-5 text-purple-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Premium Book Now Button */}
                   <button
                     onClick={handleBookNow}
                     disabled={isBooking || !selectedDate}
-                    className="w-full btn-getyourguide-primary py-4 text-lg font-bold mb-6 transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 text-white font-bold py-4 lg:py-5 px-6 rounded-2xl text-base lg:text-lg mb-4 lg:mb-6 transform hover:scale-[1.02] transition-all duration-300 shadow-2xl hover:shadow-3xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden group"
                   >
-                    {isBooking ? "Creating booking..." : "Book now"}
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      {isBooking ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Creating booking...
+                        </>
+                      ) : (
+                        <>
+                          <span>🎯 Book now</span>
+                          <ArrowRightIcon className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" />
+                        </>
+                      )}
+                    </span>
                   </button>
 
-                  <div className="text-center text-sm text-gray-600 mb-4">
-                    You won't be charged yet
+                  <div className="text-center text-sm text-gray-600 mb-4 flex items-center justify-center gap-2">
+                    <ShieldCheckIcon className="w-4 h-4 text-green-600" />
+                    <span>Secure booking • No charges until confirmation</span>
                   </div>
 
-                  {/* Booking Status Messages */}
+                  {/* Enhanced Status Messages */}
                   {bookingSuccess && (
-                    <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-xl">
-                      <div className="flex items-center gap-2">
-                        <CheckIcon className="w-5 h-5 text-green-600" />
+                    <div className="mb-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl animate-scale-in">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <CheckIcon className="w-5 h-5 text-white" />
+                        </div>
                         <div>
-                          <p className="text-green-800 font-semibold">
-                            Booking confirmed!
+                          <p className="text-green-800 font-bold">
+                            🎉 Booking confirmed!
                           </p>
                           <p className="text-green-700 text-sm">
                             Check your email for confirmation details.
@@ -699,11 +748,13 @@ export default function TourDetailPage({
                   )}
 
                   {bookingError && (
-                    <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-                      <div className="flex items-center gap-2">
-                        <ExclamationTriangleIcon className="w-5 h-5 text-red-600" />
+                    <div className="mb-4 p-4 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-2xl animate-scale-in">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <ExclamationTriangleIcon className="w-5 h-5 text-white" />
+                        </div>
                         <div>
-                          <p className="text-red-800 font-semibold">
+                          <p className="text-red-800 font-bold">
                             Booking failed
                           </p>
                           <p className="text-red-700 text-sm">{bookingError}</p>
@@ -712,23 +763,31 @@ export default function TourDetailPage({
                     </div>
                   )}
 
-                  {/* Price Breakdown */}
-                  <div className="border-t border-gray-200 pt-4 space-y-3">
+                  {/* Enhanced Price Breakdown */}
+                  <div className="border-t border-gray-200 pt-4 space-y-3 bg-gray-50 rounded-2xl p-4 -mx-2">
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">
-                        ${(tour.priceCents / 100).toFixed(0)} × {guests}{" "}
+                      <span className="text-gray-600 flex items-center gap-2">
+                        <CurrencyDollarIcon className="w-4 h-4" />$
+                        {(tour.priceCents / 100).toFixed(0)} × {guests}{" "}
                         {guests === 1 ? "traveler" : "travelers"}
                       </span>
-                      <span className="text-gray-900 font-medium">
+                      <span className="text-gray-900 font-semibold">
                         ${((tour.priceCents * guests) / 100).toFixed(0)}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center font-bold text-lg pt-2 border-t border-gray-100">
-                      <span>Total</span>
-                      <span>${calculateTotal().toFixed(0)}</span>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Service fee</span>
+                      <span className="text-gray-900 font-semibold">$0</span>
                     </div>
-                    <p className="text-xs text-gray-500 text-center">
-                      Includes all taxes and fees
+                    <div className="flex justify-between items-center font-bold text-lg pt-3 border-t border-gray-300">
+                      <span className="text-gray-900">Total</span>
+                      <span className="text-gray-900 text-xl">
+                        ${calculateTotal().toFixed(0)}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 text-center flex items-center justify-center gap-1">
+                      <ShieldCheckIcon className="w-3 h-3 text-green-600" />
+                      All taxes and fees included • Best price guaranteed
                     </p>
                   </div>
                 </div>
@@ -736,439 +795,450 @@ export default function TourDetailPage({
             </div>
           </div>
 
-          {/* Content Tabs */}
-          <div className="py-8">
-            <div className="border-b border-gray-200 mb-8">
-              <nav className="flex space-x-8">
-                {[
-                  { id: "overview", label: "Overview", icon: CheckIcon },
-                  { id: "itinerary", label: "Itinerary", icon: ClockIcon },
-                  { id: "reviews", label: "Reviews", icon: ChatBubbleLeftIcon },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                      activeTab === tab.id
-                        ? "border-blue-600 text-blue-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700"
-                    }`}
-                  >
-                    <tab.icon className="w-4 h-4" />
-                    {tab.label}
-                  </button>
-                ))}
-              </nav>
-            </div>
+          {/* Enhanced Content Tabs with Professional Design */}
+          <div className="py-6 lg:py-8">
+            <div className="bg-white/95 rounded-3xl shadow-2xl border border-gray-100 p-6 lg:p-8 hover:shadow-3xl transition-all duration-500 backdrop-blur-sm">
+              <div className="border-b border-gray-200 mb-6 lg:mb-8">
+                <nav className="flex space-x-6 lg:space-x-8 overflow-x-auto">
+                  {[
+                    { id: "overview", label: "Overview", icon: CheckIcon },
+                    { id: "itinerary", label: "Itinerary", icon: ClockIcon },
+                    {
+                      id: "reviews",
+                      label: "Reviews",
+                      icon: ChatBubbleLeftIcon,
+                    },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id as any)}
+                      className={`flex items-center gap-2 py-3 lg:py-4 px-4 lg:px-6 border-b-3 font-bold text-sm lg:text-base whitespace-nowrap transition-all duration-300 rounded-t-2xl ${
+                        activeTab === tab.id
+                          ? "border-blue-600 text-white bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg transform -translate-y-1"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      <tab.icon className="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" />
+                      {tab.label}
+                    </button>
+                  ))}
+                </nav>
+              </div>
 
-            {/* Tab Content */}
-            {activeTab === "overview" && (
-              <div className="space-y-8">
-                {/* Description */}
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    About this experience
-                  </h2>
-                  <p className="text-gray-700 text-lg leading-relaxed">
-                    {tour.description}
-                  </p>
-                </div>
-
-                {/* Highlights */}
-                {tour.highlights && (
+              {/* Tab Content */}
+              {activeTab === "overview" && (
+                <div className="space-y-8">
+                  {/* Description */}
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">
-                      Highlights
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {tour.highlights.map((highlight, idx) => (
-                        <div key={idx} className="flex items-start gap-3">
-                          <CheckIcon className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                          <span className="text-gray-700">{highlight}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* What to Expect */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="card-getyourguide p-6">
-                    <h3 className="text-xl font-bold text-getyourguide-dark mb-4 flex items-center gap-2">
-                      <ClockIcon className="w-6 h-6 text-getyourguide-blue" />
-                      What to Expect
-                    </h3>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-getyourguide-blue rounded-full mt-2 flex-shrink-0"></div>
-                        <div>
-                          <h4 className="font-semibold text-gray-900 mb-1">
-                            Professional Guide
-                          </h4>
-                          <p className="text-gray-600 text-sm">
-                            Expert local guide with extensive knowledge of the
-                            area
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-getyourguide-green rounded-full mt-2 flex-shrink-0"></div>
-                        <div>
-                          <h4 className="font-semibold text-gray-900 mb-1">
-                            Small Groups
-                          </h4>
-                          <p className="text-gray-600 text-sm">
-                            Intimate experience with maximum{" "}
-                            {tour.maxGroupSize || 12} participants
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-getyourguide-orange rounded-full mt-2 flex-shrink-0"></div>
-                        <div>
-                          <h4 className="font-semibold text-gray-900 mb-1">
-                            All Inclusive
-                          </h4>
-                          <p className="text-gray-600 text-sm">
-                            Everything included - no hidden costs or surprises
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                      About this experience
+                    </h2>
+                    <p className="text-gray-700 text-lg leading-relaxed">
+                      {tour.description}
+                    </p>
                   </div>
 
-                  <div className="card-getyourguide p-6">
-                    <h3 className="text-xl font-bold text-getyourguide-dark mb-4 flex items-center gap-2">
-                      <MapPinIcon className="w-6 h-6 text-getyourguide-green" />
-                      Location Details
-                    </h3>
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-2">
-                          Meeting Point
-                        </h4>
-                        <p className="text-gray-600 text-sm mb-2">
-                          Central location, easy to find
-                        </p>
-                        <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">
-                          📍 Detailed location will be provided after booking
-                        </div>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-2">
-                          Duration
-                        </h4>
-                        <p className="text-gray-600 text-sm">
-                          Approximately {tour.duration} of immersive experience
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-2">
-                          Accessibility
-                        </h4>
-                        <p className="text-gray-600 text-sm">
-                          Please contact us for accessibility information
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Important Information */}
-                <div className="card-getyourguide p-6">
-                  <h3 className="text-xl font-bold text-getyourguide-dark mb-4 flex items-center gap-2">
-                    <InformationCircleIcon className="w-6 h-6 text-getyourguide-blue" />
-                    Important Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Highlights */}
+                  {tour.highlights && (
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-3">
-                        What to Bring
-                      </h4>
-                      <ul className="space-y-2">
-                        <li className="flex items-center gap-2 text-sm text-gray-600">
-                          <CheckIcon className="w-4 h-4 text-green-500" />
-                          Comfortable walking shoes
-                        </li>
-                        <li className="flex items-center gap-2 text-sm text-gray-600">
-                          <CheckIcon className="w-4 h-4 text-green-500" />
-                          Weather-appropriate clothing
-                        </li>
-                        <li className="flex items-center gap-2 text-sm text-gray-600">
-                          <CheckIcon className="w-4 h-4 text-green-500" />
-                          Camera for photos
-                        </li>
-                        <li className="flex items-center gap-2 text-sm text-gray-600">
-                          <CheckIcon className="w-4 h-4 text-green-500" />
-                          Valid ID or passport
-                        </li>
-                      </ul>
+                      <h3 className="text-xl font-bold text-gray-900 mb-4">
+                        Highlights
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {tour.highlights.map((highlight, idx) => (
+                          <div key={idx} className="flex items-start gap-3">
+                            <CheckIcon className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-700">{highlight}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-3">
-                        Know Before You Go
-                      </h4>
-                      <ul className="space-y-2">
-                        <li className="flex items-center gap-2 text-sm text-gray-600">
-                          <InformationCircleIcon className="w-4 h-4 text-blue-500" />
-                          Tour operates rain or shine
-                        </li>
-                        <li className="flex items-center gap-2 text-sm text-gray-600">
-                          <InformationCircleIcon className="w-4 h-4 text-blue-500" />
-                          Please arrive 15 minutes early
-                        </li>
-                        <li className="flex items-center gap-2 text-sm text-gray-600">
-                          <InformationCircleIcon className="w-4 h-4 text-blue-500" />
-                          Minimum age requirement: 12 years
-                        </li>
-                        <li className="flex items-center gap-2 text-sm text-gray-600">
-                          <InformationCircleIcon className="w-4 h-4 text-blue-500" />
-                          Free cancellation up to 24h before
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+                  )}
 
-                {/* Safety & Hygiene */}
-                <div className="card-getyourguide p-6 bg-gradient-to-br from-green-50 to-blue-50">
-                  <h3 className="text-xl font-bold text-getyourguide-dark mb-4 flex items-center gap-2">
-                    <ShieldCheckIcon className="w-6 h-6 text-getyourguide-green" />
-                    Safety & Hygiene
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="text-center p-4">
-                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <ShieldCheckIcon className="w-6 h-6 text-green-600" />
-                      </div>
-                      <h4 className="font-semibold text-gray-900 mb-2">
-                        Safety First
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        All safety protocols followed according to local
-                        guidelines
-                      </p>
-                    </div>
-                    <div className="text-center p-4">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <UsersIcon className="w-6 h-6 text-blue-600" />
-                      </div>
-                      <h4 className="font-semibold text-gray-900 mb-2">
-                        Small Groups
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        Limited group sizes for a more personal experience
-                      </p>
-                    </div>
-                    <div className="text-center p-4">
-                      <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <HeartIcon className="w-6 h-6 text-orange-600" />
-                      </div>
-                      <h4 className="font-semibold text-gray-900 mb-2">
-                        Expert Care
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        Professional guides trained in safety and first aid
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Host Information */}
-                {tour.host && (
-                  <div className="card-getyourguide-elevated p-8">
-                    <h3 className="text-xl font-bold text-getyourguide-dark mb-4 flex items-center gap-2">
-                      <UserIcon className="w-6 h-6 text-getyourguide-blue" />
-                      Meet your host
-                    </h3>
-                    <div className="flex items-start gap-6">
-                      <img
-                        src={tour.host.avatar}
-                        alt={tour.host.name}
-                        className="w-24 h-24 rounded-full object-cover shadow-lg"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-4">
+                  {/* Enhanced What to Expect Section */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl shadow-xl border border-blue-200 p-6 lg:p-8 hover:shadow-2xl transition-all duration-500">
+                      <h3 className="text-xl lg:text-2xl font-black text-blue-900 mb-6 flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                          <ClockIcon className="w-5 h-5 text-white" />
+                        </div>
+                        What to Expect
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all">
+                          <div className="w-3 h-3 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                           <div>
-                            <h4 className="text-2xl font-bold text-getyourguide-dark">
-                              {tour.host.name}
+                            <h4 className="font-bold text-blue-900 mb-2">
+                              Professional Guide
                             </h4>
-                            <div className="flex items-center gap-1 mt-1">
+                            <p className="text-blue-800 text-sm leading-relaxed">
+                              Expert local guide with extensive knowledge of the
+                              area
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all">
+                          <div className="w-3 h-3 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <div>
+                            <h4 className="font-bold text-blue-900 mb-2">
+                              Small Groups
+                            </h4>
+                            <p className="text-blue-800 text-sm leading-relaxed">
+                              Intimate experience with maximum{" "}
+                              {tour.maxGroupSize || 12} participants
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all">
+                          <div className="w-3 h-3 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <div>
+                            <h4 className="font-bold text-blue-900 mb-2">
+                              All Inclusive
+                            </h4>
+                            <p className="text-blue-800 text-sm leading-relaxed">
+                              Everything included - no hidden costs or surprises
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl shadow-xl border border-green-200 p-6 lg:p-8 hover:shadow-2xl transition-all duration-500">
+                      <h3 className="text-xl lg:text-2xl font-black text-green-900 mb-6 flex items-center gap-3">
+                        <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
+                          <MapPinIcon className="w-5 h-5 text-white" />
+                        </div>
+                        Location Details
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="p-4 rounded-2xl bg-white/60 backdrop-blur-sm">
+                          <h4 className="font-bold text-green-900 mb-3">
+                            Meeting Point
+                          </h4>
+                          <p className="text-green-800 text-sm mb-3 leading-relaxed">
+                            Central location, easy to find
+                          </p>
+                          <div className="bg-blue-100 p-3 rounded-xl text-sm text-blue-800 font-medium border border-blue-200">
+                            📍 Detailed location will be provided after booking
+                          </div>
+                        </div>
+                        <div className="p-4 rounded-2xl bg-white/60 backdrop-blur-sm">
+                          <h4 className="font-bold text-green-900 mb-2">
+                            Duration
+                          </h4>
+                          <p className="text-green-800 text-sm leading-relaxed">
+                            Approximately {tour.duration} of immersive
+                            experience
+                          </p>
+                        </div>
+                        <div className="p-4 rounded-2xl bg-white/60 backdrop-blur-sm">
+                          <h4 className="font-bold text-green-900 mb-2">
+                            Accessibility
+                          </h4>
+                          <p className="text-green-800 text-sm leading-relaxed">
+                            Please contact us for accessibility information
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Important Information */}
+                  <div className="card-getyourguide p-4 lg:p-6">
+                    <h3 className="text-lg lg:text-xl font-bold text-getyourguide-dark mb-4 lg:mb-6 flex items-center gap-2">
+                      <InformationCircleIcon className="w-5 h-5 lg:w-6 lg:h-6 text-getyourguide-blue" />
+                      Important Information
+                    </h3>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-3 text-sm lg:text-base">
+                          What to Bring
+                        </h4>
+                        <ul className="space-y-2">
+                          <li className="flex items-center gap-2 text-sm text-gray-600">
+                            <CheckIcon className="w-4 h-4 text-green-500 flex-shrink-0" />
+                            Comfortable walking shoes
+                          </li>
+                          <li className="flex items-center gap-2 text-sm text-gray-600">
+                            <CheckIcon className="w-4 h-4 text-green-500 flex-shrink-0" />
+                            Weather-appropriate clothing
+                          </li>
+                          <li className="flex items-center gap-2 text-sm text-gray-600">
+                            <CheckIcon className="w-4 h-4 text-green-500 flex-shrink-0" />
+                            Camera for photos
+                          </li>
+                          <li className="flex items-center gap-2 text-sm text-gray-600">
+                            <CheckIcon className="w-4 h-4 text-green-500 flex-shrink-0" />
+                            Valid ID or passport
+                          </li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-3 text-sm lg:text-base">
+                          Know Before You Go
+                        </h4>
+                        <ul className="space-y-2">
+                          <li className="flex items-center gap-2 text-sm text-gray-600">
+                            <InformationCircleIcon className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                            Tour operates rain or shine
+                          </li>
+                          <li className="flex items-center gap-2 text-sm text-gray-600">
+                            <InformationCircleIcon className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                            Please arrive 15 minutes early
+                          </li>
+                          <li className="flex items-center gap-2 text-sm text-gray-600">
+                            <InformationCircleIcon className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                            Minimum age requirement: 12 years
+                          </li>
+                          <li className="flex items-center gap-2 text-sm text-gray-600">
+                            <InformationCircleIcon className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                            Free cancellation up to 24h before
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Safety & Hygiene */}
+                  <div className="card-getyourguide p-4 lg:p-6 bg-gradient-to-br from-green-50 to-blue-50">
+                    <h3 className="text-lg lg:text-xl font-bold text-getyourguide-dark mb-4 lg:mb-6 flex items-center gap-2">
+                      <ShieldCheckIcon className="w-5 h-5 lg:w-6 lg:h-6 text-getyourguide-green" />
+                      Safety & Hygiene
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="text-center p-3 lg:p-4">
+                        <div className="w-10 h-10 lg:w-12 lg:h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <ShieldCheckIcon className="w-5 h-5 lg:w-6 lg:h-6 text-green-600" />
+                        </div>
+                        <h4 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">
+                          Safety First
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          All safety protocols followed according to local
+                          guidelines
+                        </p>
+                      </div>
+                      <div className="text-center p-3 lg:p-4">
+                        <div className="w-10 h-10 lg:w-12 lg:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <UsersIcon className="w-5 h-5 lg:w-6 lg:h-6 text-blue-600" />
+                        </div>
+                        <h4 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">
+                          Small Groups
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          Limited group sizes for a more personal experience
+                        </p>
+                      </div>
+                      <div className="text-center p-3 lg:p-4">
+                        <div className="w-10 h-10 lg:w-12 lg:h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <HeartIcon className="w-5 h-5 lg:w-6 lg:h-6 text-orange-600" />
+                        </div>
+                        <h4 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">
+                          Expert Care
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          Professional guides trained in safety and first aid
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Host Information */}
+                  {tour.host && (
+                    <div className="card-getyourguide-elevated p-4 lg:p-8">
+                      <h3 className="text-lg lg:text-xl font-bold text-getyourguide-dark mb-4 lg:mb-6 flex items-center gap-2">
+                        <UserIcon className="w-5 h-5 lg:w-6 lg:h-6 text-getyourguide-blue" />
+                        Meet your host
+                      </h3>
+                      <div className="flex flex-col sm:flex-row items-start gap-4 lg:gap-6">
+                        <img
+                          src={tour.host.avatar}
+                          alt={tour.host.name}
+                          className="w-20 h-20 lg:w-24 lg:h-24 rounded-full object-cover shadow-lg flex-shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+                            <div className="min-w-0">
+                              <h4 className="text-xl lg:text-2xl font-bold text-getyourguide-dark mb-1">
+                                {tour.host.name}
+                              </h4>
+                              <div className="flex items-center gap-1 mb-2">
+                                <div className="flex">
+                                  {[...Array(5)].map((_, i) => (
+                                    <StarSolidIcon
+                                      key={i}
+                                      className="w-3 h-3 lg:w-4 lg:h-4 text-yellow-400"
+                                    />
+                                  ))}
+                                </div>
+                                <span className="font-semibold text-getyourguide-dark ml-1 text-sm lg:text-base">
+                                  {tour.host.rating}
+                                </span>
+                                <span className="text-gray-500 text-sm">
+                                  (127 reviews)
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <p className="text-gray-600 mb-4 text-base lg:text-lg leading-relaxed">
+                            Professional local guide with 10+ years of
+                            experience showing visitors the best of {tour.city}.
+                            Passionate about sharing local culture, history, and
+                            hidden gems that only locals know about.
+                          </p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 text-sm">
+                            <div className="flex items-center gap-2 text-gray-600">
+                              <ChatBubbleLeftIcon className="w-4 h-4 lg:w-5 lg:h-5 text-getyourguide-blue" />
+                              <span className="font-medium">
+                                Responds {tour.host.responseTime}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-600">
+                              <GlobeAltIcon className="w-4 h-4 lg:w-5 lg:h-5 text-getyourguide-green" />
+                              <span className="font-medium">
+                                {tour.host.languages.join(", ")}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-600">
+                              <StarIcon className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-500" />
+                              <span className="font-medium">
+                                Highly rated guide
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-600">
+                              <ShieldCheckIcon className="w-4 h-4 lg:w-5 lg:h-5 text-green-500" />
+                              <span className="font-medium">Verified host</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === "itinerary" && tour.itinerary && (
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                    Tour itinerary
+                  </h2>
+                  <div className="space-y-6">
+                    {tour.itinerary.map((item, idx) => (
+                      <div key={idx} className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                            {idx + 1}
+                          </div>
+                          {idx < tour.itinerary!.length - 1 && (
+                            <div className="w-0.5 h-16 bg-gray-300 mt-2"></div>
+                          )}
+                        </div>
+                        <div className="flex-1 pb-6">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              {item.title}
+                            </h3>
+                            <span className="text-sm text-gray-500 font-medium">
+                              {item.time}
+                            </span>
+                          </div>
+                          <p className="text-gray-700 leading-relaxed">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "reviews" && tour.reviewList && (
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      Guest reviews
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <StarSolidIcon className="w-5 h-5 text-yellow-400" />
+                      <span className="font-bold text-lg">{tour.rating}</span>
+                      <span className="text-gray-600">
+                        ({tour.reviewList.length} reviews)
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    {tour.reviewList.map((review) => (
+                      <div
+                        key={review.id}
+                        className="bg-white border border-gray-200 rounded-xl p-6"
+                      >
+                        <div className="flex items-start gap-4">
+                          <Image
+                            src={review.user.avatar}
+                            alt={review.user.name}
+                            width={50}
+                            height={50}
+                            className="rounded-full object-cover"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <div>
+                                <h4 className="font-semibold text-gray-900">
+                                  {review.user.name}
+                                </h4>
+                                <p className="text-sm text-gray-600">
+                                  {review.user.country}
+                                </p>
+                              </div>
                               <div className="flex">
                                 {[...Array(5)].map((_, i) => (
                                   <StarSolidIcon
                                     key={i}
-                                    className="w-4 h-4 text-yellow-400"
+                                    className={`w-4 h-4 ${
+                                      i < review.rating
+                                        ? "text-yellow-400"
+                                        : "text-gray-300"
+                                    }`}
                                   />
                                 ))}
                               </div>
-                              <span className="font-semibold text-getyourguide-dark ml-1">
-                                {tour.host.rating}
+                            </div>
+                            <p className="text-gray-700 mb-3 leading-relaxed">
+                              {review.comment}
+                            </p>
+                            <div className="flex items-center justify-between text-sm text-gray-500">
+                              <span>
+                                {new Date(review.date).toLocaleDateString()}
                               </span>
-                              <span className="text-gray-500">
-                                (127 reviews)
-                              </span>
+                              <button className="flex items-center gap-1 hover:text-gray-700">
+                                <span>👍 Helpful ({review.helpful})</span>
+                              </button>
                             </div>
                           </div>
                         </div>
-                        <p className="text-gray-600 mb-4 text-lg">
-                          Professional local guide with 10+ years of experience
-                          showing visitors the best of {tour.city}. Passionate
-                          about sharing local culture, history, and hidden gems
-                          that only locals know about.
-                        </p>
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div className="flex items-center gap-2 text-gray-600">
-                            <ChatBubbleLeftIcon className="w-5 h-5 text-getyourguide-blue" />
-                            <span className="font-medium">
-                              Responds {tour.host.responseTime}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 text-gray-600">
-                            <GlobeAltIcon className="w-5 h-5 text-getyourguide-green" />
-                            <span className="font-medium">
-                              {tour.host.languages.join(", ")}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 text-gray-600">
-                            <StarIcon className="w-5 h-5 text-yellow-500" />
-                            <span className="font-medium">
-                              Highly rated guide
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 text-gray-600">
-                            <ShieldCheckIcon className="w-5 h-5 text-green-500" />
-                            <span className="font-medium">Verified host</span>
-                          </div>
-                        </div>
                       </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {activeTab === "itinerary" && tour.itinerary && (
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Tour itinerary
-                </h2>
-                <div className="space-y-6">
-                  {tour.itinerary.map((item, idx) => (
-                    <div key={idx} className="flex gap-4">
-                      <div className="flex flex-col items-center">
-                        <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm">
-                          {idx + 1}
-                        </div>
-                        {idx < tour.itinerary!.length - 1 && (
-                          <div className="w-0.5 h-16 bg-gray-300 mt-2"></div>
-                        )}
-                      </div>
-                      <div className="flex-1 pb-6">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            {item.title}
-                          </h3>
-                          <span className="text-sm text-gray-500 font-medium">
-                            {item.time}
-                          </span>
-                        </div>
-                        <p className="text-gray-700 leading-relaxed">
-                          {item.description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === "reviews" && tour.reviewList && (
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    Guest reviews
-                  </h2>
-                  <div className="flex items-center gap-2">
-                    <StarSolidIcon className="w-5 h-5 text-yellow-400" />
-                    <span className="font-bold text-lg">{tour.rating}</span>
-                    <span className="text-gray-600">
-                      ({tour.reviewList.length} reviews)
-                    </span>
+                    ))}
                   </div>
                 </div>
-
-                <div className="space-y-6">
-                  {tour.reviewList.map((review) => (
-                    <div
-                      key={review.id}
-                      className="bg-white border border-gray-200 rounded-xl p-6"
-                    >
-                      <div className="flex items-start gap-4">
-                        <Image
-                          src={review.user.avatar}
-                          alt={review.user.name}
-                          width={50}
-                          height={50}
-                          className="rounded-full object-cover"
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
-                            <div>
-                              <h4 className="font-semibold text-gray-900">
-                                {review.user.name}
-                              </h4>
-                              <p className="text-sm text-gray-600">
-                                {review.user.country}
-                              </p>
-                            </div>
-                            <div className="flex">
-                              {[...Array(5)].map((_, i) => (
-                                <StarSolidIcon
-                                  key={i}
-                                  className={`w-4 h-4 ${
-                                    i < review.rating
-                                      ? "text-yellow-400"
-                                      : "text-gray-300"
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          <p className="text-gray-700 mb-3 leading-relaxed">
-                            {review.comment}
-                          </p>
-                          <div className="flex items-center justify-between text-sm text-gray-500">
-                            <span>
-                              {new Date(review.date).toLocaleDateString()}
-                            </span>
-                            <button className="flex items-center gap-1 hover:text-gray-700">
-                              <span>👍 Helpful ({review.helpful})</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Similar Tours */}
-          <div className="py-8 border-t border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <div className="py-6 lg:py-8 border-t border-gray-200">
+            <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4 lg:mb-6">
               Similar experiences
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               {similarTours.map((similarTour) => (
                 <Link
                   key={similarTour.id}
                   href={`/tours/${similarTour.id}`}
                   className="group block"
                 >
-                  <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="relative h-48">
+                  <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div className="relative h-40 lg:h-48">
                       <Image
                         src={similarTour.image}
                         alt={similarTour.title}
@@ -1176,31 +1246,31 @@ export default function TourDetailPage({
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                    <div className="p-3 lg:p-4">
+                      <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2 text-sm lg:text-base">
                         {similarTour.title}
                       </h3>
                       <div className="flex items-center gap-2 mb-2">
-                        <MapPinIcon className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm text-gray-600">
+                        <MapPinIcon className="w-3 h-3 lg:w-4 lg:h-4 text-gray-500 flex-shrink-0" />
+                        <span className="text-xs lg:text-sm text-gray-600 truncate">
                           {similarTour.city}, {similarTour.country}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <StarSolidIcon className="w-4 h-4 text-yellow-400" />
-                          <span className="text-sm font-medium">
+                          <StarSolidIcon className="w-3 h-3 lg:w-4 lg:h-4 text-yellow-400" />
+                          <span className="text-xs lg:text-sm font-medium">
                             {similarTour.rating}
                           </span>
-                          <span className="text-sm text-gray-600">
+                          <span className="text-xs lg:text-sm text-gray-600">
                             ({similarTour.reviews})
                           </span>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold text-gray-900">
+                          <div className="font-bold text-gray-900 text-sm lg:text-base">
                             From ${(similarTour.priceCents / 100).toFixed(0)}
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-xs lg:text-sm text-gray-600">
                             {similarTour.duration}
                           </div>
                         </div>

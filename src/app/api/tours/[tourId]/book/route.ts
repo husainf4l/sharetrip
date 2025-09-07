@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { tourId: string } }
+  { params }: { params: Promise<{ tourId: string }> }
 ) {
   try {
+    const resolvedParams = await params;
+    const { tourId } = resolvedParams;
     const body = await request.json();
     const { headcount, specialRequests, selectedDate } = body;
 
@@ -21,7 +23,7 @@ export async function POST(
 
     // Forward the request to the backend
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:3001';
-    const response = await fetch(`${backendUrl}/tours/book/${params.tourId}`, {
+    const response = await fetch(`${backendUrl}/tours/book/${tourId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

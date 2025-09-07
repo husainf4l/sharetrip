@@ -70,11 +70,6 @@ export default function FiltersSidebar({
     onChange?.({ languages: newLanguages.join(",") });
   };
 
-  const handlePriceChange = (min: number, max: number) => {
-    setPriceRange([min, max]);
-    onChange?.({ minPrice: min.toString(), maxPrice: max.toString() });
-  };
-
   return (
     <aside className="space-y-6">
       {/* Price Range */}
@@ -99,9 +94,23 @@ export default function FiltersSidebar({
               max="1000"
               step="10"
               value={priceRange[0]}
-              onChange={(e) =>
-                handlePriceChange(Number(e.target.value), priceRange[1])
-              }
+              onChange={(e) => {
+                const newMin = Number(e.target.value);
+                const newMax = priceRange[1];
+                if (newMin > newMax) {
+                  setPriceRange([newMin, newMin]);
+                  onChange?.({
+                    minPrice: newMin.toString(),
+                    maxPrice: newMin.toString(),
+                  });
+                } else {
+                  setPriceRange([newMin, newMax]);
+                  onChange?.({
+                    minPrice: newMin.toString(),
+                    maxPrice: newMax.toString(),
+                  });
+                }
+              }}
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
             />
             <input
@@ -110,29 +119,75 @@ export default function FiltersSidebar({
               max="1000"
               step="10"
               value={priceRange[1]}
-              onChange={(e) =>
-                handlePriceChange(priceRange[0], Number(e.target.value))
-              }
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb absolute top-0"
+              onChange={(e) => {
+                const newMax = Number(e.target.value);
+                const newMin = priceRange[0];
+                if (newMax < newMin) {
+                  setPriceRange([newMax, newMax]);
+                  onChange?.({
+                    minPrice: newMax.toString(),
+                    maxPrice: newMax.toString(),
+                  });
+                } else {
+                  setPriceRange([newMin, newMax]);
+                  onChange?.({
+                    minPrice: newMin.toString(),
+                    maxPrice: newMax.toString(),
+                  });
+                }
+              }}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb absolute top-0 left-0 z-10"
             />
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <input
               type="number"
               value={priceRange[0]}
-              onChange={(e) =>
-                handlePriceChange(Number(e.target.value), priceRange[1])
-              }
+              onChange={(e) => {
+                const newMin = Number(e.target.value);
+                const newMax = priceRange[1];
+                if (newMin > newMax) {
+                  setPriceRange([newMin, newMin]);
+                  onChange?.({
+                    minPrice: newMin.toString(),
+                    maxPrice: newMin.toString(),
+                  });
+                } else {
+                  setPriceRange([newMin, newMax]);
+                  onChange?.({
+                    minPrice: newMin.toString(),
+                    maxPrice: newMax.toString(),
+                  });
+                }
+              }}
+              min="0"
+              max="1000"
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
               placeholder="Min"
             />
             <input
               type="number"
               value={priceRange[1]}
-              onChange={(e) =>
-                handlePriceChange(priceRange[0], Number(e.target.value))
-              }
+              onChange={(e) => {
+                const newMax = Number(e.target.value);
+                const newMin = priceRange[0];
+                if (newMax < newMin) {
+                  setPriceRange([newMax, newMax]);
+                  onChange?.({
+                    minPrice: newMax.toString(),
+                    maxPrice: newMax.toString(),
+                  });
+                } else {
+                  setPriceRange([newMin, newMax]);
+                  onChange?.({
+                    minPrice: newMin.toString(),
+                    maxPrice: newMax.toString(),
+                  });
+                }
+              }}
+              min="0"
+              max="1000"
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
               placeholder="Max"
             />

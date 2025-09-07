@@ -279,7 +279,7 @@ export default function ToursPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {/* Large Featured Image */}
             <div className="lg:col-span-2 lg:row-span-2 relative group cursor-pointer overflow-hidden rounded-3xl">
-              <div className="aspect-[4/3] lg:aspect-[16/9] relative">
+              <div className="aspect-[4/3] relative">
                 <img
                   src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop"
                   alt="Scenic landscape"
@@ -295,9 +295,9 @@ export default function ToursPage() {
 
             {/* Medium Image */}
             <div className="relative group cursor-pointer overflow-hidden rounded-3xl">
-              <div className="aspect-square relative">
+              <div className="aspect-[4/3] relative">
                 <img
-                  src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&h=600&fit=crop"
+                  src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&h=450&fit=crop"
                   alt="Cultural experience"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
@@ -311,9 +311,9 @@ export default function ToursPage() {
 
             {/* Small Image 1 */}
             <div className="relative group cursor-pointer overflow-hidden rounded-3xl">
-              <div className="aspect-square relative">
+              <div className="aspect-[4/3] relative">
                 <img
-                  src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=600&fit=crop"
+                  src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=450&fit=crop"
                   alt="Nightlife"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
@@ -327,9 +327,9 @@ export default function ToursPage() {
 
             {/* Medium Image 2 */}
             <div className="md:col-span-2 lg:col-span-1 relative group cursor-pointer overflow-hidden rounded-3xl">
-              <div className="aspect-[2/1] relative">
+              <div className="aspect-[4/3] relative">
                 <img
-                  src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=400&fit=crop"
+                  src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&h=450&fit=crop"
                   alt="Food experience"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
@@ -343,9 +343,9 @@ export default function ToursPage() {
 
             {/* Small Image 2 */}
             <div className="md:col-span-2 lg:col-span-1 relative group cursor-pointer overflow-hidden rounded-3xl">
-              <div className="aspect-[2/1] relative">
+              <div className="aspect-[4/3] relative">
                 <img
-                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop"
+                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=450&fit=crop"
                   alt="Adventure"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
@@ -359,9 +359,9 @@ export default function ToursPage() {
           </div>
 
           {/* Search Bar Overlay */}
-          <div className="relative -mt-16 z-10">
+          <div className="relative mt-8">
             <div className="max-w-4xl mx-auto">
-              <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20">
+              <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
                 <div className="text-center mb-6">
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">
                     Find your next adventure

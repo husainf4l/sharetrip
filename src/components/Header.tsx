@@ -15,6 +15,7 @@ import {
   TicketIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../contexts/AuthContext";
+import Logo from "./Logo";
 
 // Type definitions for navigation items
 type ExperienceItemWithIcon = {
@@ -239,8 +240,8 @@ export default function Header() {
     return (
       <header className="w-full bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="text-3xl font-bold text-blue-600">
-            ShareTripX
+          <Link href="/">
+            <Logo variant="default" size="md" />
           </Link>
           <div className="text-sm text-gray-500">Loading...</div>
         </div>
@@ -252,11 +253,8 @@ export default function Header() {
     <header className="w-full glass sticky top-0 z-50 border-b border-white/20">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link
-          href="/"
-          className="text-3xl font-bold text-gradient hover-scale animate-fade-up"
-        >
-          ShareTripX
+        <Link href="/" className="hover-scale animate-fade-up">
+          <Logo variant="default" size="md" />
         </Link>
 
         {/* Navigation */}

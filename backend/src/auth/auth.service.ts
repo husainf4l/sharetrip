@@ -1,6 +1,5 @@
 import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { Role } from '@prisma/client';
 import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { randomBytes } from 'crypto';
@@ -14,7 +13,7 @@ export class AuthService {
     if (existing) throw new BadRequestException('Email already in use');
 
     const hash = await argon2.hash(data.password, { type: argon2.argon2id });
-    const user = await this.prisma.user.create({ data: { name: data.name, email: data.email, passwordHash: hash, role: Role.TRAVELER } });
+    const user = await this.prisma.user.create({ data: { name: data.name, email: data.email, passwordHash: hash, role: 'TRAVELER' } });
 
     if (data.wantToHost) {
       await this.prisma.hostApplication.create({ data: { userId: user.id, status: 'draft', data: {} } });

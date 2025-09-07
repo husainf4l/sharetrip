@@ -6,6 +6,7 @@ import {
   PhoneIcon,
   EnvelopeIcon,
 } from "@heroicons/react/24/outline";
+import Logo from "./Logo";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -18,10 +19,7 @@ export default function Footer() {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">S</span>
-              </div>
-              <span className="text-xl font-bold">ShareTripX</span>
+              <Logo variant="white" size="sm" />
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
               Discover and share unforgettable experiences around the world.

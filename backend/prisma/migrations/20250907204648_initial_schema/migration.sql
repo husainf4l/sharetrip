@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('TRAVELER', 'HOST', 'EXPLORER');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -7,7 +10,7 @@ CREATE TABLE "User" (
     "emailVerified" BOOLEAN NOT NULL DEFAULT false,
     "emailVerifiedAt" TIMESTAMP(3),
     "image" TEXT,
-    "role" TEXT NOT NULL DEFAULT 'traveler',
+    "role" "Role" NOT NULL DEFAULT 'TRAVELER',
     "languages" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "ageRange" TEXT,
     "travelStyle" TEXT,

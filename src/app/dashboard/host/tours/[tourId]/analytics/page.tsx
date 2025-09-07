@@ -48,12 +48,10 @@ export default function TourAnalyticsPage() {
     }
   }, [tourId, router]);
 
-  if (!tourId) {
-    return null;
-  }
-
-  // Mock analytics data
+  // Mock analytics data - useEffect at top level
   useEffect(() => {
+    if (!tourId) return;
+
     const mockAnalytics: TourAnalytics = {
       totalViews: 2450,
       totalBookings: 24,
@@ -80,6 +78,11 @@ export default function TourAnalyticsPage() {
       setLoading(false);
     }, 1000);
   }, [tourId]);
+
+  // Early return after hooks
+  if (!tourId) {
+    return null;
+  }
 
   if (loading) {
     return (

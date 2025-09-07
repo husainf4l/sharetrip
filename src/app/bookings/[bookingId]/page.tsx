@@ -72,12 +72,10 @@ export default function BookingDetailsPage() {
     }
   }, [bookingId, router]);
 
-  if (!bookingId) {
-    return null;
-  }
-
-  // Mock booking data
+  // Mock booking data - use useEffect at top level
   useEffect(() => {
+    if (!bookingId) return;
+
     const mockBooking: Booking = {
       id: bookingId,
       tourId: "tour1",
@@ -124,6 +122,11 @@ export default function BookingDetailsPage() {
       setLoading(false);
     }, 1000);
   }, [bookingId]);
+
+  // Early return after hooks
+  if (!bookingId) {
+    return null;
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {

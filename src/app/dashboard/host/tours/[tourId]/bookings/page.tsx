@@ -62,18 +62,21 @@ export default function TourBookingsPage() {
     }
   }, [tourId, router]);
 
-  if (!tourId) {
-    return null;
-  }
-
+  // All hooks must come before early returns
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [tour, setTour] = useState<Tour | null>(null);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
+  if (!tourId) {
+    return null;
+  }
+
   // Mock tour data
   useEffect(() => {
+    if (!tourId) return;
+
     const mockTour: Tour = {
       id: tourId,
       title: "Authentic Portuguese Food Tour",

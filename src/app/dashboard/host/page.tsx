@@ -254,7 +254,7 @@ export default function HostDashboard() {
                 View Public Site
               </Link>
               <Link
-                href="/dashboard/host/tours/new"
+                href="/dashboard/host/tours/create"
                 className="btn btn-primary hover-glow"
               >
                 <PlusIcon className="w-4 h-4 mr-2" />
@@ -466,7 +466,7 @@ export default function HostDashboard() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <Link
-                    href="/dashboard/host/tours/new"
+                    href="/dashboard/host/tours/create"
                     className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
                   >
                     <PlusIcon className="w-6 h-6 text-blue-600" />

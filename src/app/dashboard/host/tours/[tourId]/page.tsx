@@ -68,12 +68,10 @@ export default function TourDetailsPage() {
     }
   }, [tourId, router]);
 
-  if (!tourId) {
-    return null;
-  }
-
-  // Mock tour data
+  // Mock tour data - useEffect before early return
   useEffect(() => {
+    if (!tourId) return;
+
     const mockTour: Tour = {
       id: tourId,
       title: "Authentic Portuguese Food Tour",
@@ -109,6 +107,11 @@ export default function TourDetailsPage() {
       setLoading(false);
     }, 1000);
   }, [tourId]);
+
+  // Early return after hooks
+  if (!tourId) {
+    return null;
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
