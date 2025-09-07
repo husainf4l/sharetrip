@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import {
-  MagnifyingGlassIcon,
   HeartIcon,
   UserIcon,
   ChevronDownIcon,
@@ -493,11 +492,6 @@ export default function Header() {
             )}
           </div>
 
-          {/* Search Icon */}
-          <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <MagnifyingGlassIcon className="w-6 h-6 text-gray-600" />
-          </button>
-
           {/* Wishlist */}
           <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <HeartIcon className="w-6 h-6 text-gray-600" />
@@ -590,7 +584,7 @@ export default function Header() {
                 href="/tours"
                 className="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-gray-50"
               >
-                <MagnifyingGlassIcon className="h-6 w-6" />
+                <MapPinIcon className="h-6 w-6" />
                 <span className="text-xs mt-1">Explore</span>
               </Link>
               <Link

@@ -7,6 +7,12 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+enum Role {
+  TRAVELER
+  HOST
+  EXPLORER
+}
+
 // Main user table
 model User {
     id              String    @id @default(uuid())
@@ -16,7 +22,7 @@ model User {
     emailVerified   Boolean   @default(false)
     emailVerifiedAt DateTime?
     image           String?
-    role            String    @default("traveler")
+    role            Role      @default(TRAVELER)
     languages       String[]  @default([])
     ageRange        String?
     travelStyle     String?

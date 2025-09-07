@@ -84,11 +84,11 @@ export default function ToursPage() {
   const getImage = useCallback((idx: number): string => {
     const images = [
       "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=300&fit=crop",
       "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=300&fit=crop",
       "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
       "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop",
     ];
     return images[idx % images.length];
   }, []);
@@ -279,12 +279,18 @@ export default function ToursPage() {
                 {totalResults.toLocaleString()} experiences
               </span>
               <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-              <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-md font-medium">Live</span>
-              <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-md font-medium">Deals</span>
+              <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-md font-medium">
+                Live
+              </span>
+              <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-md font-medium">
+                Deals
+              </span>
               {urlCategory && (
                 <>
                   <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                  <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-md font-medium">↪ {urlCategory}</span>
+                  <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-md font-medium">
+                    ↪ {urlCategory}
+                  </span>
                 </>
               )}
             </div>
@@ -365,38 +371,53 @@ export default function ToursPage() {
               Quick filters:
             </span>
             {[
-              { label: "💰 Under $50", value: "0-50", type: "price", color: "green" },
+              {
+                label: "💰 Under $50",
+                value: "0-50",
+                type: "price",
+                color: "green",
+              },
               {
                 label: "🔄 Free cancellation",
                 value: "free_cancellation",
                 type: "feature",
-                color: "blue"
+                color: "blue",
               },
               {
                 label: "⚡ Instant confirmation",
                 value: "instant",
                 type: "feature",
-                color: "yellow"
+                color: "yellow",
               },
-              { label: "👥 Small group", value: "small_group", type: "feature", color: "purple" },
-              { label: "⭐ Highly rated", value: "highly_rated", type: "rating", color: "orange" },
+              {
+                label: "👥 Small group",
+                value: "small_group",
+                type: "feature",
+                color: "purple",
+              },
+              {
+                label: "⭐ Highly rated",
+                value: "highly_rated",
+                type: "rating",
+                color: "orange",
+              },
               {
                 label: "🚶 Walking Tours",
                 value: "Walking Tours",
                 type: "category",
-                color: "teal"
+                color: "teal",
               },
               {
                 label: "🍽️ Food & Drink",
                 value: "Food & Drink",
                 type: "category",
-                color: "red"
+                color: "red",
               },
               {
                 label: "🏛️ Culture & History",
                 value: "Culture & History",
                 type: "category",
-                color: "indigo"
+                color: "indigo",
               },
             ].map((filter, index) => (
               <button
@@ -462,7 +483,8 @@ export default function ToursPage() {
                   No experiences found
                 </h3>
                 <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                  We couldn't find any experiences matching your criteria. Try adjusting your filters or exploring different options.
+                  We couldn't find any experiences matching your criteria. Try
+                  adjusting your filters or exploring different options.
                 </p>
                 <button
                   onClick={() => {
@@ -485,7 +507,7 @@ export default function ToursPage() {
                 {/* Enhanced Tours Grid */}
                 <div className="grid-auto-fit gap-8 animate-fade-up">
                   {paginatedResults.map((tour, index) => (
-                    <div 
+                    <div
                       key={tour.id}
                       className="stagger-item"
                       style={{ animationDelay: `${index * 0.05}s` }}

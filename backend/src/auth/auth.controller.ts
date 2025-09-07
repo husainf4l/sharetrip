@@ -2,6 +2,7 @@ import { Controller, Post, Body, Get, Query, UseGuards, Req } from '@nestjs/comm
 import { AuthService } from './auth.service';
 import { MailerService } from '../utils/mailer.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { Role } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -260,7 +261,7 @@ export class AuthController {
         style: 'getyourguide',
         primaryColor: '#00AA6C'
       },
-      dashboardUrl: result.user.role === 'host' ? '/host/dashboard' : '/explore'
+      dashboardUrl: result.user.role === Role.HOST ? '/host/dashboard' : '/explore'
     };
   }
 

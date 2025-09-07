@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Put, Body, UseGuards, Req } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { PrismaService } from '../prisma.service';
+import { Role } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
@@ -108,7 +109,7 @@ export class UsersController {
     // Update user role to include host capabilities
     await this.prisma.user.update({
       where: { id: req.user.sub },
-      data: { role: 'host' }
+      data: { role: Role.HOST }
     });
 
     return {

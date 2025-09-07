@@ -1,8 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import ShareTourCard from './ShareTourCard';
-import { ChevronDownIcon, FunnelIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
+import { useState, useCallback } from "react";
+import ShareTourCard from "./ShareTourCard";
+import {
+  ChevronDownIcon,
+  FunnelIcon,
+  AdjustmentsHorizontalIcon,
+} from "@heroicons/react/24/outline";
 
 interface Tour {
   id: string;
@@ -27,7 +31,7 @@ interface Tour {
     user?: {
       name: string;
       image?: string;
-    }
+    };
   };
   startTimes: string[];
   travelStyles?: string[];
@@ -50,12 +54,12 @@ interface ShareToursGridProps {
 }
 
 const sortOptions = [
-  { value: 'compatible', label: 'Most compatible' },
-  { value: 'price_low', label: 'Price: Low to High' },
-  { value: 'price_high', label: 'Price: High to Low' },
-  { value: 'spots_left', label: 'Spots left' },
-  { value: 'starting_soon', label: 'Starting soon' },
-  { value: 'rating', label: 'Highest rated' }
+  { value: "compatible", label: "Most compatible" },
+  { value: "price_low", label: "Price: Low to High" },
+  { value: "price_high", label: "Price: High to Low" },
+  { value: "spots_left", label: "Spots left" },
+  { value: "starting_soon", label: "Starting soon" },
+  { value: "rating", label: "Highest rated" },
 ];
 
 export default function ShareToursGrid({
@@ -68,13 +72,15 @@ export default function ShareToursGrid({
   onPageChange,
   onToggleFilters,
   showFiltersButton = true,
-  isLoading = false
+  isLoading = false,
 }: ShareToursGridProps) {
-  const [wishlistedTours, setWishlistedTours] = useState<Set<string>>(new Set());
+  const [wishlistedTours, setWishlistedTours] = useState<Set<string>>(
+    new Set()
+  );
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
 
   const handleToggleWishlist = useCallback((tourId: string) => {
-    setWishlistedTours(prev => {
+    setWishlistedTours((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(tourId)) {
         newSet.delete(tourId);
@@ -85,15 +91,21 @@ export default function ShareToursGrid({
     });
   }, []);
 
-  const handleSortSelect = useCallback((value: string) => {
-    onSortChange(value);
-    setSortDropdownOpen(false);
-  }, [onSortChange]);
+  const handleSortSelect = useCallback(
+    (value: string) => {
+      onSortChange(value);
+      setSortDropdownOpen(false);
+    },
+    [onSortChange]
+  );
 
   const renderPaginationButtons = () => {
     const buttons = [];
     const maxVisiblePages = 5;
-    const startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    const startPage = Math.max(
+      1,
+      currentPage - Math.floor(maxVisiblePages / 2)
+    );
     const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
     // Previous button
@@ -117,8 +129,8 @@ export default function ShareToursGrid({
           onClick={() => onPageChange(i)}
           className={`px-3 py-2 text-sm font-medium border ${
             i === currentPage
-              ? 'bg-blue-600 text-white border-blue-600'
-              : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'
+              ? "bg-blue-600 text-white border-blue-600"
+              : "text-gray-700 bg-white border-gray-300 hover:bg-gray-50"
           }`}
         >
           {i}
@@ -150,17 +162,26 @@ export default function ShareToursGrid({
           <div className="h-6 bg-gray-200 rounded w-48 animate-pulse" />
           <div className="h-10 bg-gray-200 rounded w-32 animate-pulse" />
         </div>
-        
+
         {/* Grid Skeleton */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-200 overflow-hidden animate-pulse">
-              <div className="h-48 bg-gray-200" />
-              <div className="p-4 space-y-3">
-                <div className="h-4 bg-gray-200 rounded w-3/4" />
-                <div className="h-4 bg-gray-200 rounded w-1/2" />
-                <div className="h-4 bg-gray-200 rounded w-full" />
-                <div className="h-8 bg-gray-200 rounded" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-white/90 backdrop-blur-xl border border-gray-200/50 rounded-3xl overflow-hidden shadow-sm animate-pulse"
+            >
+              <div className="h-56 bg-gray-200" />
+              <div className="p-6 space-y-4">
+                <div className="h-4 bg-gray-200 rounded-lg w-32" />
+                <div className="h-6 bg-gray-200 rounded-lg w-full" />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="h-4 bg-gray-200 rounded w-16" />
+                    <div className="h-4 bg-gray-200 rounded w-12" />
+                  </div>
+                  <div className="h-4 bg-gray-200 rounded w-8" />
+                </div>
+                <div className="h-10 bg-gray-200 rounded-2xl w-full" />
               </div>
             </div>
           ))}
@@ -177,7 +198,7 @@ export default function ShareToursGrid({
           <h2 className="text-xl font-semibold text-gray-900">
             {totalCount.toLocaleString()} Share Tours
           </h2>
-          
+
           {showFiltersButton && (
             <button
               onClick={onToggleFilters}
@@ -196,8 +217,14 @@ export default function ShareToursGrid({
             className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             <AdjustmentsHorizontalIcon className="w-4 h-4" />
-            <span>{sortOptions.find(opt => opt.value === sortBy)?.label}</span>
-            <ChevronDownIcon className={`w-4 h-4 transition-transform ${sortDropdownOpen ? 'rotate-180' : ''}`} />
+            <span>
+              {sortOptions.find((opt) => opt.value === sortBy)?.label}
+            </span>
+            <ChevronDownIcon
+              className={`w-4 h-4 transition-transform ${
+                sortDropdownOpen ? "rotate-180" : ""
+              }`}
+            />
           </button>
 
           {sortDropdownOpen && (
@@ -207,7 +234,9 @@ export default function ShareToursGrid({
                   key={option.value}
                   onClick={() => handleSortSelect(option.value)}
                   className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg ${
-                    sortBy === option.value ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                    sortBy === option.value
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-gray-700"
                   }`}
                 >
                   {option.label}
@@ -220,21 +249,28 @@ export default function ShareToursGrid({
 
       {/* Tours Grid */}
       {tours.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {tours.map((tour) => (
-            <ShareTourCard
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {tours.map((tour, index) => (
+            <div
               key={tour.id}
-              tour={tour}
-              onToggleWishlist={handleToggleWishlist}
-              isWishlisted={wishlistedTours.has(tour.id)}
-            />
+              className="animate-fade-up"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <ShareTourCard
+                tour={tour}
+                onToggleWishlist={handleToggleWishlist}
+                isWishlisted={wishlistedTours.has(tour.id)}
+              />
+            </div>
           ))}
         </div>
       ) : (
         <div className="text-center py-12">
           <div className="max-w-md mx-auto">
             <FunnelIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No tours found</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No tours found
+            </h3>
             <p className="text-gray-500">
               Try adjusting your filters or search criteria to find more tours.
             </p>
@@ -245,15 +281,15 @@ export default function ShareToursGrid({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center space-x-2 pt-6">
-          <div className="flex items-center">
-            {renderPaginationButtons()}
-          </div>
+          <div className="flex items-center">{renderPaginationButtons()}</div>
         </div>
       )}
 
       {/* Results Summary */}
       <div className="text-center text-sm text-gray-500">
-        Showing {((currentPage - 1) * 20) + 1}-{Math.min(currentPage * 20, totalCount)} of {totalCount.toLocaleString()} results
+        Showing {(currentPage - 1) * 20 + 1}-
+        {Math.min(currentPage * 20, totalCount)} of{" "}
+        {totalCount.toLocaleString()} results
       </div>
 
       {/* Close sort dropdown when clicking outside */}
