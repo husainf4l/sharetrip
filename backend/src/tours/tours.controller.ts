@@ -1,11 +1,32 @@
-// @ts-ignore - Post and Body decorators exist but TypeScript module resolution has issues
-import { Controller, Get, Query, Post, Body, Put, Delete, Param, UseGuards, Req } from '@nestjs/common';
+// @ts-ignore
+import { Controller, Get, Query, Post, Body, Put, Param, UseGuards, Req, Delete } from '@nestjs/common';
 import { ToursService } from './tours.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PrismaService } from '../prisma.service';
 
 @Controller('tours')
 export class ToursController {
-  constructor(private readonly toursService: ToursService) {}
+  constructor(
+    private readonly toursService: ToursService,
+    private readonly prisma: PrismaService
+  ) {}
+
+  @Get('health')
+  async healthCheck() {
+    try {
+      // Test database connection
+      await this.prisma.user.findFirst();
+      return { status: 'ok', database: 'connected', timestamp: new Date().toISOString() };
+    } catch (error) {
+      console.error('Health check failed:', error);
+      return { 
+        status: 'error', 
+        database: 'disconnected', 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString() 
+      };
+    }
+  }
 
   @Get('filter')
   async filter(@Query() query: any) {
@@ -143,12 +164,26 @@ export class ToursController {
   @Post('host/create')
   @UseGuards(JwtAuthGuard)
   async createTour(@Body() body: any, @Req() req: any) {
-    // TODO: Add JWT guard and get user from req.user
-    const tourData = {
-      ...body,
-      guideId: req.user.sub // This should come from JWT token
-    };
-    return this.toursService.createTour(tourData);
+    try {
+      if (!req.user?.sub) {
+        throw new Error('User authentication failed');
+      }
+      
+      // Basic validation
+      if (!body.title || !body.city || !body.country) {
+        throw new Error('Missing required fields: title, city, and country are required');
+      }
+
+      const tourData = {
+        ...body,
+        guideId: req.user.sub
+      };
+      return await this.toursService.createTour(tourData);
+    } catch (error) {
+      console.error('Error creating tour:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create tour';
+      throw new Error(errorMessage);
+    }
   }
 
   @Get('host/my-tours')
@@ -163,32 +198,19 @@ export class ToursController {
     return this.toursService.updateTour(tourId, body, req.user.sub);
   }
 
-  @Delete('host/:tourId')
+  // @Delete('host/:tourId')
+  @Post('host/:tourId/delete')
   @UseGuards(JwtAuthGuard)
   async deleteTour(@Param('tourId') tourId: string, @Req() req: any) {
-    return this.toursService.deleteTour(tourId, req.user.sub);
-  }
-
-  @Get('host/:tourId/bookings')
-  @UseGuards(JwtAuthGuard)
-  async getTourBookings(@Param('tourId') tourId: string, @Req() req: any) {
-    return this.toursService.getTourBookings(tourId, req.user.sub);
-  }
-
-  @Post('book/:tourId')
-  @UseGuards(JwtAuthGuard)
-  async bookTour(@Param('tourId') tourId: string, @Body() body: any, @Req() req: any) {
-    const bookingData = {
-      ...body,
-      tourId,
-      travelerId: req.user.sub
-    };
-    return this.toursService.createBooking(bookingData);
-  }
-
-  @Get('my-bookings')
-  @UseGuards(JwtAuthGuard)
-  async getMyBookings(@Req() req: any) {
-    return this.toursService.getBookingsByTraveler(req.user.sub);
+    try {
+      if (!req.user?.sub) {
+        throw new Error('User authentication failed');
+      }
+      return await this.toursService.deleteTour(tourId, req.user.sub);
+    } catch (error) {
+      console.error('Error deleting tour:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete tour';
+      throw new Error(errorMessage);
+    }
   }
 }

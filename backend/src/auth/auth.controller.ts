@@ -264,6 +264,25 @@ export class AuthController {
     };
   }
 
+  @Post('refresh')
+  async refresh(@Body() body: { refreshToken: string }) {
+    const result = await this.auth.refresh(body.refreshToken);
+    
+    return {
+      success: true,
+      message: 'Tokens refreshed successfully',
+      user: {
+        id: result.user.id,
+        email: result.user.email,
+        name: result.user.name,
+        role: result.user.role,
+        emailVerified: result.user.emailVerified
+      },
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken
+    };
+  }
+
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getProfile(@Req() req: any) {

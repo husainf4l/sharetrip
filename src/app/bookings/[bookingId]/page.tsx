@@ -78,30 +78,158 @@ export default function BookingDetailsPage() {
 
     const mockBooking: Booking = {
       id: bookingId,
-      tourId: "tour1",
-      tourTitle: "Authentic Portuguese Food Tour",
+      tourId:
+        bookingId === "1"
+          ? "lisbon-food-tour"
+          : bookingId === "2"
+          ? "rome-colosseum"
+          : bookingId === "3"
+          ? "paris-walking-tour"
+          : "tour1",
+      tourTitle:
+        bookingId === "1"
+          ? "Authentic Portuguese Food Tour"
+          : bookingId === "2"
+          ? "Skip-the-Line Colosseum Tour"
+          : bookingId === "3"
+          ? "Montmartre Walking Tour"
+          : "Authentic Portuguese Food Tour",
       tourImage:
-        "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&h=250&fit=crop",
-      tourLocation: "Lisbon, Portugal",
+        bookingId === "1"
+          ? "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&h=250&fit=crop"
+          : bookingId === "2"
+          ? "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=250&fit=crop"
+          : bookingId === "3"
+          ? "https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=400&h=250&fit=crop"
+          : "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&h=250&fit=crop",
+      tourLocation:
+        bookingId === "1"
+          ? "Lisbon, Portugal"
+          : bookingId === "2"
+          ? "Rome, Italy"
+          : bookingId === "3"
+          ? "Paris, France"
+          : "Lisbon, Portugal",
       tourDescription:
-        "Discover authentic local flavors and culinary traditions on this immersive food experience. Join our expert local guide for a journey through Lisbon's vibrant food scene.",
-      tourDate: "2024-09-20",
-      tourDuration: "3 hours",
-      bookingDate: "2024-09-01",
-      participants: 2,
-      totalPrice: 90,
-      status: "confirmed",
-      paymentStatus: "paid",
+        bookingId === "1"
+          ? "Discover authentic local flavors and culinary traditions on this immersive food experience. Join our expert local guide for a journey through Lisbon's vibrant food scene."
+          : bookingId === "2"
+          ? "Experience the ancient wonders of Rome with our expert guide. Skip the long lines and explore the Colosseum with insider knowledge."
+          : bookingId === "3"
+          ? "Explore the artistic heart of Paris on this walking tour of Montmartre. Discover hidden gems and local culture."
+          : "Discover authentic local flavors and culinary traditions on this immersive food experience.",
+      tourDate:
+        bookingId === "1"
+          ? "2024-03-15"
+          : bookingId === "2"
+          ? "2024-02-28"
+          : bookingId === "3"
+          ? "2024-04-10"
+          : "2024-09-20",
+      tourDuration:
+        bookingId === "1"
+          ? "3 hours"
+          : bookingId === "2"
+          ? "2.5 hours"
+          : bookingId === "3"
+          ? "2 hours"
+          : "3 hours",
+      bookingDate:
+        bookingId === "1"
+          ? "2024-03-01"
+          : bookingId === "2"
+          ? "2024-02-15"
+          : bookingId === "3"
+          ? "2024-03-25"
+          : "2024-09-01",
+      participants:
+        bookingId === "1"
+          ? 2
+          : bookingId === "2"
+          ? 1
+          : bookingId === "3"
+          ? 1
+          : 2,
+      totalPrice:
+        bookingId === "1"
+          ? 80
+          : bookingId === "2"
+          ? 45
+          : bookingId === "3"
+          ? 25
+          : 90,
+      status:
+        bookingId === "1"
+          ? "confirmed"
+          : bookingId === "2"
+          ? "completed"
+          : bookingId === "3"
+          ? "confirmed"
+          : "confirmed",
+      paymentStatus:
+        bookingId === "1"
+          ? "paid"
+          : bookingId === "2"
+          ? "paid"
+          : bookingId === "3"
+          ? "paid"
+          : "paid",
       paymentMethod: "Credit Card (**** 4532)",
-      hostName: "Maria Santos",
-      hostEmail: "maria.santos@email.com",
-      hostPhone: "+351 912 345 678",
+      hostName:
+        bookingId === "1"
+          ? "Maria Santos"
+          : bookingId === "2"
+          ? "Giuseppe Romano"
+          : bookingId === "3"
+          ? "Sophie Dubois"
+          : "Maria Santos",
+      hostEmail:
+        bookingId === "1"
+          ? "maria.santos@email.com"
+          : bookingId === "2"
+          ? "giuseppe.romano@email.com"
+          : bookingId === "3"
+          ? "sophie.dubois@email.com"
+          : "maria.santos@email.com",
+      hostPhone:
+        bookingId === "1"
+          ? "+351 912 345 678"
+          : bookingId === "2"
+          ? "+39 333 123 4567"
+          : bookingId === "3"
+          ? "+33 6 12 34 56 78"
+          : "+351 912 345 678",
       hostImage:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-      specialRequests: "Vegetarian options needed",
+        bookingId === "1"
+          ? "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
+          : bookingId === "2"
+          ? "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+          : bookingId === "3"
+          ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+          : "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
+      specialRequests:
+        bookingId === "1"
+          ? "Vegetarian options needed"
+          : bookingId === "2"
+          ? undefined
+          : bookingId === "3"
+          ? undefined
+          : "Vegetarian options needed",
+      rating: bookingId === "2" ? 5 : undefined,
+      review:
+        bookingId === "2"
+          ? "Amazing experience! The guide was very knowledgeable."
+          : undefined,
       cancellationPolicy:
         "Free cancellation up to 24 hours before the tour. Cancellations within 24 hours are non-refundable.",
-      meetingPoint: "Rossio Square, Lisbon Main Entrance",
+      meetingPoint:
+        bookingId === "1"
+          ? "Rossio Square, near the fountain"
+          : bookingId === "2"
+          ? "Colosseum Metro Station Exit"
+          : bookingId === "3"
+          ? "Sacré-Cœur Basilica main entrance"
+          : "Rossio Square, near the fountain",
       included: [
         "Expert local guide",
         "Traditional Portuguese meal",
@@ -200,7 +328,7 @@ export default function BookingDetailsPage() {
             Booking Not Found
           </h2>
           <p className="text-gray-600 mb-4">
-            The booking you're looking for doesn't exist.
+            The booking you&apos;re looking for doesn&apos;t exist.
           </p>
           <Link href="/bookings" className="btn btn-primary">
             Back to My Bookings
@@ -324,7 +452,7 @@ export default function BookingDetailsPage() {
               {/* What's Included */}
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  What's Included
+                  What&apos;s Included
                 </h3>
                 <ul className="space-y-2">
                   {booking.included.map((item, index) => (
@@ -339,7 +467,7 @@ export default function BookingDetailsPage() {
               {/* What's Not Included */}
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  What's Not Included
+                  What&apos;s Not Included
                 </h3>
                 <ul className="space-y-2">
                   {booking.notIncluded.map((item, index) => (
@@ -482,7 +610,10 @@ export default function BookingDetailsPage() {
                     <span className="text-sm text-gray-700">Call Host</span>
                   </a>
                 )}
-                <button className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors w-full">
+                <button
+                  onClick={() => alert("Messaging feature coming soon!")}
+                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors w-full"
+                >
                   <ChatBubbleLeftIcon className="w-5 h-5 text-purple-600" />
                   <span className="text-sm text-gray-700">Message Host</span>
                 </button>
@@ -547,12 +678,18 @@ export default function BookingDetailsPage() {
                   </button>
                 )}
 
-                <button className="btn btn-outline w-full">
+                <button
+                  onClick={() => alert("Receipt download feature coming soon!")}
+                  className="btn btn-outline w-full"
+                >
                   <DocumentTextIcon className="w-4 h-4 mr-2" />
                   Download Receipt
                 </button>
 
-                <button className="btn btn-outline w-full">
+                <button
+                  onClick={() => alert("Report issue feature coming soon!")}
+                  className="btn btn-outline w-full"
+                >
                   <ShieldCheckIcon className="w-4 h-4 mr-2" />
                   Report Issue
                 </button>

@@ -1,12 +1,15 @@
 import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
+import * as argon2 from 'argon2';
 import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwt: JwtService) { }
+  constructor(
+    private prisma: PrismaService, 
+    private jwt: JwtService
+  ) { }
 
   async signup(data: { name?: string; email: string; password: string; wantToHost?: boolean }) {
     const existing = await this.prisma.user.findUnique({ where: { email: data.email } });
@@ -101,5 +104,49 @@ export class AuthService {
       } catch (err) { }
     }
     throw new BadRequestException('Invalid token');
+  }
+
+  async refresh(refreshToken: string) {
+    // Find refresh token by scanning and verifying hash
+    const tokens = await this.prisma.refreshToken.findMany({ where: { revoked: false } });
+    for (const t of tokens) {
+      try {
+        const ok = await argon2.verify(t.tokenHash, refreshToken);
+        if (ok) {
+          if (t.expiresAt < new Date()) throw new UnauthorizedException('Refresh token expired');
+          
+          // Get user
+          const user = await this.prisma.user.findUnique({
+            where: { id: t.userId },
+            select: { id: true, email: true, name: true, role: true, emailVerified: true }
+          });
+          if (!user) throw new UnauthorizedException('User not found');
+
+          // Revoke old refresh token
+          await this.prisma.refreshToken.update({ where: { id: t.id }, data: { revoked: true } });
+
+          // Generate new tokens
+          const payload = { sub: user.id, email: user.email };
+          const newAccessToken = this.jwt.sign(payload, { expiresIn: '15m' });
+          const newRefreshToken = this.jwt.sign(payload, { expiresIn: '7d' });
+
+          // Store new refresh token hash
+          const newRefreshHash = await argon2.hash(newRefreshToken);
+          await this.prisma.refreshToken.create({ 
+            data: { 
+              userId: user.id, 
+              tokenHash: newRefreshHash, 
+              expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+              replacedById: t.id // optional, to track chain
+            } 
+          });
+
+          return { user, accessToken: newAccessToken, refreshToken: newRefreshToken };
+        }
+      } catch (err) {
+        // continue
+      }
+    }
+    throw new UnauthorizedException('Invalid refresh token');
   }
 }

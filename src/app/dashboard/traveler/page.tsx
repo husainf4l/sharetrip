@@ -166,16 +166,23 @@ export default function TravelerDashboard() {
               </p>
             </div>
             <div className="flex items-center gap-4">
+              <Link href="/bookings" className="btn btn-outline hover-lift">
+                <TicketIcon className="w-4 h-4 mr-2" />
+                All Bookings
+              </Link>
               <Link href="/tours" className="btn btn-outline hover-lift">
                 <MagnifyingGlassIcon className="w-4 h-4 mr-2" />
                 Find Tours
               </Link>
-              <Link href="/dashboard/host" className="btn btn-primary hover-glow">
+              <Link
+                href="/dashboard/host"
+                className="btn btn-primary hover-glow"
+              >
                 <UserIcon className="w-4 h-4 mr-2" />
                 Become a Host
               </Link>
               <div className="relative">
-                <button 
+                <button
                   onClick={() => setActiveTab("profile" as any)}
                   className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
                   title="Profile"
@@ -260,22 +267,24 @@ export default function TravelerDashboard() {
 
                 {/* Status Tabs */}
                 <div className="flex bg-gray-100 rounded-lg p-1">
-                  {(["upcoming", "completed", "cancelled"] as const).map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveTab(tab)}
-                      className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                        activeTab === tab
-                          ? "bg-white text-blue-600 shadow-sm"
-                          : "text-gray-600 hover:text-gray-900"
-                      }`}
-                    >
-                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                      <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
-                        {bookings.filter((b) => b.status === tab).length}
-                      </span>
-                    </button>
-                  ))}
+                  {(["upcoming", "completed", "cancelled"] as const).map(
+                    (tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                          activeTab === tab
+                            ? "bg-white text-blue-600 shadow-sm"
+                            : "text-gray-600 hover:text-gray-900"
+                        }`}
+                      >
+                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                        <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                          {bookings.filter((b) => b.status === tab).length}
+                        </span>
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
             )}
@@ -292,7 +301,7 @@ export default function TravelerDashboard() {
             <p className="text-gray-600 mb-6">
               {searchQuery
                 ? "Try adjusting your search terms"
-                : `You don't have any ${activeTab} tours yet`}
+                : `You don&apos;t have any ${activeTab} tours yet`}
             </p>
             {!searchQuery && activeTab === "upcoming" && (
               <Link href="/tours" className="btn btn-primary hover-glow">
@@ -428,17 +437,23 @@ export default function TravelerDashboard() {
                               >
                                 View Details
                               </Link>
-                              <button className="btn btn-primary btn-sm hover-glow">
+                              <Link
+                                href={`/bookings/${booking.id}`}
+                                className="btn btn-primary btn-sm hover-glow"
+                              >
                                 Manage Booking
-                              </button>
+                              </Link>
                             </>
                           )}
 
                           {booking.status === "completed" &&
                             !booking.rating && (
-                              <button className="btn btn-primary btn-sm hover-glow">
+                              <Link
+                                href={`/bookings/${booking.id}`}
+                                className="btn btn-primary btn-sm hover-glow"
+                              >
                                 Write Review
-                              </button>
+                              </Link>
                             )}
 
                           {booking.status === "completed" && (
@@ -463,16 +478,22 @@ export default function TravelerDashboard() {
         {activeTab === "profile" && (
           <div className="space-y-6">
             <div className="card p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">My Profile</h2>
-              
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                My Profile
+              </h2>
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Personal Information */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
-                  
+                  <h3 className="text-lg font-medium text-gray-900">
+                    Personal Information
+                  </h3>
+
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Full Name
+                      </label>
                       <input
                         type="text"
                         value={user?.name || ""}
@@ -480,9 +501,11 @@ export default function TravelerDashboard() {
                         readOnly
                       />
                     </div>
-                    
+
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Email Address
+                      </label>
                       <input
                         type="email"
                         value={user?.email || ""}
@@ -490,9 +513,11 @@ export default function TravelerDashboard() {
                         readOnly
                       />
                     </div>
-                    
+
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Account Type</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Account Type
+                      </label>
                       <input
                         type="text"
                         value={user?.role || "Traveler"}
@@ -505,49 +530,64 @@ export default function TravelerDashboard() {
 
                 {/* Account Stats */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-gray-900">Account Statistics</h3>
-                  
+                  <h3 className="text-lg font-medium text-gray-900">
+                    Account Statistics
+                  </h3>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-blue-50 p-4 rounded-lg text-center">
                       <div className="text-2xl font-bold text-blue-600">
-                        {bookings.filter((b) => b.status === "completed").length}
+                        {
+                          bookings.filter((b) => b.status === "completed")
+                            .length
+                        }
                       </div>
-                      <div className="text-sm text-blue-700">Tours Completed</div>
+                      <div className="text-sm text-blue-700">
+                        Tours Completed
+                      </div>
                     </div>
-                    
+
                     <div className="bg-green-50 p-4 rounded-lg text-center">
                       <div className="text-2xl font-bold text-green-600">
                         {new Set(bookings.map((b) => b.location)).size}
                       </div>
-                      <div className="text-sm text-green-700">Cities Explored</div>
+                      <div className="text-sm text-green-700">
+                        Cities Explored
+                      </div>
                     </div>
-                    
+
                     <div className="bg-purple-50 p-4 rounded-lg text-center">
                       <div className="text-2xl font-bold text-purple-600">
                         ${bookings.reduce((sum, b) => sum + b.totalPrice, 0)}
                       </div>
                       <div className="text-sm text-purple-700">Total Spent</div>
                     </div>
-                    
+
                     <div className="bg-orange-50 p-4 rounded-lg text-center">
                       <div className="text-2xl font-bold text-orange-600">
-                        {bookings.filter((b) => b.rating && b.rating >= 4).length}
+                        {
+                          bookings.filter((b) => b.rating && b.rating >= 4)
+                            .length
+                        }
                       </div>
                       <div className="text-sm text-orange-700">5★ Reviews</div>
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               {/* Action Buttons */}
               <div className="mt-6 pt-6 border-t border-gray-200 flex gap-4">
                 <button className="btn btn-primary hover-glow">
                   Edit Profile
                 </button>
-                <Link href="/dashboard/host" className="btn btn-outline hover-lift">
+                <Link
+                  href="/dashboard/host"
+                  className="btn btn-outline hover-lift"
+                >
                   Become a Host
                 </Link>
-                <button 
+                <button
                   onClick={logout}
                   className="btn btn-outline text-red-600 border-red-300 hover:bg-red-50"
                 >

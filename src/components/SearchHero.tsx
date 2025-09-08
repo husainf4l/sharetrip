@@ -38,14 +38,9 @@ export default function SearchHero({
   };
 
   const popularDestinations = [
-    "Paris, France",
-    "Rome, Italy",
-    "Barcelona, Spain",
-    "Amsterdam, Netherlands",
-    "Berlin, Germany",
-    "London, UK",
-    "Prague, Czech Republic",
-    "Vienna, Austria",
+    "Petra, Jordan",
+    "Pyramids of Giza, Egypt",
+    "Beirut, Lebanon",
   ];
 
   return (

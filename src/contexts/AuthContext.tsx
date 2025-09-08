@@ -44,13 +44,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const userData = await apiService.getCurrentUser();
       setUser(userData);
-    } catch (err: any) {
-      // Only clear tokens if it's a 401 Unauthorized error
+    } catch (err: unknown) {
+      // Only clear tokens if it's a 401 Unauthorized error or token expiration
+      // and we couldn't refresh the token
       // Don't log out on network errors or other temporary issues
       console.error("Auth check failed:", err);
       if (
-        err?.message?.includes("401") ||
-        err?.message?.includes("Unauthorized")
+        err instanceof Error &&
+        (err.message?.includes("401") ||
+          err.message?.includes("Unauthorized") ||
+          err.message?.includes("Token has expired") ||
+          err.message?.includes("token") ||
+          err.message?.includes("expired") ||
+          err.message?.includes("No refresh token"))
       ) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");

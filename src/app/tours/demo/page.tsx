@@ -188,7 +188,7 @@ export default function TourDetailDemo() {
 
             {/* Highlights */}
             <div className="card-getyourguide p-8 mb-8">
-              <h2 className="text-2xl font-bold text-getyourguide-dark mb-6">What's included</h2>
+              <h2 className="text-2xl font-bold text-getyourguide-dark mb-6">What&apos;s included</h2>
               <div className="space-y-3 mb-6">
                 {tour.highlights.map((highlight, index) => (
                   <div key={index} className="flex items-start gap-3">

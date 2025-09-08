@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiService } from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   CameraIcon,
   MapPinIcon,
@@ -182,6 +183,7 @@ export default function BecomeHostPage() {
   const [loading, setLoading] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const router = useRouter();
+  const { user } = useAuth();
 
   const steps = [
     { id: 1, name: "Basic Info", icon: DocumentTextIcon },
@@ -197,6 +199,67 @@ export default function BecomeHostPage() {
       ...prev,
       [field]: value,
     }));
+  };
+
+  const loadSampleData = () => {
+    setHostDetails({
+      experienceType: "Food & Drink",
+      title: "Tokyo Street Food Adventure",
+      description:
+        "Embark on a culinary journey through Tokyo's vibrant street food scene. Discover hidden gems, local favorites, and authentic Japanese flavors in the bustling streets of Shibuya, Harajuku, and Akihabara. Your expert guide will take you to the best spots for ramen, takoyaki, sushi rolls, and more, sharing stories about Japanese food culture along the way.",
+      category: "Food Tours",
+      subcategory: "Street Food",
+      location: "Tokyo, Japan",
+      meetingPoint: "Shibuya Station, Hachiko Exit",
+      duration: "2-4 hours",
+      groupSize: { min: 2, max: 8 },
+      ageRestriction: { min: 8, max: 99 },
+      pricePerPerson: 50,
+      currency: "USD",
+      pricingType: "person",
+      discounts: { children: 20, seniors: 10, groups: 15 },
+      availability: {
+        days: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ],
+        timeSlots: ["10:00", "14:00", "18:00"],
+        blackoutDates: [],
+      },
+      hostExperience:
+        "5 years as a food tour guide in Tokyo, certified food safety expert",
+      languages: ["English", "Japanese"],
+      certifications: ["Food Safety Certified", "Tour Guide License"],
+      specialSkills: ["Japanese cuisine expert", "Photography", "Storytelling"],
+      whatsIncluded: [
+        "Expert guide",
+        "Tastings of 8-10 different foods",
+        "Transportation between locations",
+        "Cultural insights",
+      ],
+      whatsExcluded: [
+        "Transportation to meeting point",
+        "Beverages",
+        "Gratuities",
+      ],
+      requirements: ["Comfortable walking shoes", "Open mind for new flavors"],
+      cancellationPolicy: "flexible",
+      difficulty: "easy",
+      physicalActivity: "medium",
+      photos: [],
+      videos: [],
+      addons: [
+        {
+          name: "Private photography session",
+          price: 25,
+          description: "Professional photos of your food adventure",
+        },
+      ],
+    });
   };
 
   const addToArray = (field: keyof HostDetails, value: string) => {
@@ -241,14 +304,24 @@ export default function BecomeHostPage() {
   };
 
   const handleSubmit = async () => {
+    if (!user) {
+      alert("Please log in to submit your application.");
+      return;
+    }
+
     setLoading(true);
     try {
-      // Here you would submit the host details to your backend
+      await apiService.saveStep({
+        userId: user.id,
+        stepNumber: 1,
+        data: hostDetails as unknown as Record<string, unknown>,
+      });
       alert(
         "Host application submitted successfully! We will review your application within 24-48 hours."
       );
       router.push("/dashboard");
     } catch (error) {
+      console.error("Error submitting application:", error);
       alert("Error submitting application. Please try again.");
     }
     setLoading(false);
@@ -502,7 +575,7 @@ export default function BecomeHostPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-4">
-                What's Included
+                What&apos;s Included
               </label>
               <div className="space-y-2">
                 {hostDetails.whatsIncluded.map((item, index) => (
@@ -539,7 +612,7 @@ export default function BecomeHostPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-4">
-                What's Excluded
+                What&apos;s Excluded
               </label>
               <div className="space-y-2">
                 {hostDetails.whatsExcluded.map((item, index) => (
@@ -655,6 +728,7 @@ export default function BecomeHostPage() {
                   <option value="EUR">EUR (€)</option>
                   <option value="GBP">GBP (£)</option>
                   <option value="JPY">JPY (¥)</option>
+                  <option value="CAD">CAD (C$)</option>
                 </select>
               </div>
             </div>
@@ -1082,12 +1156,13 @@ export default function BecomeHostPage() {
                 <li>
                   • Our team will review your application within 24-48 hours
                 </li>
-                <li>• You'll receive an email with the review results</li>
+                <li>• You&apos;ll receive an email with the review results</li>
                 <li>
-                  • If approved, you'll be able to start accepting bookings
+                  • If approved, you&apos;ll be able to start accepting bookings
                 </li>
                 <li>
-                  • You'll need to complete payment setup to receive earnings
+                  • You&apos;ll need to complete payment setup to receive
+                  earnings
                 </li>
               </ul>
             </div>
@@ -1568,6 +1643,15 @@ export default function BecomeHostPage() {
           </div>
         </div>
 
+        <div className="mb-4 text-center">
+          <button
+            onClick={loadSampleData}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Load Sample: Tokyo Street Food Adventure
+          </button>
+        </div>
+
         {/* Main Content */}
         <div className="bg-white rounded-lg shadow-sm border p-8">
           {renderStepContent()}
@@ -1623,8 +1707,8 @@ export default function BecomeHostPage() {
             <div>
               <h4 className="font-medium text-blue-900 mb-2">💡 Tips</h4>
               <p className="text-sm text-blue-800">
-                Focus on unique, authentic experiences that travelers can't find
-                elsewhere.
+                Focus on unique, authentic experiences that travelers can&apos;t
+                find elsewhere.
               </p>
             </div>
           </div>

@@ -310,7 +310,7 @@ export default function SignupPage() {
                       Host Information
                     </h4>
                     <p className="text-xs text-blue-700 mb-3">
-                      As a host, you'll need to provide additional information
+                      As a host, you&apos;ll need to provide additional information
                       to start hosting experiences.
                     </p>
                     <div className="text-xs text-blue-600">

@@ -33,8 +33,8 @@ export default function BookingsPage() {
   useEffect(() => {
     const loadBookings = async () => {
       try {
-        const userBookings = await getUserBookings();
-        setBookings(userBookings);
+        const userBookingsResponse = await getUserBookings();
+        setBookings(userBookingsResponse.bookings as unknown as Booking[]);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to load bookings"

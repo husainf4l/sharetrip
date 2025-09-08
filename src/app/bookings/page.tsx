@@ -60,7 +60,8 @@ export default function BookingsPage() {
         id: "bk1",
         tourId: "tour1",
         tourTitle: "Authentic Portuguese Food Tour",
-        tourImage: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&h=250&fit=crop",
+        tourImage:
+          "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&h=250&fit=crop",
         tourLocation: "Lisbon, Portugal",
         tourDate: "2024-09-20",
         bookingDate: "2024-09-01",
@@ -77,7 +78,8 @@ export default function BookingsPage() {
         id: "bk2",
         tourId: "tour2",
         tourTitle: "Skip-the-Line Colosseum Tour",
-        tourImage: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=250&fit=crop",
+        tourImage:
+          "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=250&fit=crop",
         tourLocation: "Rome, Italy",
         tourDate: "2024-09-25",
         bookingDate: "2024-09-02",
@@ -93,7 +95,8 @@ export default function BookingsPage() {
         id: "bk3",
         tourId: "tour3",
         tourTitle: "Barcelona Gaudi Architecture Tour",
-        tourImage: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400&h=250&fit=crop",
+        tourImage:
+          "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400&h=250&fit=crop",
         tourLocation: "Barcelona, Spain",
         tourDate: "2024-09-15",
         bookingDate: "2024-08-28",
@@ -110,7 +113,8 @@ export default function BookingsPage() {
         id: "bk4",
         tourId: "tour4",
         tourTitle: "Berlin Street Art Walking Tour",
-        tourImage: "https://images.unsplash.com/photo-1560969184-10fe8719e6c7?w=400&h=250&fit=crop",
+        tourImage:
+          "https://images.unsplash.com/photo-1560969184-10fe8719e6c7?w=400&h=250&fit=crop",
         tourLocation: "Berlin, Germany",
         tourDate: "2024-09-18",
         bookingDate: "2024-09-03",
@@ -160,7 +164,8 @@ export default function BookingsPage() {
   };
 
   const filteredBookings = bookings.filter((booking) => {
-    const matchesStatus = filterStatus === "all" || booking.status === filterStatus;
+    const matchesStatus =
+      filterStatus === "all" || booking.status === filterStatus;
     const matchesSearch =
       booking.tourTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
       booking.tourLocation.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -171,10 +176,14 @@ export default function BookingsPage() {
 
   const getStats = () => {
     const totalBookings = bookings.length;
-    const confirmedBookings = bookings.filter(b => b.status === "confirmed").length;
-    const pendingBookings = bookings.filter(b => b.status === "pending").length;
+    const confirmedBookings = bookings.filter(
+      (b) => b.status === "confirmed"
+    ).length;
+    const pendingBookings = bookings.filter(
+      (b) => b.status === "pending"
+    ).length;
     const totalSpent = bookings
-      .filter(b => b.paymentStatus === "paid")
+      .filter((b) => b.paymentStatus === "paid")
       .reduce((sum, b) => sum + b.totalPrice, 0);
 
     return { totalBookings, confirmedBookings, pendingBookings, totalSpent };
@@ -207,7 +216,9 @@ export default function BookingsPage() {
                 <ArrowLeftIcon className="w-5 h-5" />
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">My Bookings</h1>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  My Bookings
+                </h1>
                 <p className="text-gray-600">Manage your tour reservations</p>
               </div>
             </div>
@@ -232,25 +243,33 @@ export default function BookingsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-sm p-6 text-center">
             <TicketIcon className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900">{stats.totalBookings}</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {stats.totalBookings}
+            </div>
             <div className="text-gray-600">Total Bookings</div>
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-6 text-center">
             <CheckCircleIcon className="w-8 h-8 text-green-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900">{stats.confirmedBookings}</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {stats.confirmedBookings}
+            </div>
             <div className="text-gray-600">Confirmed</div>
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-6 text-center">
             <ExclamationTriangleIcon className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900">{stats.pendingBookings}</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {stats.pendingBookings}
+            </div>
             <div className="text-gray-600">Pending</div>
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-6 text-center">
             <CurrencyDollarIcon className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900">${stats.totalSpent}</div>
+            <div className="text-2xl font-bold text-gray-900">
+              ${stats.totalSpent}
+            </div>
             <div className="text-gray-600">Total Spent</div>
           </div>
         </div>
@@ -300,7 +319,9 @@ export default function BookingsPage() {
           {filteredBookings.length === 0 ? (
             <div className="bg-white rounded-lg shadow-sm p-12 text-center">
               <TicketIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Bookings Found</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                No Bookings Found
+              </h3>
               <p className="text-gray-600 mb-6">
                 {searchQuery || filterStatus !== "all"
                   ? "Try adjusting your filters or search terms."
@@ -312,7 +333,10 @@ export default function BookingsPage() {
             </div>
           ) : (
             filteredBookings.map((booking) => (
-              <div key={booking.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div
+                key={booking.id}
+                className="bg-white rounded-lg shadow-sm overflow-hidden"
+              >
                 <div className="flex flex-col lg:flex-row">
                   {/* Tour Image */}
                   <div className="lg:w-48 h-48 lg:h-auto relative">
@@ -332,10 +356,18 @@ export default function BookingsPage() {
                           <h3 className="text-xl font-semibold text-gray-900">
                             {booking.tourTitle}
                           </h3>
-                          <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(booking.status)}`}>
+                          <span
+                            className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(
+                              booking.status
+                            )}`}
+                          >
                             {booking.status}
                           </span>
-                          <span className={`px-3 py-1 text-sm font-medium rounded-full ${getPaymentStatusColor(booking.paymentStatus)}`}>
+                          <span
+                            className={`px-3 py-1 text-sm font-medium rounded-full ${getPaymentStatusColor(
+                              booking.paymentStatus
+                            )}`}
+                          >
                             {booking.paymentStatus}
                           </span>
                         </div>
@@ -347,19 +379,22 @@ export default function BookingsPage() {
                           </div>
                           <div className="flex items-center gap-2">
                             <CalendarIcon className="w-4 h-4" />
-                            Tour: {new Date(booking.tourDate).toLocaleDateString()}
+                            Tour:{" "}
+                            {new Date(booking.tourDate).toLocaleDateString()}
                           </div>
                           <div className="flex items-center gap-2">
                             <UserIcon className="w-4 h-4" />
-                            {booking.participants} participant{booking.participants !== 1 ? 's' : ''}
+                            {booking.participants} participant
+                            {booking.participants !== 1 ? "s" : ""}
                           </div>
                           <div className="flex items-center gap-2">
-                            <CurrencyDollarIcon className="w-4 h-4" />
-                            ${booking.totalPrice}
+                            <CurrencyDollarIcon className="w-4 h-4" />$
+                            {booking.totalPrice}
                           </div>
                           <div className="flex items-center gap-2">
                             <ClockIcon className="w-4 h-4" />
-                            Booked: {new Date(booking.bookingDate).toLocaleDateString()}
+                            Booked:{" "}
+                            {new Date(booking.bookingDate).toLocaleDateString()}
                           </div>
                           <div className="flex items-center gap-2">
                             <UserIcon className="w-4 h-4" />
@@ -372,7 +407,10 @@ export default function BookingsPage() {
                           {booking.hostEmail && (
                             <div className="flex items-center gap-2">
                               <EnvelopeIcon className="w-4 h-4" />
-                              <a href={`mailto:${booking.hostEmail}`} className="text-blue-600 hover:underline">
+                              <a
+                                href={`mailto:${booking.hostEmail}`}
+                                className="text-blue-600 hover:underline"
+                              >
                                 {booking.hostEmail}
                               </a>
                             </div>
@@ -380,7 +418,10 @@ export default function BookingsPage() {
                           {booking.hostPhone && (
                             <div className="flex items-center gap-2">
                               <PhoneIcon className="w-4 h-4" />
-                              <a href={`tel:${booking.hostPhone}`} className="text-blue-600 hover:underline">
+                              <a
+                                href={`tel:${booking.hostPhone}`}
+                                className="text-blue-600 hover:underline"
+                              >
                                 {booking.hostPhone}
                               </a>
                             </div>
@@ -390,7 +431,8 @@ export default function BookingsPage() {
                         {booking.specialRequests && (
                           <div className="bg-gray-50 p-3 rounded-lg mb-4">
                             <p className="text-sm text-gray-700">
-                              <strong>Special Requests:</strong> {booking.specialRequests}
+                              <strong>Special Requests:</strong>{" "}
+                              {booking.specialRequests}
                             </p>
                           </div>
                         )}
@@ -402,7 +444,9 @@ export default function BookingsPage() {
                                 <StarIcon
                                   key={i}
                                   className={`w-4 h-4 ${
-                                    i < booking.rating! ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                                    i < booking.rating!
+                                      ? "text-yellow-400 fill-current"
+                                      : "text-gray-300"
                                   }`}
                                 />
                               ))}
@@ -436,15 +480,21 @@ export default function BookingsPage() {
                           View Tour
                         </Link>
                         {booking.status === "confirmed" && (
-                          <button className="btn btn-outline btn-sm text-red-600 border-red-300 hover:bg-red-50">
+                          <Link
+                            href={`/bookings/${booking.id}`}
+                            className="btn btn-outline btn-sm text-red-600 border-red-300 hover:bg-red-50"
+                          >
                             Cancel Booking
-                          </button>
+                          </Link>
                         )}
                         {booking.status === "completed" && !booking.rating && (
-                          <button className="btn btn-primary btn-sm">
+                          <Link
+                            href={`/bookings/${booking.id}`}
+                            className="btn btn-primary btn-sm"
+                          >
                             <StarIcon className="w-4 h-4 mr-2" />
                             Leave Review
-                          </button>
+                          </Link>
                         )}
                       </div>
                     </div>

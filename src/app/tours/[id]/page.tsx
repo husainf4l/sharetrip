@@ -109,6 +109,9 @@ export default function TourDetailPage({
   const [isBooking, setIsBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
+  const [getYourGuideTours, setGetYourGuideTours] = useState<any[]>([]);
+  const [selectedGygTour, setSelectedGygTour] = useState<any>(null);
+  const [showGygModal, setShowGygModal] = useState(false);
 
   const router = useRouter();
 
@@ -293,6 +296,23 @@ export default function TourDetailPage({
           }));
 
         setSimilarTours(similar);
+
+        // Load GetYourGuide tours for this location
+        try {
+          const gygResponse = await fetch(
+            `/api/getyourguide/search?location=${encodeURIComponent(
+              enhancedTour.city + ", " + enhancedTour.country
+            )}&activity=${encodeURIComponent(enhancedTour.title)}`
+          );
+          if (gygResponse.ok) {
+            const gygData = await gygResponse.json();
+            if (gygData.success) {
+              setGetYourGuideTours(gygData.tours.slice(0, 3)); // Show top 3 results
+            }
+          }
+        } catch (gygError) {
+          console.log("GetYourGuide integration not available:", gygError);
+        }
       } catch (error) {
         console.error("Error loading tour:", error);
         setError(
@@ -1282,10 +1302,312 @@ export default function TourDetailPage({
             </div>
           </div>
 
+          {/* GetYourGuide Tours Section */}
+          {getYourGuideTours.length > 0 && (
+            <div className="mt-8 lg:mt-12">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <GlobeAltIcon className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl lg:text-2xl font-bold text-gray-900">
+                    More Options from GetYourGuide
+                  </h2>
+                  <p className="text-gray-600 text-sm lg:text-base">
+                    Compare and book from trusted local providers
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                {getYourGuideTours.map((gygTour) => (
+                  <div
+                    key={gygTour.id}
+                    className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                    onClick={() => {
+                      setSelectedGygTour(gygTour);
+                      setShowGygModal(true);
+                    }}
+                  >
+                    <div className="relative h-40 lg:h-48">
+                      <Image
+                        src={gygTour.images[0]}
+                        alt={gygTour.title}
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        GetYourGuide
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-sm lg:text-base">
+                        {gygTour.title}
+                      </h3>
+                      <div className="flex items-center gap-2 mb-2">
+                        <MapPinIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                        <span className="text-sm text-gray-600 truncate">
+                          {gygTour.location}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="flex items-center gap-1">
+                          <StarSolidIcon className="w-4 h-4 text-yellow-400" />
+                          <span className="text-sm font-medium">
+                            {gygTour.rating}
+                          </span>
+                          <span className="text-sm text-gray-600">
+                            ({gygTour.reviewCount})
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-gray-600">
+                          {gygTour.duration}
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-gray-900 text-lg">
+                            {gygTour.price.currency} {gygTour.price.amount}
+                          </div>
+                          <div className="text-xs text-green-600 font-medium">
+                            Free cancellation
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Ad Banner */}
           <AdBanner category={tour?.category?.toLowerCase()} className="mt-8" />
         </div>
       </div>
+
+      {/* GetYourGuide Modal */}
+      {showGygModal && selectedGygTour && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <GlobeAltIcon className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    GetYourGuide Experience
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Book through GetYourGuide for instant confirmation
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowGygModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <XMarkIcon className="w-6 h-6 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Tour Details */}
+                <div>
+                  <div className="relative h-64 mb-6 rounded-xl overflow-hidden">
+                    <Image
+                      src={selectedGygTour.images[0]}
+                      alt={selectedGygTour.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                    {selectedGygTour.title}
+                  </h2>
+
+                  <div className="space-y-4 mb-6">
+                    <div className="flex items-center gap-2">
+                      <MapPinIcon className="w-5 h-5 text-gray-500" />
+                      <span className="text-gray-700">
+                        {selectedGygTour.location}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ClockIcon className="w-5 h-5 text-gray-500" />
+                      <span className="text-gray-700">
+                        {selectedGygTour.duration}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <UsersIcon className="w-5 h-5 text-gray-500" />
+                      <span className="text-gray-700">
+                        Max {selectedGygTour.maxGroupSize} people
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <StarSolidIcon className="w-5 h-5 text-yellow-400" />
+                      <span className="text-gray-700">
+                        {selectedGygTour.rating} ({selectedGygTour.reviewCount}{" "}
+                        reviews)
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h4 className="font-semibold text-gray-900 mb-2">
+                      What's Included
+                    </h4>
+                    <ul className="space-y-1">
+                      {selectedGygTour.included.map(
+                        (item: string, index: number) => (
+                          <li
+                            key={index}
+                            className="flex items-center gap-2 text-sm text-gray-600"
+                          >
+                            <CheckIcon className="w-4 h-4 text-green-600 flex-shrink-0" />
+                            {item}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+
+                  <div className="mb-6">
+                    <h4 className="font-semibold text-gray-900 mb-2">
+                      What's Not Included
+                    </h4>
+                    <ul className="space-y-1">
+                      {selectedGygTour.excluded.map(
+                        (item: string, index: number) => (
+                          <li
+                            key={index}
+                            className="flex items-center gap-2 text-sm text-gray-600"
+                          >
+                            <XMarkIcon className="w-4 h-4 text-red-600 flex-shrink-0" />
+                            {item}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Booking Form */}
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <div className="mb-6">
+                    <div className="text-3xl font-bold text-gray-900 mb-2">
+                      {selectedGygTour.price.currency}{" "}
+                      {selectedGygTour.price.amount}
+                    </div>
+                    <div className="text-sm text-gray-600">per person</div>
+                    {selectedGygTour.price.originalPrice && (
+                      <div className="text-sm text-red-600 line-through mt-1">
+                        Was {selectedGygTour.price.currency}{" "}
+                        {selectedGygTour.price.originalPrice}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-4 mb-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Select Date
+                      </label>
+                      <input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        min={new Date().toISOString().split("T")[0]}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Number of Travelers
+                      </label>
+                      <select
+                        value={guests}
+                        onChange={(e) => setGuests(parseInt(e.target.value))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      >
+                        {[...Array(selectedGygTour.maxGroupSize)].map(
+                          (_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                              {i + 1} {i + 1 === 1 ? "traveler" : "travelers"}
+                            </option>
+                          )
+                        )}
+                      </select>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={async () => {
+                      if (!selectedDate) {
+                        alert("Please select a date");
+                        return;
+                      }
+
+                      setIsBooking(true);
+                      try {
+                        const result = await createBooking(tourId, {
+                          headcount: guests,
+                          selectedDate,
+                          specialRequests: "",
+                          getYourGuideData: {
+                            gygTourId: selectedGygTour.id,
+                            gygPrice: selectedGygTour.price.amount,
+                            gygCurrency: selectedGygTour.price.currency,
+                          },
+                        });
+
+                        if (result.success) {
+                          setShowGygModal(false);
+                          router.push(
+                            `/bookings/confirmation?bookingId=${
+                              result.booking?.id || "gyg-" + selectedGygTour.id
+                            }`
+                          );
+                        } else {
+                          alert(result.error || "Booking failed");
+                        }
+                      } catch (error) {
+                        alert("An error occurred while booking");
+                      } finally {
+                        setIsBooking(false);
+                      }
+                    }}
+                    disabled={isBooking || !selectedDate}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isBooking ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        Book with GetYourGuide
+                        <ArrowRightIcon className="w-5 h-5 inline ml-2" />
+                      </>
+                    )}
+                  </button>
+
+                  <div className="mt-4 text-center text-sm text-gray-600">
+                    <ShieldCheckIcon className="w-4 h-4 text-green-600 inline mr-1" />
+                    Free cancellation • Instant confirmation • Secure booking
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -50,26 +50,12 @@
   --radius-lg: 1.25rem;
   --radius-xl: 1.5rem;
   --radius-2xl: 2rem;
-  --radius-full: 9999px;
-  
-  /* Enhanced Spacing */
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space: 1rem;
-  --space-md: 1.5rem;
-  --space-lg: 2rem;
-  --space-xl: 3rem;
-  --space-2xl: 4rem;
+  --radius-3xl: 3rem;
 }
 
-[data-theme="dark"] {
-  --background: #0f172a;
-  --foreground: #f1f5f9;
-  --surface: #1e293b;
-  --surface-elevated: #334155;
-  --border: #475569;
-  --border-hover: #64748b;
-  --muted: #94a3b8;
+/* Theme Transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 * {

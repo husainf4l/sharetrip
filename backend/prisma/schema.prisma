@@ -65,6 +65,7 @@ model Tour {
     description      String?
     startTimes       DateTime[]
     basePrice        Int // Price in cents
+    currency         String       @default("USD")
     minGroup         Int
     maxGroup         Int
     durationMins     Int

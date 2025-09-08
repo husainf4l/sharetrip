@@ -130,7 +130,7 @@ export default function BookingConfirmationPage() {
             Booking Confirmed!
           </h1>
           <p className="text-lg text-gray-600">
-            Your reservation has been successfully confirmed. We've sent a
+            Your reservation has been successfully confirmed. We&apos;ve sent a
             confirmation email with all the details.
           </p>
         </div>
@@ -268,7 +268,7 @@ export default function BookingConfirmationPage() {
         {/* Next Steps */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            What's Next?
+            What&apos;s Next?
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center p-4 border border-gray-200 rounded-lg">
@@ -279,7 +279,7 @@ export default function BookingConfirmationPage() {
                 Check Your Email
               </h4>
               <p className="text-sm text-gray-600">
-                We've sent a detailed confirmation with all booking information.
+                We&apos;ve sent a detailed confirmation with all booking information.
               </p>
             </div>
 

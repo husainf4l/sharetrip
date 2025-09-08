@@ -22,7 +22,7 @@ export async function POST(
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
     // Forward the request to the backend
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3003';
     const response = await fetch(`${backendUrl}/tours/book/${tourId}`, {
       method: 'POST',
       headers: {
