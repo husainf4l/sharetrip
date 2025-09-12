@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Al-hu/sharetripx/frontend/src/services/**)",
+      "Read(//c/Users/Al-hu/sharetripx/frontend/src/app/dashboard/host/tours/create/**)",
+      "Bash(npm run build:*)",
+      "Bash(npm run start:dev:*)",
+      "Bash(curl:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

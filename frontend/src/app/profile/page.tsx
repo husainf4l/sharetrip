@@ -80,7 +80,8 @@ export default function ProfilePage() {
     id: "1",
     companyName: "Adventure Tours Co.",
     businessType: "Tour & Travel Agency",
-    description: "We specialize in providing authentic local experiences and unforgettable adventures across Europe. Our team of local experts ensures every tour is unique and memorable.",
+    description:
+      "We specialize in providing authentic local experiences and unforgettable adventures across Europe. Our team of local experts ensures every tour is unique and memorable.",
     website: "https://adventuretours.com",
     phone: "+1 (555) 123-4567",
     address: {
@@ -182,10 +183,7 @@ export default function ProfilePage() {
                     <CheckIcon className="w-4 h-4 mr-2" />
                     Save Changes
                   </button>
-                  <button
-                    onClick={handleCancel}
-                    className="btn btn-outline"
-                  >
+                  <button onClick={handleCancel} className="btn btn-outline">
                     <XMarkIcon className="w-4 h-4 mr-2" />
                     Cancel
                   </button>
@@ -210,7 +208,11 @@ export default function ProfilePage() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <nav className="space-y-2">
               {[
-                { id: "general", label: "General Info", icon: BuildingOfficeIcon },
+                {
+                  id: "general",
+                  label: "General Info",
+                  icon: BuildingOfficeIcon,
+                },
                 { id: "contact", label: "Contact Details", icon: PhoneIcon },
                 { id: "hours", label: "Business Hours", icon: CogIcon },
                 { id: "social", label: "Social Media", icon: GlobeAltIcon },
@@ -246,7 +248,7 @@ export default function ProfilePage() {
               <h2 className="text-xl font-semibold text-gray-900 mb-6">
                 General Information
               </h2>
-              
+
               <div className="space-y-6">
                 {/* Company Logo */}
                 <div className="flex items-center gap-6">
@@ -397,7 +399,7 @@ export default function ProfilePage() {
                   <h3 className="text-lg font-medium text-gray-900">
                     Business Address
                   </h3>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Street Address *
@@ -463,7 +465,10 @@ export default function ProfilePage() {
                         onChange={(e) =>
                           setProfile((prev) => ({
                             ...prev,
-                            address: { ...prev.address, zipCode: e.target.value },
+                            address: {
+                              ...prev.address,
+                              zipCode: e.target.value,
+                            },
                           }))
                         }
                         disabled={!editing}
@@ -480,7 +485,10 @@ export default function ProfilePage() {
                         onChange={(e) =>
                           setProfile((prev) => ({
                             ...prev,
-                            address: { ...prev.address, country: e.target.value },
+                            address: {
+                              ...prev.address,
+                              country: e.target.value,
+                            },
                           }))
                         }
                         disabled={!editing}
@@ -512,13 +520,16 @@ export default function ProfilePage() {
 
               <div className="space-y-4">
                 {Object.entries(profile.businessHours).map(([day, hours]) => (
-                  <div key={day} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg">
+                  <div
+                    key={day}
+                    className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg"
+                  >
                     <div className="w-24">
                       <span className="font-medium text-gray-900 capitalize">
                         {day}
                       </span>
                     </div>
-                    
+
                     <label className="flex items-center">
                       <input
                         type="checkbox"
@@ -598,7 +609,10 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setProfile((prev) => ({
                           ...prev,
-                          socialMedia: { ...prev.socialMedia, instagram: e.target.value },
+                          socialMedia: {
+                            ...prev.socialMedia,
+                            instagram: e.target.value,
+                          },
                         }))
                       }
                       disabled={!editing}
@@ -617,7 +631,10 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setProfile((prev) => ({
                           ...prev,
-                          socialMedia: { ...prev.socialMedia, facebook: e.target.value },
+                          socialMedia: {
+                            ...prev.socialMedia,
+                            facebook: e.target.value,
+                          },
                         }))
                       }
                       disabled={!editing}
@@ -636,7 +653,10 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setProfile((prev) => ({
                           ...prev,
-                          socialMedia: { ...prev.socialMedia, twitter: e.target.value },
+                          socialMedia: {
+                            ...prev.socialMedia,
+                            twitter: e.target.value,
+                          },
                         }))
                       }
                       disabled={!editing}
@@ -655,7 +675,10 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setProfile((prev) => ({
                           ...prev,
-                          socialMedia: { ...prev.socialMedia, linkedin: e.target.value },
+                          socialMedia: {
+                            ...prev.socialMedia,
+                            linkedin: e.target.value,
+                          },
                         }))
                       }
                       disabled={!editing}
@@ -684,7 +707,8 @@ export default function ProfilePage() {
                         Document Verification
                       </h3>
                       <p className="text-sm text-blue-700 mt-1">
-                        Upload your business documents to increase trust with customers and comply with local regulations.
+                        Upload your business documents to increase trust with
+                        customers and comply with local regulations.
                       </p>
                     </div>
                   </div>
@@ -731,7 +755,10 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setProfile((prev) => ({
                           ...prev,
-                          businessDocuments: { ...prev.businessDocuments, taxId: e.target.value },
+                          businessDocuments: {
+                            ...prev.businessDocuments,
+                            taxId: e.target.value,
+                          },
                         }))
                       }
                       disabled={!editing}
@@ -760,7 +787,9 @@ export default function ProfilePage() {
                         Secure Payment Processing
                       </h3>
                       <p className="text-sm text-yellow-700 mt-1">
-                        All payment information is encrypted and securely stored. We use industry-standard security measures to protect your financial data.
+                        All payment information is encrypted and securely
+                        stored. We use industry-standard security measures to
+                        protect your financial data.
                       </p>
                     </div>
                   </div>
@@ -820,7 +849,9 @@ export default function ProfilePage() {
                   <div className="space-y-4">
                     <label className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                       <div>
-                        <div className="font-medium text-gray-900">Email Notifications</div>
+                        <div className="font-medium text-gray-900">
+                          Email Notifications
+                        </div>
                         <div className="text-sm text-gray-600">
                           Receive booking confirmations and updates via email
                         </div>
@@ -831,7 +862,10 @@ export default function ProfilePage() {
                         onChange={(e) =>
                           setProfile((prev) => ({
                             ...prev,
-                            settings: { ...prev.settings, emailNotifications: e.target.checked },
+                            settings: {
+                              ...prev.settings,
+                              emailNotifications: e.target.checked,
+                            },
                           }))
                         }
                         disabled={!editing}
@@ -841,7 +875,9 @@ export default function ProfilePage() {
 
                     <label className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                       <div>
-                        <div className="font-medium text-gray-900">SMS Notifications</div>
+                        <div className="font-medium text-gray-900">
+                          SMS Notifications
+                        </div>
                         <div className="text-sm text-gray-600">
                           Receive urgent booking updates via SMS
                         </div>
@@ -852,7 +888,10 @@ export default function ProfilePage() {
                         onChange={(e) =>
                           setProfile((prev) => ({
                             ...prev,
-                            settings: { ...prev.settings, smsNotifications: e.target.checked },
+                            settings: {
+                              ...prev.settings,
+                              smsNotifications: e.target.checked,
+                            },
                           }))
                         }
                         disabled={!editing}
@@ -870,9 +909,12 @@ export default function ProfilePage() {
                   <div className="space-y-4">
                     <label className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                       <div>
-                        <div className="font-medium text-gray-900">Public Profile</div>
+                        <div className="font-medium text-gray-900">
+                          Public Profile
+                        </div>
                         <div className="text-sm text-gray-600">
-                          Make your company profile visible to potential customers
+                          Make your company profile visible to potential
+                          customers
                         </div>
                       </div>
                       <input
@@ -881,7 +923,10 @@ export default function ProfilePage() {
                         onChange={(e) =>
                           setProfile((prev) => ({
                             ...prev,
-                            settings: { ...prev.settings, publicProfile: e.target.checked },
+                            settings: {
+                              ...prev.settings,
+                              publicProfile: e.target.checked,
+                            },
                           }))
                         }
                         disabled={!editing}
@@ -891,7 +936,9 @@ export default function ProfilePage() {
 
                     <label className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                       <div>
-                        <div className="font-medium text-gray-900">Instant Booking</div>
+                        <div className="font-medium text-gray-900">
+                          Instant Booking
+                        </div>
                         <div className="text-sm text-gray-600">
                           Allow customers to book tours without approval
                         </div>
@@ -902,7 +949,10 @@ export default function ProfilePage() {
                         onChange={(e) =>
                           setProfile((prev) => ({
                             ...prev,
-                            settings: { ...prev.settings, instantBooking: e.target.checked },
+                            settings: {
+                              ...prev.settings,
+                              instantBooking: e.target.checked,
+                            },
                           }))
                         }
                         disabled={!editing}
@@ -920,9 +970,12 @@ export default function ProfilePage() {
                   <div className="border border-red-200 rounded-lg p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium text-red-900">Delete Account</div>
+                        <div className="font-medium text-red-900">
+                          Delete Account
+                        </div>
                         <div className="text-sm text-red-600">
-                          Permanently delete your account and all associated data
+                          Permanently delete your account and all associated
+                          data
                         </div>
                       </div>
                       <button className="btn btn-outline text-red-600 border-red-300 hover:bg-red-50">

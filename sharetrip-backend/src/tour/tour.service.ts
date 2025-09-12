@@ -1,13 +1,17 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { S3Service } from '../common/s3';
 import { CreateTourDto, UpdateTourDto, TourQueryDto } from './dto';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class TourService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private s3Service: S3Service,
+  ) {}
 
-  async create(createTourDto: CreateTourDto, userId: string) {
+  async create(createTourDto: CreateTourDto, userId: string, photos?: Express.Multer.File[]) {
     try {
       // Find the user's guide profile
       const user = await this.prisma.user.findUnique({
@@ -56,6 +60,56 @@ export class TourService {
           },
         },
       });
+
+      // Handle photo uploads if provided
+      if (photos && photos.length > 0) {
+        try {
+          // Upload photos to S3
+          const fileUrls = await this.s3Service.uploadMultipleFiles(photos, `tours/${tour.id}`);
+
+          // Save media records to database
+          const mediaRecords = fileUrls.map((url, index) => ({
+            tourId: tour.id,
+            url,
+            type: photos[index].mimetype.startsWith('image/') ? 'image' : 'video',
+          }));
+
+          await this.prisma.tourMedia.createMany({
+            data: mediaRecords,
+          });
+
+          // Refresh tour data to include the newly uploaded media
+          const updatedTour = await this.prisma.tour.findUnique({
+            where: { id: tour.id },
+            include: {
+              guide: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      name: true,
+                      email: true,
+                      image: true,
+                    },
+                  },
+                },
+              },
+              media: true,
+              _count: {
+                select: {
+                  bookings: true,
+                },
+              },
+            },
+          });
+
+          return updatedTour;
+        } catch (uploadError) {
+          console.error('Failed to upload photos for tour:', uploadError);
+          // Return tour without photos rather than failing completely
+          return tour;
+        }
+      }
 
       return tour;
     } catch (error) {
@@ -485,6 +539,95 @@ export class TourService {
       totalParticipants,
       averageBookingValue: totalBookings > 0 ? Math.round(totalRevenue / totalBookings) : 0,
       conversionRate: totalBookings > 0 ? Math.round((confirmedBookings / totalBookings) * 100) : 0,
+    };
+  }
+
+  async uploadTourMedia(tourId: string, files: Express.Multer.File[], userId: string) {
+    // Verify tour exists and user owns it
+    const tour = await this.prisma.tour.findUnique({
+      where: { id: tourId },
+      include: {
+        guide: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+
+    if (!tour) {
+      throw new NotFoundException('Tour not found');
+    }
+
+    if (tour.guide.user.id !== userId) {
+      throw new ForbiddenException('You can only upload media to your own tours');
+    }
+
+    // Upload files to S3
+    const fileUrls = await this.s3Service.uploadMultipleFiles(files, `tours/${tourId}`);
+
+    // Save media records to database
+    const mediaRecords = fileUrls.map((url, index) => ({
+      tourId,
+      url,
+      type: files[index].mimetype.startsWith('image/') ? 'image' : 'video',
+    }));
+
+    const createdMedia = await this.prisma.tourMedia.createMany({
+      data: mediaRecords,
+    });
+
+    return {
+      message: 'Media uploaded successfully',
+      uploadedCount: createdMedia.count,
+      media: mediaRecords,
+    };
+  }
+
+  async deleteTourMedia(tourId: string, mediaId: string, userId: string) {
+    // Verify tour exists and user owns it
+    const tour = await this.prisma.tour.findUnique({
+      where: { id: tourId },
+      include: {
+        guide: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+
+    if (!tour) {
+      throw new NotFoundException('Tour not found');
+    }
+
+    if (tour.guide.user.id !== userId) {
+      throw new ForbiddenException('You can only delete media from your own tours');
+    }
+
+    // Find the media record
+    const media = await this.prisma.tourMedia.findUnique({
+      where: { id: mediaId },
+    });
+
+    if (!media) {
+      throw new NotFoundException('Media not found');
+    }
+
+    if (media.tourId !== tourId) {
+      throw new BadRequestException('Media does not belong to this tour');
+    }
+
+    // Delete from S3
+    await this.s3Service.deleteFile(media.url);
+
+    // Delete from database
+    await this.prisma.tourMedia.delete({
+      where: { id: mediaId },
+    });
+
+    return {
+      message: 'Media deleted successfully',
     };
   }
 }

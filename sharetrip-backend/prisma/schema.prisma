@@ -88,6 +88,15 @@ model Tour {
   tags           String[] @default([])
   searchKeywords String[] @default([])
 
+  // Additional tour details
+  whatsIncluded  String[] @default([])
+  whatsExcluded  String[] @default([])
+  requirements   String[] @default([])
+  highlights     String[] @default([])
+  itinerary      String?
+  difficulty     String?
+  ageRestriction Int?
+
   media     TourMedia[]
   bookings  Booking[]
   groupFill GroupFill?

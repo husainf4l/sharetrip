@@ -11,7 +11,13 @@ import {
   Request,
   HttpCode,
   HttpStatus,
+  UseInterceptors,
+  UploadedFiles,
+  BadRequestException,
 } from '@nestjs/common';
+import { validate } from 'class-validator';
+import { plainToClass } from 'class-transformer';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { TourService } from './tour.service';
 import { CreateTourDto, UpdateTourDto, TourQueryDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -22,10 +28,55 @@ export class TourController {
 
   @Post('create')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FilesInterceptor('photos', 10))
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createTourDto: CreateTourDto, @Request() req) {
+  async create(
+    @Body() body: any, 
+    @UploadedFiles() photos: Express.Multer.File[],
+    @Request() req
+  ) {
+    // Filter out file-related fields from body to get clean DTO data
+    const { photos: _, coverPhoto: __, ...cleanBody } = body;
+    
+    // Parse string arrays that were sent as JSON
+    const tourData = {
+      ...cleanBody,
+      startTimes: JSON.parse(cleanBody.startTimes || '[]'),
+      languages: JSON.parse(cleanBody.languages || '[]'),
+      travelStyles: JSON.parse(cleanBody.travelStyles || '[]'),
+      accessibility: JSON.parse(cleanBody.accessibility || '[]'),
+      tags: JSON.parse(cleanBody.tags || '[]'),
+      searchKeywords: JSON.parse(cleanBody.searchKeywords || '[]'),
+      whatsIncluded: JSON.parse(cleanBody.whatsIncluded || '[]'),
+      whatsExcluded: JSON.parse(cleanBody.whatsExcluded || '[]'),
+      requirements: JSON.parse(cleanBody.requirements || '[]'),
+      highlights: JSON.parse(cleanBody.highlights || '[]'),
+      // Convert string numbers to numbers
+      basePrice: parseInt(cleanBody.basePrice),
+      minGroup: parseInt(cleanBody.minGroup),
+      maxGroup: parseInt(cleanBody.maxGroup),
+      durationMins: parseInt(cleanBody.durationMins),
+      latitude: cleanBody.latitude ? parseFloat(cleanBody.latitude) : undefined,
+      longitude: cleanBody.longitude ? parseFloat(cleanBody.longitude) : undefined,
+      ageRestriction: cleanBody.ageRestriction ? parseInt(cleanBody.ageRestriction) : undefined,
+      // Convert string booleans to booleans
+      isPayWhatYouWant: cleanBody.isPayWhatYouWant === 'true',
+      instantBook: cleanBody.instantBook === 'true',
+    };
+
+    // Transform and validate the DTO
+    const createTourDto = plainToClass(CreateTourDto, tourData);
+    const errors = await validate(createTourDto);
+    
+    if (errors.length > 0) {
+      const errorMessages = errors.map(error => 
+        Object.values(error.constraints || {}).join(', ')
+      ).join('; ');
+      throw new BadRequestException(`Validation failed: ${errorMessages}`);
+    }
+
     const userId = req.user.id;
-    return this.tourService.create(createTourDto, userId);
+    return this.tourService.create(createTourDto, userId, photos);
   }
 
   @Get()
@@ -99,5 +150,45 @@ export class TourController {
   async getTourMedia(@Param('id') id: string) {
     const tour = await this.tourService.findOne(id);
     return tour.media;
+  }
+
+  @Post(':id/media')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FilesInterceptor('files', 10)) // Allow up to 10 files
+  @HttpCode(HttpStatus.CREATED)
+  async uploadTourMedia(
+    @Param('id') id: string,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Request() req,
+  ) {
+    if (!files || files.length === 0) {
+      throw new BadRequestException('No files uploaded');
+    }
+
+    // Validate file types
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'video/mp4'];
+    for (const file of files) {
+      if (!allowedTypes.includes(file.mimetype)) {
+        throw new BadRequestException(
+          `File type ${file.mimetype} not allowed. Allowed types: ${allowedTypes.join(', ')}`
+        );
+      }
+      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        throw new BadRequestException('File size too large. Maximum size: 10MB');
+      }
+    }
+
+    return this.tourService.uploadTourMedia(id, files, req.user.id);
+  }
+
+  @Delete(':id/media/:mediaId')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteTourMedia(
+    @Param('id') id: string,
+    @Param('mediaId') mediaId: string,
+    @Request() req,
+  ) {
+    return this.tourService.deleteTourMedia(id, mediaId, req.user.id);
   }
 }

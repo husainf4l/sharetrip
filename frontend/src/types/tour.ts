@@ -2,6 +2,11 @@ export enum TourCategory {
   SHARE_TRIP = 'SHARE_TRIP',
   PRIVATE = 'PRIVATE',
   GROUP = 'GROUP',
+  TOURS_SIGHTSEEING = 'TOURS_SIGHTSEEING',
+  CULTURE_EXPERIENCES = 'CULTURE_EXPERIENCES',
+  ADVENTURE_OUTDOORS = 'ADVENTURE_OUTDOORS',
+  FOOD_TOURS = 'FOOD_TOURS',
+  WALKING_TOURS = 'WALKING_TOURS',
 }
 
 export enum CancellationPolicy {
@@ -42,6 +47,19 @@ export interface CreateTourDto {
   // SEO and searchability
   tags?: string[];
   searchKeywords?: string[];
+
+  // Media uploads
+  photos?: File[];
+  coverPhoto?: File;
+
+  // Additional details
+  itinerary?: string;
+  whatsIncluded?: string[];
+  whatsExcluded?: string[];
+  requirements?: string[];
+  highlights?: string[];
+  difficulty?: 'easy' | 'moderate' | 'challenging';
+  ageRestriction?: string;
 }
 
 export interface Guide {
@@ -115,6 +133,15 @@ export interface Tour {
   _count: {
     bookings: number;
   };
+
+  // Additional details
+  itinerary?: string;
+  whatsIncluded?: string[];
+  whatsExcluded?: string[];
+  requirements?: string[];
+  highlights?: string[];
+  difficulty?: string;
+  ageRestriction?: string;
 }
 
 export interface TourQueryDto {

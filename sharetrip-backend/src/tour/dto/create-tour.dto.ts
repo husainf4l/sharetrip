@@ -4,6 +4,11 @@ export enum TourCategory {
   SHARE_TRIP = 'SHARE_TRIP',
   PRIVATE = 'PRIVATE',
   GROUP = 'GROUP',
+  TOURS_SIGHTSEEING = 'TOURS_SIGHTSEEING',
+  CULTURE_EXPERIENCES = 'CULTURE_EXPERIENCES',
+  ADVENTURE_OUTDOORS = 'ADVENTURE_OUTDOORS',
+  FOOD_TOURS = 'FOOD_TOURS',
+  WALKING_TOURS = 'WALKING_TOURS',
 }
 
 export enum CancellationPolicy {
@@ -116,4 +121,38 @@ export class CreateTourDto {
   @IsArray()
   @IsString({ each: true })
   searchKeywords?: string[] = [];
+
+  // Additional tour details
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  whatsIncluded?: string[] = [];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  whatsExcluded?: string[] = [];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  requirements?: string[] = [];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  highlights?: string[] = [];
+
+  @IsOptional()
+  @IsString()
+  itinerary?: string;
+
+  @IsOptional()
+  @IsString()
+  difficulty?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  ageRestriction?: number;
 }

@@ -11,6 +11,21 @@ import {
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import { createBooking } from "../services/booking";
+import { Tour as TourType } from "../types/tour";
+
+const getCategoryDisplayName = (category: string): string => {
+  const categoryMap: Record<string, string> = {
+    SHARE_TRIP: "Shared Experience",
+    PRIVATE: "Private Tour",
+    GROUP: "Group Tour",
+    TOURS_SIGHTSEEING: "Tours & Sightseeing",
+    CULTURE_EXPERIENCES: "Culture Experiences",
+    ADVENTURE_OUTDOORS: "Adventure & Outdoors",
+    FOOD_TOURS: "Food Tours",
+    WALKING_TOURS: "Walking Tours",
+  };
+  return categoryMap[category] || category;
+};
 
 interface Tour {
   id: string;
@@ -33,18 +48,36 @@ interface Tour {
   accessibility?: boolean;
 }
 
-export default function TourCard({ tour }: { tour: Tour }) {
+export default function TourCard({ tour }: { tour: Tour | TourType }) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isBooking, setIsBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
 
-  const rating = tour.rating || 4.5;
-  const reviews = tour.reviews || 100;
+  // Handle different property names for rating and price
+  const rating = (tour as Tour).rating || (tour as TourType).hostRating || 4.5;
+  const reviews = (tour as Tour).reviews || 100;
+  const price = (tour as Tour).priceCents || (tour as TourType).basePrice || 0;
   const image =
-    tour.image ||
+    (tour as Tour).image ||
+    (tour as TourType).media?.[0]?.url ||
     `https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop&q=80`;
+  const badge = (tour as Tour).badge;
+  const duration =
+    (tour as Tour).duration ||
+    `${Math.floor(((tour as TourType).durationMins || 120) / 60)}h ${
+      ((tour as TourType).durationMins || 120) % 60
+    }m`;
+  const groupSize =
+    (tour as Tour).groupSize ||
+    `${(tour as TourType).minGroup}-${(tour as TourType).maxGroup}`;
+  const isInstantConfirmation =
+    (tour as Tour).isInstantConfirmation || (tour as TourType).instantBook;
+  const isFreeCancellation =
+    (tour as Tour).isFreeCancellation ||
+    (tour as TourType).cancellationPolicy === "flexible";
+  const isSkipTheLine = (tour as Tour).isSkipTheLine;
 
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -72,7 +105,7 @@ export default function TourCard({ tour }: { tour: Tour }) {
       } else {
         setBookingError(result.error || "Failed to book tour");
       }
-    } catch (error) {
+    } catch {
       setBookingError("An unexpected error occurred");
     } finally {
       setIsBooking(false);
@@ -100,16 +133,16 @@ export default function TourCard({ tour }: { tour: Tour }) {
           )}
 
           {/* Compact Badge */}
-          {tour.badge && (
+          {badge && (
             <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">
-              {tour.badge}
+              {badge}
             </div>
           )}
 
           {/* Compact Category Badge */}
           {tour.category && (
             <div className="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded text-xs font-medium text-gray-700">
-              {tour.category}
+              {getCategoryDisplayName(tour.category)}
             </div>
           )}
 
@@ -138,18 +171,16 @@ export default function TourCard({ tour }: { tour: Tour }) {
           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
             <div className="text-white text-center">
               <div className="flex items-center justify-center gap-4 mb-2">
-                {tour.duration && (
+                {duration && (
                   <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
                     <ClockIcon className="w-4 h-4" />
-                    <span className="text-sm font-medium">{tour.duration}</span>
+                    <span className="text-sm font-medium">{duration}</span>
                   </div>
                 )}
-                {tour.groupSize && (
+                {groupSize && (
                   <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
                     <UsersIcon className="w-4 h-4" />
-                    <span className="text-sm font-medium">
-                      {tour.groupSize}
-                    </span>
+                    <span className="text-sm font-medium">{groupSize}</span>
                   </div>
                 )}
               </div>
@@ -187,32 +218,32 @@ export default function TourCard({ tour }: { tour: Tour }) {
             <div className="flex flex-wrap gap-2 mb-3">
               {tour.category && (
                 <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
-                  {tour.category}
+                  {getCategoryDisplayName(tour.category)}
                 </span>
               )}
-              {tour.isInstantConfirmation && (
+              {isInstantConfirmation && (
                 <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">
                   ⚡ Instant
                 </span>
               )}
-              {tour.isFreeCancellation && (
+              {isFreeCancellation && (
                 <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
                   🎟️ Free cancel
                 </span>
               )}
-              {tour.isSkipTheLine && (
+              {isSkipTheLine && (
                 <span className="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">
                   ⏰ Skip line
                 </span>
               )}
             </div>
-            
+
             {/* Additional Info Grid */}
             <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-              {tour.duration && (
+              {duration && (
                 <div className="flex items-center gap-1">
                   <ClockIcon className="w-4 h-4 text-gray-400" />
-                  <span>{tour.duration}</span>
+                  <span>{duration}</span>
                 </div>
               )}
               {tour.language && (
@@ -221,10 +252,10 @@ export default function TourCard({ tour }: { tour: Tour }) {
                   <span>{tour.language}</span>
                 </div>
               )}
-              {tour.groupSize && (
+              {groupSize && (
                 <div className="flex items-center gap-1">
                   <UserGroupIcon className="w-4 h-4 text-gray-400" />
-                  <span>Max {tour.groupSize}</span>
+                  <span>Max {groupSize}</span>
                 </div>
               )}
               {tour.accessibility && (
@@ -242,7 +273,7 @@ export default function TourCard({ tour }: { tour: Tour }) {
               <div className="flex items-baseline gap-1">
                 <span className="text-sm text-gray-500">From</span>
                 <span className="text-2xl font-bold text-gray-900">
-                  ${(tour.priceCents / 100).toFixed(0)}
+                  ${(price / 100).toFixed(0)}
                 </span>
               </div>
               <div className="text-sm text-gray-500">per person</div>
