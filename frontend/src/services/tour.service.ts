@@ -404,6 +404,76 @@ class TourService {
       throw error;
     }
   }
+
+  async getMyTours(): Promise<{data: Tour[], meta: any}> {
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+
+      const response = await fetch(`${this.baseUrl}/tours/my-tours`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        let errorData: any = null;
+        
+        try {
+          errorData = await response.json();
+        } catch (parseError) {
+          console.log('Failed to parse error response as JSON:', parseError);
+          try {
+            const rawResponse = await response.text();
+            throw new Error(`HTTP ${response.status}: ${response.statusText} - ${rawResponse}`);
+          } catch (textError) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+        }
+        
+        const apiError = createApiError(response, errorData.error || errorData.message);
+        throw new Error(handleApiError(apiError));
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Get my tours error:', error);
+      throw error;
+    }
+  }
+
+  async checkAvailability(tourId: string, headcount: number) {
+    try {
+      const response = await fetch(`${this.baseUrl}/bookings/availability/${tourId}?headcount=${headcount}`);
+      
+      if (!response.ok) {
+        let errorData: any = null;
+        
+        try {
+          errorData = await response.json();
+        } catch (parseError) {
+          console.log('Failed to parse error response as JSON:', parseError);
+          try {
+            const rawResponse = await response.text();
+            throw new Error(`HTTP ${response.status}: ${response.statusText} - ${rawResponse}`);
+          } catch (textError) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+        }
+        
+        const apiError = createApiError(response, errorData.error || errorData.message);
+        throw new Error(handleApiError(apiError));
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Check availability error:', error);
+      throw error;
+    }
+  }
 }
 
 export const tourService = new TourService();

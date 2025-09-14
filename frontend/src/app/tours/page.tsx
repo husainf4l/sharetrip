@@ -20,14 +20,18 @@ function convertTourForCard(tour: Tour) {
     description: tour.description,
     rating: tour.guide.ratingAvg || 4.5,
     reviews: tour.guide.toursCount || 0,
-    image: tour.media[0]?.url || `https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop&q=80`,
-    badge: tour.status === 'active' ? null : tour.status,
-    duration: `${Math.floor(tour.durationMins / 60)}h ${tour.durationMins % 60}m`,
+    image:
+      tour.media[0]?.url ||
+      `https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop&q=80`,
+    badge: tour.status === "active" ? null : tour.status,
+    duration: `${Math.floor(tour.durationMins / 60)}h ${
+      tour.durationMins % 60
+    }m`,
     groupSize: `${tour.minGroup}-${tour.maxGroup} people`,
     language: tour.language,
     category: tour.category,
     isInstantConfirmation: tour.instantBook,
-    isFreeCancellation: tour.cancellationPolicy === 'flexible',
+    isFreeCancellation: tour.cancellationPolicy === "flexible",
     isSkipTheLine: false,
     accessibility: tour.accessibility?.length > 0,
   };
@@ -53,12 +57,12 @@ export default function ToursPage() {
         page: currentPage,
         limit: itemsPerPage,
         search: searchQuery || undefined,
-        sortBy: sortBy === 'recommended' ? undefined : sortBy,
-        sortOrder: 'desc'
+        sortBy: sortBy === "recommended" ? undefined : sortBy,
+        sortOrder: "desc",
       };
 
       const response: ToursResponse = await tourService.getAllTours(query);
-      
+
       setTours(response.data);
       setTotalResults(response.meta.total);
       setTotalPages(response.meta.totalPages);
@@ -121,12 +125,20 @@ export default function ToursPage() {
               Discover Amazing Tours
             </h1>
             <p className="text-gray-600">
-              {totalResults} tours found
+              {totalResults} tours found • Book instantly with availability
+              check
             </p>
           </div>
 
           {/* Search and Controls */}
           <div className="mt-4 lg:mt-0 flex flex-col sm:flex-row gap-4">
+            <a
+              href="/check-availability"
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-center"
+            >
+              Check Availability
+            </a>
+
             <div className="relative">
               <input
                 type="text"
@@ -136,7 +148,7 @@ export default function ToursPage() {
                 className="w-full sm:w-80 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            
+
             <div className="flex gap-2">
               <button
                 onClick={() => setShowFilters(!showFilters)}
@@ -145,9 +157,11 @@ export default function ToursPage() {
                 <AdjustmentsHorizontalIcon className="w-5 h-5" />
                 Filters
               </button>
-              
+
               <button
-                onClick={() => setViewMode(viewMode === "grid" ? "map" : "grid")}
+                onClick={() =>
+                  setViewMode(viewMode === "grid" ? "map" : "grid")
+                }
                 className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 {viewMode === "grid" ? (
@@ -175,8 +189,12 @@ export default function ToursPage() {
         {/* Tours Grid */}
         {tours.length === 0 ? (
           <div className="text-center py-12">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No tours found</h3>
-            <p className="text-gray-600">Try adjusting your search or filters.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No tours found
+            </h3>
+            <p className="text-gray-600">
+              Try adjusting your search or filters.
+            </p>
           </div>
         ) : (
           <>
@@ -184,7 +202,10 @@ export default function ToursPage() {
               {convertedTours.map((tour) => {
                 // Inline simple tour card since TourCard has complex dependencies
                 return (
-                  <div key={tour.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                  <div
+                    key={tour.id}
+                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                  >
                     <div className="relative h-48">
                       <img
                         src={tour.image}
@@ -197,18 +218,18 @@ export default function ToursPage() {
                         </span>
                       )}
                     </div>
-                    
+
                     <div className="p-4">
                       <div className="flex items-start justify-between mb-2">
                         <h3 className="font-semibold text-gray-900 line-clamp-2">
                           {tour.title}
                         </h3>
                       </div>
-                      
+
                       <p className="text-sm text-gray-600 mb-2">
                         {tour.city}, {tour.country}
                       </p>
-                      
+
                       <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
                         <span>⭐ {tour.rating}</span>
                         <span>•</span>
@@ -216,21 +237,31 @@ export default function ToursPage() {
                         <span>•</span>
                         <span>{tour.groupSize}</span>
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div>
                           <span className="text-lg font-bold text-gray-900">
                             ${(tour.priceCents / 100).toFixed(2)}
                           </span>
-                          <span className="text-sm text-gray-500 ml-1">per person</span>
+                          <span className="text-sm text-gray-500 ml-1">
+                            per person
+                          </span>
                         </div>
-                        
-                        <a
-                          href={`/tours/${tour.id}`}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                        >
-                          View Details
-                        </a>
+
+                        <div className="flex gap-2">
+                          <a
+                            href={`/tours/${tour.id}`}
+                            className="px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                          >
+                            View Details
+                          </a>
+                          <a
+                            href={`/check-availability?tourId=${tour.id}`}
+                            className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                          >
+                            Book Now
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -243,19 +274,23 @@ export default function ToursPage() {
               <div className="flex justify-center">
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                    onClick={() =>
+                      handlePageChange(Math.max(1, currentPage - 1))
+                    }
                     disabled={currentPage === 1}
                     className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                   >
                     Previous
                   </button>
-                  
+
                   <span className="px-4 py-2 text-gray-600">
                     Page {currentPage} of {totalPages}
                   </span>
-                  
+
                   <button
-                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                    onClick={() =>
+                      handlePageChange(Math.min(totalPages, currentPage + 1))
+                    }
                     disabled={currentPage === totalPages}
                     className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                   >

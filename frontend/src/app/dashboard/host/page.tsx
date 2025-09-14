@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../../contexts/AuthContext";
 import Link from "next/link";
 import Image from "next/image";
+import { tourService } from "../../../services/tour.service";
 import {
   CalendarIcon,
   ClockIcon,
@@ -94,102 +95,83 @@ export default function HostDashboard() {
   console.log("HostDashboard - Tours:", tours);
   console.log("HostDashboard - Stats:", stats);
 
-  // Mock data for demo
+  // Fetch real data from API
   useEffect(() => {
-    const mockTours: HostTour[] = [
-      {
-        id: "tour1",
-        title: "Authentic Portuguese Food Tour",
-        location: "Lisbon, Portugal",
-        price: 45,
-        duration: "3 hours",
-        maxParticipants: 12,
-        currentBookings: 8,
-        status: "active",
-        rating: 4.8,
-        totalReviews: 24,
-        image:
-          "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&h=250&fit=crop",
-        category: "Food & Drink",
-        createdAt: "2024-01-15",
-      },
-      {
-        id: "tour2",
-        title: "Skip-the-Line Colosseum Tour",
-        location: "Rome, Italy",
-        price: 35,
-        duration: "2.5 hours",
-        maxParticipants: 15,
-        currentBookings: 12,
-        status: "active",
-        rating: 4.9,
-        totalReviews: 45,
-        image:
-          "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=250&fit=crop",
-        category: "Historical",
-        createdAt: "2024-02-01",
-      },
-      {
-        id: "tour3",
-        title: "Barcelona Gaudi Architecture Tour",
-        location: "Barcelona, Spain",
-        price: 40,
-        duration: "4 hours",
-        maxParticipants: 10,
-        currentBookings: 3,
-        status: "draft",
-        rating: 0,
-        totalReviews: 0,
-        image:
-          "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400&h=250&fit=crop",
-        category: "Architecture",
-        createdAt: "2024-08-20",
-      },
-    ];
+    const fetchHostData = async () => {
+      try {
+        setLoading(true);
 
-    const mockBookings: HostBooking[] = [
-      {
-        id: "booking1",
-        tourId: "tour1",
-        tourTitle: "Authentic Portuguese Food Tour",
-        customerName: "John Smith",
-        customerEmail: "john@example.com",
-        participants: 2,
-        totalPrice: 90,
-        bookingDate: "2024-08-25",
-        tourDate: "2024-09-15",
-        status: "confirmed",
-        paymentStatus: "paid",
-      },
-      {
-        id: "booking2",
-        tourId: "tour2",
-        tourTitle: "Skip-the-Line Colosseum Tour",
-        customerName: "Sarah Johnson",
-        customerEmail: "sarah@example.com",
-        participants: 1,
-        totalPrice: 35,
-        bookingDate: "2024-08-28",
-        tourDate: "2024-09-20",
-        status: "pending",
-        paymentStatus: "pending",
-      },
-    ];
+        // Fetch user's tours
+        const response = await tourService.getMyTours();
 
-    const mockStats: DashboardStats = {
-      totalTours: 3,
-      activeTours: 2,
-      totalBookings: 45,
-      monthlyRevenue: 2850,
-      averageRating: 4.7,
-      pendingBookings: 3,
+        // Extract tours from the API response
+        const userTours = response.data;
+
+        // Transform API tours to match the HostTour interface
+        const transformedTours: HostTour[] = userTours.map((tour) => ({
+          id: tour.id,
+          title: tour.title,
+          location: `${tour.city}, ${tour.country}`,
+          price: tour.basePrice,
+          duration: `${Math.floor(tour.durationMins / 60)}h ${
+            tour.durationMins % 60
+          }m`,
+          maxParticipants: tour.maxGroup,
+          currentBookings: tour._count?.bookings || 0,
+          status: (tour.status === "approved" ? "active" : tour.status) as
+            | "active"
+            | "draft"
+            | "paused",
+          rating: tour.hostRating || 0,
+          totalReviews: 0, // This would need to be fetched from reviews
+          image:
+            tour.media?.[0]?.url ||
+            "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=250&fit=crop",
+          category: tour.category,
+          createdAt: tour.createdAt.split("T")[0],
+        }));
+
+        setTours(transformedTours);
+
+        // Calculate stats from real data
+        const stats: DashboardStats = {
+          totalTours: transformedTours.length,
+          activeTours: transformedTours.filter(
+            (tour) => tour.status === "active"
+          ).length,
+          totalBookings: 0, // This would need a separate API call
+          monthlyRevenue: 0, // This would need a separate API call
+          averageRating: 0, // This would need to be calculated from reviews
+          pendingBookings: 0, // This would need a separate API call
+        };
+
+        setStats(stats);
+
+        // Mock bookings for now - this should also be fetched from API
+        const mockBookings: HostBooking[] = [];
+        setBookings(mockBookings);
+      } catch (error) {
+        console.error("Error fetching host data:", error);
+        // If API fails, fall back to empty data instead of mock data
+        setTours([]);
+        setBookings([]);
+        setStats({
+          totalTours: 0,
+          activeTours: 0,
+          totalBookings: 0,
+          monthlyRevenue: 0,
+          averageRating: 0,
+          pendingBookings: 0,
+        });
+      } finally {
+        setLoading(false);
+      }
     };
 
-    setTours(mockTours);
-    setBookings(mockBookings);
-    setStats(mockStats);
-    setLoading(false);
-  }, []);
+    if (user) {
+      fetchHostData();
+    }
+  }, [user]);
 
   const filteredTours = tours.filter(
     (tour) =>
