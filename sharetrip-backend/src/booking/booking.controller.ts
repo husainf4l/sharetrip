@@ -15,6 +15,7 @@ import {
 import { BookingService } from './booking.service';
 import { CreateBookingDto, UpdateBookingDto, BookingQueryDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { BookingGuard } from './guards';
 
 @Controller('bookings')
 export class BookingController {
@@ -53,20 +54,24 @@ export class BookingController {
     return this.bookingService.findByTraveler(travelerId, query);
   }
 
-  @Get('tour/:tourId')
+  @Get('availability/:tourId')
   @HttpCode(HttpStatus.OK)
-  async findByTour(@Param('tourId') tourId: string, @Query() query: BookingQueryDto) {
-    return this.bookingService.findByTour(tourId, query);
+  async checkAvailability(
+    @Param('tourId') tourId: string,
+    @Query('headcount') headcount: number = 1,
+  ) {
+    return this.bookingService.checkTourAvailability(tourId, headcount);
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard, BookingGuard)
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string) {
     return this.bookingService.findOne(id);
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, BookingGuard)
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id') id: string,
@@ -78,7 +83,7 @@ export class BookingController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, BookingGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string, @Request() req) {
     const userId = req.user.id;
@@ -88,7 +93,7 @@ export class BookingController {
   // Additional endpoints for business operations
 
   @Post(':id/confirm')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, BookingGuard)
   @HttpCode(HttpStatus.OK)
   async confirmBooking(@Param('id') id: string, @Request() req) {
     const userId = req.user.id;
@@ -96,11 +101,19 @@ export class BookingController {
   }
 
   @Post(':id/cancel')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, BookingGuard)
   @HttpCode(HttpStatus.OK)
   async cancelBooking(@Param('id') id: string, @Request() req) {
     const userId = req.user.id;
     return this.bookingService.cancelBooking(id, userId);
+  }
+
+  @Post(':id/complete')
+  @UseGuards(JwtAuthGuard, BookingGuard)
+  @HttpCode(HttpStatus.OK)
+  async completeBooking(@Param('id') id: string, @Request() req) {
+    const userId = req.user.id;
+    return this.bookingService.completeBooking(id, userId);
   }
 
   @Get('stats/tour/:tourId')

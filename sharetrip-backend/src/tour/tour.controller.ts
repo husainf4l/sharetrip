@@ -97,6 +97,15 @@ export class TourController {
     return this.tourService.findByGuide(guideId, query);
   }
 
+  @Get('my-tours')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async findMyTours(@Query() query: TourQueryDto, @Request() req) {
+    const userId = req.user.id;
+    const userRole = req.user.role;
+    return this.tourService.findMyTours(userId, userRole, query);
+  }
+
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string) {

@@ -145,7 +145,7 @@ export class TourService {
       minHostRating,
       isDropIn,
       isEarlyBird,
-      status = 'published',
+      status,
       sortBy = 'createdAt',
       sortOrder = 'desc',
       startDate,
@@ -156,9 +156,14 @@ export class TourService {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: Prisma.TourWhereInput = {
-      status,
-    };
+    const where: Prisma.TourWhereInput = {};
+
+    // Status filter
+    if (status) {
+      where.status = status;
+    } else {
+      where.status = { in: ['published', 'approved'] };
+    }
 
     // Search functionality
     if (search) {
@@ -389,6 +394,112 @@ export class TourService {
         orderBy,
         include: {
           media: true,
+          _count: {
+            select: {
+              bookings: true,
+            },
+          },
+        },
+      }),
+      this.prisma.tour.count({ where }),
+    ]);
+
+    return {
+      data: tours,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async findMyTours(userId: string, userRole: string, query: TourQueryDto) {
+    const {
+      page = 1,
+      limit = 10,
+      status,
+      sortBy = 'createdAt',
+      sortOrder = 'desc',
+    } = query;
+
+    const skip = (page - 1) * limit;
+
+    let where: Prisma.TourWhereInput = {};
+
+    // If user is a HOST, return tours they created
+    if (userRole === 'HOST') {
+      // Get the user's guide profile
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { guideProfile: true },
+      });
+
+      if (user?.guideProfile) {
+        where.guideId = user.guideProfile.id;
+      } else {
+        // User doesn't have a guide profile, return empty result
+        return {
+          data: [],
+          meta: {
+            page,
+            limit,
+            total: 0,
+            totalPages: 0,
+          },
+        };
+      }
+    } else {
+      // For TRAVELER or EXPLORER, return tours they booked
+      where.bookings = {
+        some: {
+          travelerId: userId,
+          status: {
+            in: ['confirmed', 'completed'], // Only show confirmed/completed bookings
+          },
+        },
+      };
+    }
+
+    if (status) {
+      where.status = status;
+    }
+
+    const orderBy: Prisma.TourOrderByWithRelationInput = {};
+    orderBy[sortBy] = sortOrder;
+
+    const [tours, total] = await Promise.all([
+      this.prisma.tour.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy,
+        include: {
+          guide: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  image: true,
+                },
+              },
+            },
+          },
+          media: true,
+          bookings: userRole !== 'HOST' ? {
+            where: {
+              travelerId: userId,
+            },
+            select: {
+              id: true,
+              status: true,
+              headcount: true,
+              createdAt: true,
+            },
+          } : false,
           _count: {
             select: {
               bookings: true,

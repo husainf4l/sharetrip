@@ -50,6 +50,30 @@ export class BookingService {
         );
       }
 
+      // Check availability - count confirmed bookings for this tour
+      const confirmedBookings = await this.prisma.booking.findMany({
+        where: {
+          tourId: createBookingDto.tourId,
+          status: 'confirmed',
+        },
+        select: {
+          headcount: true,
+        },
+      });
+
+      const totalConfirmedHeadcount = confirmedBookings.reduce(
+        (sum, booking) => sum + booking.headcount,
+        0
+      );
+
+      const availableSpots = tour.maxGroup - totalConfirmedHeadcount;
+
+      if (createBookingDto.headcount > availableSpots) {
+        throw new BadRequestException(
+          `Not enough spots available. Only ${availableSpots} spots left for this tour.`
+        );
+      }
+
       // Calculate price at booking (tour base price * headcount)
       const priceAtBooking = tour.basePrice * createBookingDto.headcount;
 
@@ -587,5 +611,105 @@ export class BookingService {
     if (newStatus === 'completed' && !isGuide) {
       throw new BadRequestException('Only tour guides can mark bookings as completed');
     }
+  }
+
+  async completeBooking(id: string, userId: string) {
+    // Only tour guide can complete bookings
+    const booking = await this.prisma.booking.findUnique({
+      where: { id },
+      include: {
+        tour: {
+          include: {
+            guide: true,
+          },
+        },
+      },
+    });
+
+    if (!booking) {
+      throw new NotFoundException('Booking not found');
+    }
+
+    if (booking.tour.guide.userId !== userId) {
+      throw new BadRequestException('Only the tour guide can complete bookings');
+    }
+
+    if (booking.status !== 'confirmed') {
+      throw new BadRequestException('Only confirmed bookings can be completed');
+    }
+
+    return this.prisma.booking.update({
+      where: { id },
+      data: { status: 'completed' },
+      include: {
+        tour: {
+          include: {
+            guide: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    image: true,
+                  },
+                },
+              },
+            },
+            media: true,
+          },
+        },
+        traveler: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+      },
+    });
+  }
+
+  async checkTourAvailability(tourId: string, requestedHeadcount: number) {
+    const tour = await this.prisma.tour.findUnique({
+      where: { id: tourId },
+    });
+
+    if (!tour) {
+      throw new NotFoundException('Tour not found');
+    }
+
+    if (tour.status !== 'published' && tour.status !== 'approved') {
+      throw new BadRequestException('Tour is not available for booking');
+    }
+
+    // Count confirmed bookings for this tour
+    const confirmedBookings = await this.prisma.booking.findMany({
+      where: {
+        tourId,
+        status: 'confirmed',
+      },
+      select: {
+        headcount: true,
+      },
+    });
+
+    const totalConfirmedHeadcount = confirmedBookings.reduce(
+      (sum, booking) => sum + booking.headcount,
+      0
+    );
+
+    const availableSpots = tour.maxGroup - totalConfirmedHeadcount;
+    const isAvailable = requestedHeadcount <= availableSpots;
+
+    return {
+      tourId,
+      availableSpots,
+      requestedHeadcount,
+      isAvailable,
+      maxGroup: tour.maxGroup,
+      minGroup: tour.minGroup,
+    };
   }
 }
