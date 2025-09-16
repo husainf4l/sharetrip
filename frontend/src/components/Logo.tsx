@@ -32,24 +32,24 @@ export const Logo: React.FC<LogoProps> = ({
     switch (variant) {
       case "white":
         return {
-          gradient: "from-white to-gray-100",
-          border: "border-white/20",
-          shadow: "shadow-white/10",
-          text: "text-white",
+          bg: "bg-white",
+          border: "border-gray-100",
+          text: "text-gray-900",
+          accent: "text-gray-600",
         };
       case "dark":
         return {
-          gradient: "from-gray-800 to-gray-900",
-          border: "border-gray-700",
-          shadow: "shadow-gray-900/20",
-          text: "text-gray-900",
+          bg: "bg-gray-900",
+          border: "border-gray-800",
+          text: "text-white",
+          accent: "text-gray-300",
         };
       default:
         return {
-          gradient: "from-blue-500 via-purple-500 to-blue-600",
-          border: "border-blue-200",
-          shadow: "shadow-blue-500/20",
-          text: "bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent",
+          bg: "bg-white",
+          border: "border-gray-200",
+          text: "text-gray-900",
+          accent: "text-blue-600",
         };
     }
   };
@@ -57,53 +57,75 @@ export const Logo: React.FC<LogoProps> = ({
   const colors = getLogoColors();
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      {/* Modern Apple-style Icon */}
+    <div className={`flex items-center gap-2 ${className}`}>
+      {/* STX Icon - Clean text-based logo */}
       <div
         className={`
-        relative ${sizeClasses[size]} 
-        bg-gradient-to-br ${colors.gradient}
-        rounded-2xl
+        relative ${sizeClasses[size]}
+        ${colors.bg}
+        rounded-lg
         border ${colors.border}
-        shadow-lg ${colors.shadow}
-        transform transition-all duration-300
-        hover:scale-105 hover:shadow-xl hover:${colors.shadow}
+        transition-all duration-200
+        hover:scale-105
         group
+        flex items-center justify-center
       `}
       >
-        {/* Glass morphism overlay */}
-        <div className="absolute inset-0 bg-white/10 rounded-2xl backdrop-blur-sm"></div>
-
-        {/* Icon content - Modern geometric travel symbol */}
-        <div className="relative w-full h-full flex items-center justify-center">
-          <svg
-            viewBox="0 0 24 24"
-            className="w-2/3 h-2/3 text-white drop-shadow-sm group-hover:scale-110 transition-transform duration-300"
-            fill="currentColor"
-          >
-            {/* Travel/Journey symbol inspired by Apple's design philosophy */}
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM8 17.5L6.5 16l4-4-4-4L8 6.5l5.5 5.5L8 17.5z" />
-            <circle cx="16" cy="8" r="2" fillOpacity="0.8" />
-          </svg>
-        </div>
-
-        {/* Subtle glow effect */}
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      </div>
-
-      {/* Brand Text */}
-      {showText && (
         <span
           className={`
-          ${textSizeClasses[size]} font-bold tracking-tight
+          font-bold tracking-wider
           ${colors.text}
-          transition-all duration-300
-          hover:scale-105
+          select-none
+          font-['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Segoe UI', 'Roboto', 'sans-serif']
+          group-hover:scale-105 transition-all duration-200
+          ${
+            size === "sm"
+              ? "text-sm"
+              : size === "md"
+              ? "text-base"
+              : size === "lg"
+              ? "text-lg"
+              : "text-xl"
+          }
         `}
         >
-          ShareTrip
-          <span className="font-light">X</span>
+          STX
         </span>
+      </div>
+
+      {/* Brand Text - Ultra-elegant Apple Typography */}
+      {showText && (
+        <div className="flex flex-col">
+          <span
+            className={`
+            ${textSizeClasses[size]} font-semibold tracking-tight
+            ${colors.text}
+            transition-all duration-200
+            hover:scale-105
+            font-['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Segoe UI', 'Roboto', 'sans-serif']
+            select-none
+            leading-tight
+            drop-shadow-sm
+          `}
+          >
+            ShareTrip
+          </span>
+          <span
+            className={`
+            ${textSizeClasses[size]} font-light tracking-widest
+            ${colors.accent}
+            transition-all duration-200
+            hover:scale-105
+            font-['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Segoe UI', 'Roboto', 'sans-serif']
+            select-none
+            leading-none
+            -mt-1
+            opacity-90
+          `}
+          >
+            X
+          </span>
+        </div>
       )}
     </div>
   );
@@ -117,7 +139,7 @@ export const LogoLink: React.FC<LogoProps & { href?: string }> = ({
   return (
     <Link
       href={href}
-      className="group transition-transform duration-300 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-2xl"
+      className="group transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-gray-400/50 focus:ring-offset-2 rounded-xl"
     >
       <Logo {...props} />
     </Link>
@@ -129,18 +151,33 @@ export const CompactLogo: React.FC<Omit<LogoProps, "showText">> = (props) => {
   return <Logo {...props} showText={false} />;
 };
 
-// Alternative simplified version
+// Alternative simplified version with ultra-minimalist Apple-style
 export const SimpleLogo: React.FC<LogoProps> = ({
   variant = "default",
   size = "md",
   className = "",
 }) => {
-  const colors =
-    variant === "white"
-      ? "text-white"
-      : variant === "dark"
-      ? "text-gray-900"
-      : "bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent";
+  const getSimpleColors = () => {
+    switch (variant) {
+      case "white":
+        return {
+          text: "text-gray-900",
+          accent: "text-gray-600",
+        };
+      case "dark":
+        return {
+          text: "text-white",
+          accent: "text-gray-300",
+        };
+      default:
+        return {
+          text: "text-gray-900",
+          accent: "text-blue-600",
+        };
+    }
+  };
+
+  const colors = getSimpleColors();
 
   const sizeClass = {
     sm: "text-lg",
@@ -150,11 +187,64 @@ export const SimpleLogo: React.FC<LogoProps> = ({
   }[size];
 
   return (
-    <div className={`flex items-center ${className}`}>
-      <span className={`${sizeClass} font-bold tracking-tight ${colors}`}>
-        ShareTrip
-        <span className="font-light">X</span>
-      </span>
+    <div className={`flex items-center gap-2 ${className}`}>
+      {/* STX Icon for SimpleLogo */}
+      <div
+        className={`
+        relative w-8 h-8
+        bg-white
+        rounded-lg
+        border border-gray-200
+        transition-all duration-200
+        hover:scale-105
+        group
+        flex items-center justify-center
+        ${
+          size === "sm"
+            ? "w-6 h-6"
+            : size === "md"
+            ? "w-8 h-8"
+            : size === "lg"
+            ? "w-10 h-10"
+            : "w-12 h-12"
+        }
+      `}
+      >
+        <span
+          className={`
+          font-bold tracking-wider
+          ${colors.text}
+          select-none
+          font-['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Segoe UI', 'Roboto', 'sans-serif']
+          group-hover:scale-105 transition-all duration-200
+          ${
+            size === "sm"
+              ? "text-xs"
+              : size === "md"
+              ? "text-sm"
+              : size === "lg"
+              ? "text-base"
+              : "text-lg"
+          }
+        `}
+        >
+          STX
+        </span>
+      </div>
+
+      {/* Elegant stacked typography */}
+      <div className="flex flex-col">
+        <span
+          className={`${sizeClass} font-semibold tracking-tight ${colors.text} select-none font-['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Segoe UI', 'Roboto', 'sans-serif'] leading-tight drop-shadow-sm`}
+        >
+          ShareTrip
+        </span>
+        <span
+          className={`${sizeClass} font-light tracking-widest ${colors.accent} select-none font-['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Segoe UI', 'Roboto', 'sans-serif'] leading-none -mt-1 opacity-90`}
+        >
+          X
+        </span>
+      </div>
     </div>
   );
 };

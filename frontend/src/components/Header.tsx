@@ -50,6 +50,7 @@ export default function Header() {
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const [isExperiencesOpen, setIsExperiencesOpen] = useState(false);
   const [isDestinationsOpen, setIsDestinationsOpen] = useState(false);
+  const [isAccommodationsOpen, setIsAccommodationsOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("EN");
   const [selectedCurrency, setSelectedCurrency] = useState("USD");
 
@@ -67,6 +68,7 @@ export default function Header() {
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const experiencesRef = useRef<HTMLDivElement>(null);
   const destinationsRef = useRef<HTMLDivElement>(null);
+  const accommodationsRef = useRef<HTMLDivElement>(null);
 
   // Navigation data
   const experienceCategories = [
@@ -148,6 +150,64 @@ export default function Header() {
     },
   ];
 
+  const accommodationTypes = [
+    {
+      name: "Hotels",
+      href: "/accommodations?type=hotels",
+      description: "Luxury and budget hotels worldwide",
+    },
+    {
+      name: "Apartments",
+      href: "/accommodations?type=apartments",
+      description: "Self-catering apartments and studios",
+    },
+    {
+      name: "Resorts",
+      href: "/accommodations?type=resorts",
+      description: "All-inclusive resorts and spas",
+    },
+    {
+      name: "Hostels",
+      href: "/accommodations?type=hostels",
+      description: "Budget-friendly shared accommodations",
+    },
+    {
+      name: "Motels",
+      href: "/accommodations?type=motels",
+      description: "Convenient roadside accommodations",
+    },
+    {
+      name: "Villas",
+      href: "/accommodations?type=villas",
+      description: "Private villas and vacation homes",
+    },
+    {
+      name: "Chalets",
+      href: "/accommodations?type=chalets",
+      description: "Mountain chalets and cabins",
+    },
+    {
+      name: "Treehouses",
+      href: "/accommodations?type=treehouses",
+      description: "Unique treehouse accommodations",
+    },
+    {
+      name: "Guest Houses",
+      href: "/accommodations?type=guest-houses",
+      description: "Homely guest houses and B&Bs",
+    },
+    {
+      name: "Vacation Homes",
+      href: "/accommodations?type=vacation-homes",
+      description: "Entire homes for your vacation",
+    },
+    {
+      name: "Caravans",
+      href: "/accommodations?type=caravans",
+      description: "Mobile caravans and RVs",
+    },
+  ];
+
   // Handle clicks outside dropdowns to close them
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -180,6 +240,12 @@ export default function Header() {
         !destinationsRef.current.contains(event.target as Node)
       ) {
         setIsDestinationsOpen(false);
+      }
+      if (
+        accommodationsRef.current &&
+        !accommodationsRef.current.contains(event.target as Node)
+      ) {
+        setIsAccommodationsOpen(false);
       }
     };
 
@@ -312,6 +378,66 @@ export default function Header() {
             )}
           </div>
 
+          {/* Accommodations Dropdown */}
+          <div className="relative" ref={accommodationsRef}>
+            <button
+              onClick={() => {
+                setIsAccommodationsOpen(!isAccommodationsOpen);
+                setIsExperiencesOpen(false);
+                setIsDestinationsOpen(false);
+                setIsLanguageOpen(false);
+                setIsCurrencyOpen(false);
+                setIsDropdownOpen(false);
+              }}
+              className="flex items-center gap-1 text-gray-700 hover:text-blue-600 font-medium transition-colors hover-lift animate-slide-right"
+            >
+              Accommodations
+              <ChevronDownIcon
+                className={`w-4 h-4 transition-transform ${
+                  isAccommodationsOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {isAccommodationsOpen && (
+              <div className="absolute top-full left-0 mt-2 w-[500px] bg-white shadow-xl border border-gray-200 rounded-2xl p-6 z-50 animate-fade-up">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4 text-gradient">
+                  Accommodation Types
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {accommodationTypes.map((accommodation, index) => (
+                    <Link
+                      key={accommodation.name}
+                      href={accommodation.href}
+                      className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group stagger-item"
+                      style={{ animationDelay: `${index * 0.05}s` }}
+                      onClick={() => setIsAccommodationsOpen(false)}
+                    >
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 group-hover:scale-125 transition-transform"></div>
+                      <div>
+                        <div className="font-medium text-gray-900 group-hover:text-blue-600">
+                          {accommodation.name}
+                        </div>
+                        <div className="text-sm text-gray-500 mt-1">
+                          {accommodation.description}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+                <div className="border-t border-gray-100 mt-6 pt-4">
+                  <Link
+                    href="/accommodations"
+                    className="btn btn-outline w-full justify-center hover-glow"
+                    onClick={() => setIsAccommodationsOpen(false)}
+                  >
+                    Browse All Accommodations
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Destinations Dropdown */}
           <div className="relative" ref={destinationsRef}>
             <button
@@ -370,6 +496,14 @@ export default function Header() {
               </div>
             )}
           </div>
+
+          {/* Demos Link */}
+          <Link
+            href="/demos"
+            className="text-gray-700 hover:text-blue-600 font-medium transition-colors hover-lift animate-slide-right"
+          >
+            Demos
+          </Link>
 
           {user && !canHost(user.role) && (
             <Link

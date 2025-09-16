@@ -42,7 +42,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Only clear tokens if it's a 401 Unauthorized error or token expiration
       // and we couldn't refresh the token
       // Don't log out on network errors or other temporary issues
-      console.error("Auth check failed:", err);
+      if (
+        err instanceof Error &&
+        (err.message?.includes("Unable to connect to server") ||
+          err.message?.includes("Network error") ||
+          err.message?.includes("fetch"))
+      ) {
+        // Backend is unavailable - silently continue without auth
+        console.warn(
+          "Backend server unavailable - continuing without authentication"
+        );
+      } else {
+        console.error("Auth check failed:", err);
+      }
+
       if (
         err instanceof Error &&
         (err.message?.includes("401") ||
