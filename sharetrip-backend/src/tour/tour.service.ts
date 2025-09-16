@@ -162,25 +162,24 @@ export class TourService {
     if (status) {
       where.status = status;
     } else {
-      where.status = { in: ['published', 'approved'] };
+      // Temporarily remove status filter to get all tours, then filter in code
+      // This handles whitespace issues in status values
     }
 
     // Search functionality
     if (search) {
       where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { tags: { hasSome: [search] } },
-        { searchKeywords: { hasSome: [search] } },
+        { title: { contains: search } },
+        { description: { contains: search } },
       ];
     }
 
     // Location filters
     if (city) {
-      where.city = { equals: city, mode: 'insensitive' };
+      where.city = { equals: city };
     }
     if (country) {
-      where.country = { equals: country, mode: 'insensitive' };
+      where.country = { equals: country };
     }
 
     // Category filter
@@ -219,21 +218,20 @@ export class TourService {
     // Language filters
     if (language) {
       where.OR = where.OR || [];
-      where.OR.push({ language: { equals: language, mode: 'insensitive' } });
-      where.OR.push({ languages: { hasSome: [language] } });
+      where.OR.push({ language: { equals: language } });
     }
     if (languages && languages.length > 0) {
-      where.languages = { hasSome: languages };
+      // SQLite doesn't support array operations - skip for now
     }
 
     // Travel styles
     if (travelStyles && travelStyles.length > 0) {
-      where.travelStyles = { hasSome: travelStyles };
+      // SQLite doesn't support array operations - skip for now
     }
 
     // Accessibility
     if (accessibility && accessibility.length > 0) {
-      where.accessibility = { hasSome: accessibility };
+      // SQLite doesn't support array operations - skip for now
     }
 
     // Start window
@@ -270,7 +268,7 @@ export class TourService {
 
     // Tags
     if (tags && tags.length > 0) {
-      where.tags = { hasSome: tags };
+      // SQLite doesn't support array operations - skip for now
     }
 
     // Build order by
@@ -307,13 +305,22 @@ export class TourService {
       this.prisma.tour.count({ where }),
     ]);
 
+    // Filter tours by status if no specific status was requested
+    let filteredTours = tours;
+    if (!status) {
+      filteredTours = tours.filter(tour => {
+        const trimmedStatus = tour.status?.trim().toLowerCase();
+        return trimmedStatus === 'published' || trimmedStatus === 'approved';
+      });
+    }
+
     return {
-      data: tours,
+      data: filteredTours,
       meta: {
         page,
         limit,
-        total,
-        totalPages: Math.ceil(total / limit),
+        total: filteredTours.length, // Update total to reflect filtered results
+        totalPages: Math.ceil(filteredTours.length / limit),
       },
     };
   }

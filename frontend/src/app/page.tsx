@@ -27,186 +27,63 @@ export default function Home() {
 
   const popularDestinations = [
     {
-      name: "Jordan",
+      name: "Cyprus",
       image:
         "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop&crop=center",
-      totalExperiences: 25,
-      description: "Ancient wonders & desert adventures",
-      href: "/tours?country=jordan",
+      totalExperiences: 20,
+      description:
+        "Mediterranean paradise with ancient history and stunning beaches",
+      href: "/tours?country=cyprus",
       cities: [
         {
-          name: "Petra",
-          experiences: 5,
-          highlights: ["Ancient City", "Treasury", "Monastery"],
-        },
-        {
-          name: "Dead Sea",
-          experiences: 3,
-          highlights: ["Spa", "Mud Therapy", "Floating"],
-        },
-        {
-          name: "Amman",
+          name: "Nicosia",
           experiences: 4,
-          highlights: ["Citadel", "Roman Theater", "Souks"],
+          highlights: ["Capital City", "Venetian Walls", "Museums"],
         },
         {
-          name: "Wadi Rum",
+          name: "Limassol",
           experiences: 3,
-          highlights: ["Desert Safari", "Bedouin Camp", "Stargazing"],
+          highlights: ["Beaches", "Wine Region", "Ancient Kourion"],
         },
         {
-          name: "Aqaba",
-          experiences: 2,
-          highlights: ["Red Sea", "Diving", "Marine Life"],
-        },
-        {
-          name: "Jerash",
-          experiences: 1,
-          highlights: ["Roman Ruins", "Colosseum", "Ancient City"],
-        },
-        {
-          name: "Madaba",
-          experiences: 2,
-          highlights: ["Mosaic Map", "St. George's Church", "Greek Orthodox"],
-        },
-        {
-          name: "Karak",
-          experiences: 2,
-          highlights: ["Crusader Castle", "Desert Views", "Medieval History"],
-        },
-        {
-          name: "Ajloun",
-          experiences: 1,
-          highlights: ["Castle", "Forest", "Hiking"],
-        },
-        {
-          name: "Umm Qais",
-          experiences: 2,
-          highlights: ["Decapolis City", "Golan Heights", "Roman Theater"],
-        },
-      ],
-    },
-    {
-      name: "Egypt",
-      image:
-        "https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=600&h=400&fit=crop&crop=center",
-      totalExperiences: 22,
-      description: "Pyramids, temples & Nile cruises",
-      href: "/tours?country=egypt",
-      cities: [
-        {
-          name: "Giza",
-          experiences: 4,
-          highlights: ["Pyramids", "Sphinx", "Great Pyramid"],
-        },
-        {
-          name: "Cairo",
-          experiences: 4,
-          highlights: ["Khan el-Khalili", "Nile River", "Islamic Cairo"],
-        },
-        {
-          name: "Luxor",
+          name: "Paphos",
           experiences: 3,
-          highlights: ["Valley of Kings", "Temple", "Nile Cruise"],
+          highlights: ["UNESCO Sites", "Aphrodite's Birthplace", "Mosaics"],
         },
         {
-          name: "Alexandria",
+          name: "Larnaca",
           experiences: 2,
-          highlights: [
-            "Mediterranean Coast",
-            "Ancient Library",
-            "Fort Qaitbay",
-          ],
+          highlights: ["International Airport", "Salt Lake", "Beaches"],
         },
         {
-          name: "Aswan",
+          name: "Ayia Napa",
           experiences: 2,
-          highlights: ["Nile River", "Philae Temple", "Felucca Ride"],
+          highlights: ["Party Destination", "Golden Beach", "Water Sports"],
         },
         {
-          name: "Sharm El Sheikh",
+          name: "Troodos Mountains",
+          experiences: 2,
+          highlights: ["Hiking", "Wineries", "Traditional Villages"],
+        },
+        {
+          name: "Famagusta",
           experiences: 1,
-          highlights: ["Red Sea Diving", "Coral Reefs", "Beach Resorts"],
+          highlights: ["Ghost Town", "Salamis Ruins", "Beaches"],
         },
         {
-          name: "Hurghada",
-          experiences: 2,
-          highlights: ["Red Sea", "Diving", "Beach Resorts"],
-        },
-        {
-          name: "Marsa Alam",
+          name: "Kyrenia",
           experiences: 1,
-          highlights: ["Diving Paradise", "Coral Gardens", "Marine Life"],
+          highlights: ["Medieval Castle", "Northern Cyprus", "Harbor"],
         },
         {
-          name: "Dahab",
+          name: "Protaras",
           experiences: 1,
-          highlights: ["Blue Hole", "Camel Riding", "Bedouin Culture"],
+          highlights: ["Family Beaches", "Fig Tree Bay", "Water Parks"],
         },
         {
-          name: "Siwa Oasis",
-          experiences: 2,
-          highlights: ["Desert Oasis", "Cleopatra's Bath", "Sand Dunes"],
-        },
-      ],
-    },
-    {
-      name: "Lebanon",
-      image:
-        "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=600&h=400&fit=crop&crop=center",
-      totalExperiences: 18,
-      description: "Mediterranean charm & ancient history",
-      href: "/tours?country=lebanon",
-      cities: [
-        {
-          name: "Beirut",
-          experiences: 3,
-          highlights: ["Corniche", "National Museum", "Food Scene"],
-        },
-        {
-          name: "Baalbek",
-          experiences: 3,
-          highlights: ["Roman Temples", "Ancient Ruins", "Festival"],
-        },
-        {
-          name: "Byblos",
-          experiences: 2,
-          highlights: ["Ancient Harbor", "Old City", "Mediterranean"],
-        },
-        {
-          name: "Tripoli",
-          experiences: 2,
-          highlights: ["Citadel", "Souks", "Mediterranean Coast"],
-        },
-        {
-          name: "Tyre",
+          name: "Polis",
           experiences: 1,
-          highlights: ["Phoenician Ruins", "Roman Hippodrome", "Beaches"],
-        },
-        {
-          name: "Sidon",
-          experiences: 1,
-          highlights: ["Sea Castle", "Soap Factory", "Old City"],
-        },
-        {
-          name: "Zahle",
-          experiences: 2,
-          highlights: ["Wine Region", "Bekaa Valley", "Vineyards"],
-        },
-        {
-          name: "Batroun",
-          experiences: 1,
-          highlights: ["Coastal Town", "Citadel", "Mediterranean Views"],
-        },
-        {
-          name: "Jounieh",
-          experiences: 1,
-          highlights: ["Bay Area", "Cable Car", "Seafood"],
-        },
-        {
-          name: "Jeita",
-          experiences: 2,
-          highlights: ["Grotto Caves", "Boat Tours", "Nature"],
+          highlights: ["Chrysochou Bay", "Akamas Peninsula", "Nature"],
         },
       ],
     },
@@ -959,12 +836,11 @@ export default function Home() {
               Popular Destinations
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Discover the most sought-after travel experiences in the Middle
-              East
+              Discover the most sought-after travel experiences in Cyprus
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-8 max-w-4xl mx-auto">
             {popularDestinations.map((destination, index) => (
               <div
                 key={destination.name}
@@ -1307,6 +1183,158 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* You Might Also Like Section */}
+        <section className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gradient animate-slide-up">
+              You might also like...
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Discover more amazing experiences tailored for you
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Demo Tour 1 */}
+            <div className="group relative bg-white/90 backdrop-blur-xl border border-gray-200/50 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:border-gray-300/60">
+              <div className="relative h-48 overflow-hidden bg-gray-100">
+                <Image
+                  src="/images/tour-1.jpg"
+                  alt="Wadi Rum Desert Adventure"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute bottom-4 right-4 bg-black/80 backdrop-blur-sm text-white px-3 py-2 rounded-2xl">
+                  <div className="text-lg font-bold">$75</div>
+                </div>
+              </div>
+              <div className="p-6">
+                <div className="flex items-center text-sm text-gray-500 mb-3">
+                  <MapPinIcon className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span className="font-medium">Wadi Rum, Jordan</span>
+                </div>
+                <h3 className="font-bold text-gray-900 mb-4 line-clamp-2 hover:text-blue-600 transition-colors duration-300 leading-tight text-lg">
+                  Wadi Rum Desert Adventure
+                </h3>
+                <div className="flex items-center justify-between text-sm text-gray-600 mb-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center">
+                      <ClockIcon className="w-4 h-4 mr-1.5" />
+                      <span className="font-medium">6h</span>
+                    </div>
+                    <div className="flex items-center">
+                      <UserGroupIcon className="w-4 h-4 mr-1.5" />
+                      <span className="font-medium">6/12</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <StarIcon className="w-4 h-4 text-amber-400 fill-current mr-1" />
+                    <span className="font-semibold text-gray-900">4.9</span>
+                  </div>
+                </div>
+                <Link
+                  href="/tours/demo-1"
+                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-2xl hover:bg-blue-700 transition-all duration-300 hover:shadow-lg hover:scale-105"
+                >
+                  View Details
+                </Link>
+              </div>
+            </div>
+
+            {/* Demo Tour 2 */}
+            <div className="group relative bg-white/90 backdrop-blur-xl border border-gray-200/50 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:border-gray-300/60">
+              <div className="relative h-48 overflow-hidden bg-gray-100">
+                <Image
+                  src="/images/tour-2.jpg"
+                  alt="Phuket Island Paradise"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute bottom-4 right-4 bg-black/80 backdrop-blur-sm text-white px-3 py-2 rounded-2xl">
+                  <div className="text-lg font-bold">$95</div>
+                </div>
+              </div>
+              <div className="p-6">
+                <div className="flex items-center text-sm text-gray-500 mb-3">
+                  <MapPinIcon className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span className="font-medium">Phuket, Thailand</span>
+                </div>
+                <h3 className="font-bold text-gray-900 mb-4 line-clamp-2 hover:text-blue-600 transition-colors duration-300 leading-tight text-lg">
+                  Phuket Island Paradise
+                </h3>
+                <div className="flex items-center justify-between text-sm text-gray-600 mb-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center">
+                      <ClockIcon className="w-4 h-4 mr-1.5" />
+                      <span className="font-medium">8h</span>
+                    </div>
+                    <div className="flex items-center">
+                      <UserGroupIcon className="w-4 h-4 mr-1.5" />
+                      <span className="font-medium">4/8</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <StarIcon className="w-4 h-4 text-amber-400 fill-current mr-1" />
+                    <span className="font-semibold text-gray-900">4.8</span>
+                  </div>
+                </div>
+                <Link
+                  href="/tours/demo-2"
+                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-2xl hover:bg-blue-700 transition-all duration-300 hover:shadow-lg hover:scale-105"
+                >
+                  View Details
+                </Link>
+              </div>
+            </div>
+
+            {/* Demo Tour 3 */}
+            <div className="group relative bg-white/90 backdrop-blur-xl border border-gray-200/50 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:border-gray-300/60">
+              <div className="relative h-48 overflow-hidden bg-gray-100">
+                <Image
+                  src="/images/tour-3.jpg"
+                  alt="Mediterranean Culinary Journey"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute bottom-4 right-4 bg-black/80 backdrop-blur-sm text-white px-3 py-2 rounded-2xl">
+                  <div className="text-lg font-bold">$65</div>
+                </div>
+              </div>
+              <div className="p-6">
+                <div className="flex items-center text-sm text-gray-500 mb-3">
+                  <MapPinIcon className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span className="font-medium">Beirut, Lebanon</span>
+                </div>
+                <h3 className="font-bold text-gray-900 mb-4 line-clamp-2 hover:text-blue-600 transition-colors duration-300 leading-tight text-lg">
+                  Mediterranean Culinary Journey
+                </h3>
+                <div className="flex items-center justify-between text-sm text-gray-600 mb-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center">
+                      <ClockIcon className="w-4 h-4 mr-1.5" />
+                      <span className="font-medium">5h</span>
+                    </div>
+                    <div className="flex items-center">
+                      <UserGroupIcon className="w-4 h-4 mr-1.5" />
+                      <span className="font-medium">6/12</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <StarIcon className="w-4 h-4 text-amber-400 fill-current mr-1" />
+                    <span className="font-semibold text-gray-900">4.7</span>
+                  </div>
+                </div>
+                <Link
+                  href="/tours/demo-3"
+                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-2xl hover:bg-blue-700 transition-all duration-300 hover:shadow-lg hover:scale-105"
+                >
+                  View Details
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
 

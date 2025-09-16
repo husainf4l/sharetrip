@@ -33,6 +33,226 @@ interface TourDetailPageProps {
   params: Promise<{ id: string }> | { id: string };
 }
 
+// Mock demo tour data
+function getDemoTourData(tourId: string): Tour | null {
+  const demoTours: Record<string, Tour> = {
+    "demo-1": {
+      id: "demo-1",
+      guideId: "demo-guide-1",
+      title: "Wadi Rum Desert Adventure",
+      city: "Wadi Rum",
+      country: "Jordan",
+      category: "ADVENTURE_OUTDOORS",
+      description:
+        "Experience the breathtaking beauty of Wadi Rum, also known as the Valley of the Moon. This full-day desert adventure takes you through stunning red sand dunes, ancient rock formations, and Bedouin camps. Ride in a 4x4 vehicle through the desert landscape, learn about Bedouin culture, and enjoy a traditional lunch under the stars.",
+      startTimes: ["08:00", "09:00"],
+      basePrice: 7500, // $75.00 in cents
+      currency: "USD",
+      minGroup: 2,
+      maxGroup: 12,
+      durationMins: 360,
+      language: "English",
+      languages: ["English", "Arabic"],
+      isPayWhatYouWant: false,
+      status: "active",
+      createdAt: "2024-01-01T00:00:00Z",
+      travelStyles: ["Adventure", "Cultural"],
+      accessibility: ["Wheelchair accessible"],
+      instantBook: true,
+      hostRating: 4.9,
+      cancellationPolicy: "flexible",
+      isDropIn: false,
+      isEarlyBird: true,
+      latitude: 29.6096,
+      longitude: 35.4289,
+      meetingPoint: "Wadi Rum Visitor Center",
+      tags: ["desert", "adventure", "bedouin", "4x4"],
+      searchKeywords: ["wadi rum", "desert safari", "jordan"],
+      guide: {
+        id: "demo-guide-1",
+        userId: "demo-user-1",
+        bio: "Experienced desert guide with 10+ years in Wadi Rum",
+        kycStatus: "verified",
+        ratingAvg: 4.9,
+        toursCount: 150,
+        user: {
+          id: "demo-user-1",
+          name: "Ahmed Al-Bedouin",
+          email: "ahmed@wadirum.com",
+          image: "/images/guide-1.jpg",
+        },
+      },
+      media: [{ id: "1", url: "/images/tour-1.jpg", type: "image" }],
+      _count: { bookings: 2341 },
+      highlights: [
+        "Explore Mars-like desert landscapes",
+        "Meet local Bedouin tribes",
+        "Visit Lawrence of Arabia's house",
+        "Enjoy traditional Bedouin hospitality",
+        "Stargazing in the clear desert night",
+      ],
+      difficulty: "moderate",
+      whatsIncluded: [
+        "Local Bedouin guide",
+        "4x4 vehicle transportation",
+        "Traditional camp lunch",
+        "Stargazing session",
+        "Tea/coffee breaks",
+      ],
+      whatsExcluded: ["Personal expenses", "Travel insurance", "Gratuities"],
+      requirements: [
+        "Comfortable clothing",
+        "Closed-toe shoes",
+        "Sunscreen and hat",
+      ],
+      itinerary:
+        "8:00 AM - Pickup from accommodation\n9:00 AM - Arrival at Wadi Rum Visitor Center\n9:30 AM - 4x4 desert safari begins\n11:00 AM - Visit Lawrence of Arabia's house\n12:00 PM - Traditional Bedouin lunch\n1:00 PM - Continue desert exploration\n3:00 PM - Tea break and cultural insights\n4:30 PM - Return to visitor center\n6:00 PM - Drop-off at accommodation",
+    },
+    "demo-2": {
+      id: "demo-2",
+      guideId: "demo-guide-2",
+      title: "Phuket Island Paradise",
+      city: "Phuket",
+      country: "Thailand",
+      category: "ADVENTURE_OUTDOORS",
+      description:
+        "Discover the stunning beauty of Phuket's pristine islands on this full-day adventure. Cruise through crystal-clear waters, snorkel in vibrant coral reefs, and relax on powdery white sand beaches. Visit the famous James Bond Island, explore hidden lagoons, and enjoy a delicious Thai lunch with ocean views.",
+      startTimes: ["07:30", "08:30"],
+      basePrice: 12000, // $120.00 in cents
+      currency: "USD",
+      minGroup: 2,
+      maxGroup: 15,
+      durationMins: 480,
+      language: "English",
+      languages: ["English", "Thai"],
+      isPayWhatYouWant: false,
+      status: "active",
+      createdAt: "2024-01-01T00:00:00Z",
+      travelStyles: ["Adventure", "Beach", "Water Sports"],
+      accessibility: ["Wheelchair accessible"],
+      instantBook: true,
+      hostRating: 4.8,
+      cancellationPolicy: "flexible",
+      isDropIn: false,
+      isEarlyBird: true,
+      latitude: 7.8804,
+      longitude: 98.3923,
+      meetingPoint: "Phuket Pier",
+      tags: ["islands", "snorkeling", "beach", "phang nga bay"],
+      searchKeywords: ["phuket islands", "james bond island", "snorkeling"],
+      guide: {
+        id: "demo-guide-2",
+        userId: "demo-user-2",
+        bio: "Certified diving instructor and island expert",
+        kycStatus: "verified",
+        ratingAvg: 4.8,
+        toursCount: 200,
+        user: {
+          id: "demo-user-2",
+          name: "Siriporn Thailand",
+          email: "siriporn@phukettours.com",
+          image: "/images/guide-2.jpg",
+        },
+      },
+      media: [{ id: "2", url: "/images/tour-2.jpg", type: "image" }],
+      _count: { bookings: 1892 },
+      highlights: [
+        "Visit 5 pristine islands",
+        "Snorkel in coral gardens",
+        "Explore James Bond Island",
+        "Relax on secluded beaches",
+        "Traditional Thai lunch experience",
+      ],
+      difficulty: "easy",
+      whatsIncluded: [
+        "Speedboat transfers",
+        "Snorkeling equipment",
+        "Lunch at beach restaurant",
+        "Professional guide",
+        "Hotel pickup/drop-off",
+      ],
+      whatsExcluded: ["Personal expenses", "Travel insurance", "Gratuities"],
+      requirements: ["Swimwear", "Towel", "Sunscreen"],
+      itinerary:
+        "7:30 AM - Hotel pickup\n8:30 AM - Departure from Phuket pier\n9:30 AM - Arrival at first island - Snorkeling\n11:00 AM - Visit James Bond Island\n12:00 PM - Beach lunch at restaurant\n1:30 PM - Explore hidden lagoon\n3:00 PM - Visit emerald cave\n4:00 PM - Return journey\n5:30 PM - Arrival back at pier",
+    },
+    "demo-3": {
+      id: "demo-3",
+      guideId: "demo-guide-3",
+      title: "Mediterranean Culinary Journey",
+      city: "Tuscany",
+      country: "Italy",
+      category: "FOOD_TOURS",
+      description:
+        "Embark on a gastronomic adventure through the heart of Tuscany, Italy's culinary capital. Visit world-renowned vineyards, learn the art of pasta-making from local artisans, and savor authentic Tuscan cuisine paired with premium wines. This immersive experience combines food, wine, and culture in one unforgettable day.",
+      startTimes: ["08:00", "09:00"],
+      basePrice: 18000, // $180.00 in cents
+      currency: "USD",
+      minGroup: 2,
+      maxGroup: 16,
+      durationMins: 600,
+      language: "English",
+      languages: ["English", "Italian"],
+      isPayWhatYouWant: false,
+      status: "active",
+      createdAt: "2024-01-01T00:00:00Z",
+      travelStyles: ["Food & Wine", "Cultural", "Educational"],
+      accessibility: ["Wheelchair accessible"],
+      instantBook: true,
+      hostRating: 4.9,
+      cancellationPolicy: "flexible",
+      isDropIn: false,
+      isEarlyBird: true,
+      latitude: 43.7696,
+      longitude: 11.2558,
+      meetingPoint: "Florence or Siena city center",
+      tags: ["wine tasting", "cooking class", "tuscany", "culinary"],
+      searchKeywords: ["tuscany food tour", "wine tasting", "pasta making"],
+      guide: {
+        id: "demo-guide-3",
+        userId: "demo-user-3",
+        bio: "Award-winning chef and sommelier with 15 years experience",
+        kycStatus: "verified",
+        ratingAvg: 4.9,
+        toursCount: 300,
+        user: {
+          id: "demo-user-3",
+          name: "Marco Rossi",
+          email: "marco@tuscanfood.com",
+          image: "/images/guide-3.jpg",
+        },
+      },
+      media: [{ id: "3", url: "/images/tour-3.jpg", type: "image" }],
+      _count: { bookings: 1456 },
+      highlights: [
+        "Visit Chianti Classico wineries",
+        "Hands-on pasta making workshop",
+        "Wine tasting with sommelier",
+        "Traditional Tuscan farmhouse lunch",
+        "Explore medieval hilltop towns",
+      ],
+      difficulty: "easy",
+      whatsIncluded: [
+        "Wine tastings at 3 vineyards",
+        "Traditional Tuscan lunch",
+        "Cooking class with local chef",
+        "Transportation in luxury van",
+        "Professional sommelier guide",
+      ],
+      whatsExcluded: ["Personal expenses", "Travel insurance", "Gratuities"],
+      requirements: [
+        "Comfortable clothing",
+        "Notebook for recipes",
+        "Camera for photos",
+      ],
+      itinerary:
+        "8:00 AM - Pickup from Florence or Siena\n9:00 AM - Drive through Tuscan countryside\n10:00 AM - First winery visit and tasting\n11:30 AM - Pasta making workshop\n1:00 PM - Traditional Tuscan lunch\n3:00 PM - Second winery experience\n4:30 PM - Visit medieval town of San Gimignano\n5:30 PM - Final wine tasting\n6:30 PM - Return transfer",
+    },
+  };
+
+  return demoTours[tourId] || null;
+}
+
 export default function TourDetailPage({ params }: TourDetailPageProps) {
   const [tour, setTour] = useState<Tour | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,6 +280,17 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
       setError(null);
 
       try {
+        // Handle demo tours statically
+        if (tourId.startsWith("demo-")) {
+          const demoTour = getDemoTourData(tourId);
+          if (demoTour) {
+            setTour(demoTour);
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        // For non-demo tours, try to fetch from API
         const tourData = await tourService.getTourById(tourId);
         setTour(tourData);
       } catch (error) {
@@ -265,9 +496,36 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
           <div className="lg:col-span-2 space-y-8">
             {/* About this activity */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                About this activity
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  About this activity
+                </h2>
+                <button
+                  onClick={() => {
+                    // Add to cart functionality
+                    console.log("Adding to cart:", tourId);
+                    alert(
+                      "Added to cart! (Cart functionality will be implemented)"
+                    );
+                  }}
+                  className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.1 5H19M7 13v8a2 2 0 002 2h10a2 2 0 002-2v-3"
+                    />
+                  </svg>
+                  Add to Cart
+                </button>
+              </div>
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-2">
                   <ClockIcon className="w-5 h-5 text-gray-400" />

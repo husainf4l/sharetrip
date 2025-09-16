@@ -10,6 +10,46 @@ import FiltersPanel from "../../components/ShareTours/FiltersPanel";
 import ShareToursGrid from "../../components/ShareTours/ShareToursGrid";
 import AdBanner from "../../components/AdBanner";
 
+interface ShareTour {
+  id: string;
+  title: string;
+  city: string;
+  country: string;
+  description?: string;
+  media?: Array<{ url: string; type: string }>;
+  currentPrice: number;
+  maxGroupPrice?: number;
+  basePrice: number;
+  spotsLeft: number;
+  confirmedBookings: number;
+  maxGroup: number;
+  durationMins: number;
+  hostRating?: number;
+  isDropIn?: boolean;
+  isEarlyBird?: boolean;
+  isPayWhatYouWant?: boolean;
+  progressPercentage: string;
+  guide?: {
+    user?: {
+      name: string;
+      image?: string;
+    };
+  };
+  startTimes: string[];
+  travelStyles?: string[];
+  accessibility?: string[];
+  language: string;
+  languages?: string[];
+  startDate: string;
+  endDate: string;
+  duration: number;
+  category: string;
+  images: string[];
+  tags: string[];
+  instantBook: boolean;
+  cancellationPolicy: string;
+}
+
 interface ShareTourFilters {
   cities?: string[];
   countries?: string[];
@@ -45,12 +85,23 @@ export default function ShareToursPage() {
     limit: 20,
     category: TourCategory.SHARE_TRIP, // Filter for share trips only
   });
-  const [tours, setTours] = useState<Tour[]>([]);
+  const [tours, setTours] = useState<ShareTour[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  const [availableOptions, setAvailableOptions] = useState({
+  const [availableOptions, setAvailableOptions] = useState<{
+    cities: string[];
+    countries: string[];
+    languages: string[];
+    travelStyles: string[];
+    accessibility: string[];
+    durations: string[];
+    groupSizes: string[];
+    startWindows: string[];
+    cancellationPolicies: string[];
+    sortOptions: { value: string; label: string }[];
+  }>({
     cities: [],
     countries: [],
     languages: [],
@@ -73,12 +124,21 @@ export default function ShareToursPage() {
           countries: ["USA", "France", "UK", "Japan", "Italy"],
           languages: ["English", "Spanish", "French", "German", "Italian"],
           travelStyles: ["Adventure", "Culture", "Food", "Nature", "History"],
-          accessibility: ["Wheelchair accessible", "Audio guide", "Visual aids"],
+          accessibility: [
+            "Wheelchair accessible",
+            "Audio guide",
+            "Visual aids",
+          ],
           durations: ["1-2 hours", "3-4 hours", "5+ hours", "Full day"],
           groupSizes: ["1-5", "6-10", "11-20", "20+"],
           startWindows: ["Morning", "Afternoon", "Evening"],
           cancellationPolicies: ["flexible", "standard", "strict"],
-          sortOptions: ["Recommended", "Price", "Rating", "Duration"],
+          sortOptions: [
+            { value: "recommended", label: "Recommended" },
+            { value: "price", label: "Price" },
+            { value: "rating", label: "Rating" },
+            { value: "duration", label: "Duration" },
+          ],
         });
       } catch (error) {
         console.error("Failed to set filter options:", error);
@@ -99,9 +159,9 @@ export default function ShareToursPage() {
       };
 
       const response: ToursResponse = await tourService.getAllTours(query);
-      
+
       // Convert API tours to ShareTours format if needed
-      const shareToursFormat = response.data.map(tour => ({
+      const shareToursFormat: ShareTour[] = response.data.map((tour) => ({
         id: tour.id,
         title: tour.title,
         city: tour.city,
@@ -112,20 +172,40 @@ export default function ShareToursPage() {
         spotsLeft: tour.maxGroup - (tour._count?.bookings || 0),
         maxSpots: tour.maxGroup,
         confirmedBookings: tour._count?.bookings || 0,
-        progressPercentage: ((tour._count?.bookings || 0) / tour.maxGroup) * 100,
-        startDate: tour.startTimes[0],
-        endDate: tour.startTimes[0], // Assuming single day tour
+        progressPercentage: `${
+          ((tour._count?.bookings || 0) / tour.maxGroup) * 100
+        }`,
+        startDate: tour.startTimes[0] || new Date().toISOString(),
+        endDate: tour.startTimes[0] || new Date().toISOString(), // Assuming single day tour
         duration: tour.durationMins,
         category: tour.category,
         description: tour.description,
-        guide: tour.guide,
-        images: tour.media.map(m => m.url),
+        guide: tour.guide
+          ? {
+              user: tour.guide.user
+                ? {
+                    name: tour.guide.user.name,
+                    image: tour.guide.user.image || undefined,
+                  }
+                : undefined,
+            }
+          : undefined,
+        images: tour.media.map((m) => m.url),
         tags: tour.tags,
         travelStyles: tour.travelStyles,
         accessibility: tour.accessibility,
         languages: tour.languages,
         instantBook: tour.instantBook,
         cancellationPolicy: tour.cancellationPolicy,
+        // Add missing required properties
+        maxGroup: tour.maxGroup,
+        durationMins: tour.durationMins,
+        startTimes: tour.startTimes,
+        language: tour.language,
+        hostRating: tour.hostRating,
+        isDropIn: tour.isDropIn,
+        isEarlyBird: tour.isEarlyBird,
+        isPayWhatYouWant: tour.isPayWhatYouWant,
       }));
 
       setTours(shareToursFormat);
@@ -167,16 +247,23 @@ export default function ShareToursPage() {
 
         switch (key) {
           case "city":
-            newFilters.cities =
-              typeof value === "string" && value ? [value] : undefined;
+            newFilters.city =
+              typeof value === "string" && value ? value : undefined;
             break;
           case "startDate":
             newFilters.startDate =
               typeof value === "string" ? value : undefined;
             break;
           case "groupSize":
-            newFilters.groupSizes =
-              typeof value === "string" && value ? [value] : undefined;
+            // Parse group size range like "1-5" into min/max
+            if (typeof value === "string" && value) {
+              const [min, max] = value.split("-").map(Number);
+              newFilters.minGroup = min;
+              newFilters.maxGroup = max;
+            } else {
+              newFilters.minGroup = undefined;
+              newFilters.maxGroup = undefined;
+            }
             break;
           case "priceRange":
             if (typeof value === "object" && value !== null) {
@@ -204,11 +291,15 @@ export default function ShareToursPage() {
       value: (() => {
         switch (filter.key) {
           case "city":
-            return filters.cities?.[0] || "";
+            return filters.city || "";
           case "startDate":
             return filters.startDate || "";
           case "groupSize":
-            return filters.groupSizes?.[0] || "";
+            // Convert min/max group to range string
+            if (filters.minGroup && filters.maxGroup) {
+              return `${filters.minGroup}-${filters.maxGroup}`;
+            }
+            return "";
           case "priceRange":
             return {
               min: filters.minPrice,

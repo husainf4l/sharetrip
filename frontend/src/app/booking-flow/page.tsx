@@ -1,19 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
-  CalendarIcon,
-  ClockIcon,
-  UserGroupIcon,
-  MapPinIcon,
   CurrencyDollarIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  InformationCircleIcon,
-  MagnifyingGlassIcon,
+  CreditCardIcon,
+  DevicePhoneMobileIcon,
 } from "@heroicons/react/24/outline";
-import { CheckCircleIcon as CheckCircleSolidIcon } from "@heroicons/react/24/solid";
 
 interface Tour {
   id: string;
@@ -34,37 +27,47 @@ interface TimeSlot {
   price: number;
 }
 
-interface AvailabilityData {
-  date: string;
-  timeSlots: TimeSlot[];
-}
-
 export default function BookingFlow() {
   const [currentStep, setCurrentStep] = useState(1);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Booking data state
-  const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(
-    null
-  );
-  const [guests, setGuests] = useState(2);
-  const [availability, setAvailability] = useState<AvailabilityData | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  // Parse URL parameters
+  const tourId = searchParams?.get("tourId");
+  const dateParam = searchParams?.get("date");
+  const guestsParam = searchParams?.get("guests");
+  const priceParam = searchParams?.get("price");
 
   const steps = [
-    { id: 1, name: "Check Availability" },
-    { id: 2, name: "Trip Details" },
-    { id: 3, name: "Personal Details" },
-    { id: 4, name: "Payment" },
+    { id: 1, name: "Trip Details" },
+    { id: 2, name: "Personal Details" },
+    { id: 3, name: "Payment" },
   ];
 
   // Demo tours data
   const demoTours: Tour[] = [
+    {
+      id: "871be770-94b0-4ea5-ae76-d875abfb9ea2",
+      title: "Bangkok City Highlights Tour",
+      city: "Bangkok",
+      country: "Thailand",
+      duration: 240,
+      basePrice: 15,
+      currency: "USD",
+      maxGroup: 10,
+      image: "/images/tour-1.jpg",
+    },
+    {
+      id: "f51fa672-ad05-47a0-9bd6-7669f404d305",
+      title: "Petra Ancient City Tour",
+      city: "Petra",
+      country: "Jordan",
+      duration: 360,
+      basePrice: 4345,
+      currency: "USD",
+      maxGroup: 15,
+      image: "/images/tour-1.jpg",
+    },
     {
       id: "1",
       title: "Bangkok Street Food Tour",
@@ -111,8 +114,44 @@ export default function BookingFlow() {
     },
   ];
 
+  // Initialize state from URL parameters
+  const initialTour = tourId
+    ? demoTours.find((tour) => tour.id === tourId) || demoTours[0]
+    : demoTours[0];
+  const initialDate = dateParam || "";
+  const initialGuests = guestsParam ? parseInt(guestsParam) : 2;
+  const initialPrice = priceParam
+    ? parseInt(priceParam)
+    : initialTour?.basePrice || 2500;
+
+  // Create mock time slot for the selected tour
+  const initialTimeSlot = initialTour
+    ? {
+        time: "10:00",
+        available: true,
+        spotsLeft: 5,
+        price: initialPrice,
+      }
+    : null;
+
+  // Booking data state
+  const [selectedTour, setSelectedTour] = useState<Tour | null>(initialTour);
+  const [selectedDate, setSelectedDate] = useState(initialDate);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(
+    initialTimeSlot
+  );
+  const [guests, setGuests] = useState(initialGuests);
+
+  // Payment state
+  const [paymentMethod, setPaymentMethod] = useState<string>("card");
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+  const [cvv, setCvv] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [paypalEmail, setPaypalEmail] = useState("");
+
   const nextStep = () => {
-    if (currentStep < 4) {
+    if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -122,50 +161,6 @@ export default function BookingFlow() {
       setCurrentStep(currentStep - 1);
     }
   };
-
-  // Generate demo availability data
-  const generateDemoAvailability = (date: string): AvailabilityData => {
-    const timeSlots: TimeSlot[] = [];
-    const baseTimes = ["09:00", "11:00", "14:00", "16:00", "18:00"];
-
-    baseTimes.forEach((time) => {
-      const isAvailable = Math.random() > 0.3; // 70% chance of being available
-      const spotsLeft = isAvailable ? Math.floor(Math.random() * 8) + 1 : 0;
-      const priceMultiplier = Math.random() * 0.5 + 0.75; // 0.75 to 1.25
-
-      timeSlots.push({
-        time,
-        available: isAvailable,
-        spotsLeft,
-        price: Math.round(selectedTour!.basePrice * priceMultiplier),
-      });
-    });
-
-    return { date, timeSlots };
-  };
-
-  const handleCheckAvailability = () => {
-    if (!selectedTour || !selectedDate) return;
-
-    setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      const availabilityData = generateDemoAvailability(selectedDate);
-      setAvailability(availabilityData);
-      setIsLoading(false);
-    }, 1500);
-  };
-
-  const handleSelectTimeSlot = (timeSlot: TimeSlot) => {
-    setSelectedTimeSlot(timeSlot);
-  };
-
-  const filteredTours = demoTours.filter(
-    (tour) =>
-      tour.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tour.city.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat("en-US", {
@@ -185,343 +180,236 @@ export default function BookingFlow() {
     if (currentStep === 1) {
       return selectedTour && selectedDate && selectedTimeSlot;
     }
+    if (currentStep === 3) {
+      // Payment validation
+      if (paymentMethod === "card") {
+        return cardNumber && expiryDate && cvv && cardName;
+      }
+      return true; // Other payment methods don't require form validation
+    }
     return true;
   };
 
+  // Check if tour exists (only if tourId was provided but not found)
+  if (tourId && !demoTours.find((tour) => tour.id === tourId)) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">
+            Tour Not Found
+          </h1>
+          <p className="text-gray-600 mb-6">
+            The tour you're looking for doesn't exist or may have been removed.
+          </p>
+          <button
+            onClick={() => router.push("/tours")}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Browse Tours
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-3xl font-bold text-center mb-8">
-            Book Your Tour
-          </h1>
+      {/* Simple Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-4 py-6">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Book Your Tour
+            </h1>
+            <p className="text-gray-600">
+              Complete your booking in 3 simple steps
+            </p>
+          </div>
+        </div>
+      </div>
 
-          {/* Progress Steps */}
-          <div className="flex justify-center mb-8">
-            {steps.map((step, index) => (
-              <div key={step.id} className="flex items-center">
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    currentStep >= step.id
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-300 text-gray-600"
-                  }`}
-                >
-                  {step.id}
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          {/* Simple Progress Steps */}
+          <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+            <div className="flex justify-center items-center space-x-8">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-center">
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                        currentStep >= step.id
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-200 text-gray-600"
+                      }`}
+                    >
+                      {step.id}
+                    </div>
+                    <span
+                      className={`mt-2 text-xs font-medium ${
+                        currentStep >= step.id
+                          ? "text-blue-600"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {step.name}
+                    </span>
+                  </div>
+                  {index < steps.length - 1 && (
+                    <div
+                      className={`w-12 h-0.5 mx-4 ${
+                        currentStep > step.id ? "bg-blue-600" : "bg-gray-200"
+                      }`}
+                    ></div>
+                  )}
                 </div>
-                <span
-                  className={`ml-2 ${
-                    currentStep >= step.id ? "text-blue-600" : "text-gray-600"
-                  }`}
-                >
-                  {step.name}
-                </span>
-                {index < steps.length - 1 && (
-                  <div
-                    className={`w-16 h-0.5 mx-4 ${
-                      currentStep > step.id ? "bg-blue-600" : "bg-gray-300"
-                    }`}
-                  ></div>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           {/* Step Content */}
-          <div className="mb-8">
+          <div className="p-6">
             {currentStep === 1 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">
-                  Step 1: Check Availability
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  Select a tour, date, and time to check availability before
-                  booking.
-                </p>
-
-                {/* Tour Selection */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-medium mb-3">Select a Tour</h3>
-
-                  {/* Search */}
-                  <div className="relative mb-4">
-                    <MagnifyingGlassIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search tours by name or city..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-
-                  {/* Tour Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    {filteredTours.map((tour) => (
-                      <div
-                        key={tour.id}
-                        onClick={() => setSelectedTour(tour)}
-                        className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                          selectedTour?.id === tour.id
-                            ? "border-blue-500 bg-blue-50"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                      >
-                        <div className="aspect-video bg-gray-200 rounded mb-3 flex items-center justify-center">
-                          <span className="text-gray-500 text-sm">
-                            Tour Image
-                          </span>
-                        </div>
-                        <h4 className="font-semibold text-sm mb-1">
-                          {tour.title}
-                        </h4>
-                        <div className="flex items-center text-gray-600 text-xs mb-2">
-                          <MapPinIcon className="h-3 w-3 mr-1" />
-                          {tour.city}, {tour.country}
-                        </div>
-                        <div className="flex items-center justify-between text-xs text-gray-600">
-                          <span>{formatDuration(tour.duration)}</span>
-                          <span>
-                            {formatPrice(tour.basePrice, tour.currency)}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    Trip Details
+                  </h2>
+                  <p className="text-gray-600">Review your tour selection</p>
                 </div>
 
-                {/* Date and Guest Selection */}
-                {selectedTour && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        <CalendarIcon className="h-4 w-4 inline mr-1" />
-                        Select Date
-                      </label>
-                      <input
-                        type="date"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        min={new Date().toISOString().split("T")[0]}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
+                {selectedTour && selectedTimeSlot && (
+                  <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                      Booking Summary
+                    </h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Tour:</span>
+                          <span className="font-medium text-gray-900">
+                            {selectedTour.title}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Date:</span>
+                          <span className="font-medium text-gray-900">
+                            {new Date(selectedDate).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              }
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Time:</span>
+                          <span className="font-medium text-gray-900">
+                            {selectedTimeSlot.time}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Guests:</span>
+                          <span className="font-medium text-gray-900">
+                            {guests}
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        <UserGroupIcon className="h-4 w-4 inline mr-1" />
-                        Number of Guests
-                      </label>
-                      <select
-                        value={guests}
-                        onChange={(e) => setGuests(Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        {Array.from(
-                          { length: selectedTour.maxGroup },
-                          (_, i) => i + 1
-                        ).map((num) => (
-                          <option key={num} value={num}>
-                            {num} {num === 1 ? "Guest" : "Guests"}
-                          </option>
-                        ))}
-                      </select>
+                    <div className="mt-6 pt-4 border-t border-gray-200">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-lg text-gray-700">Total Price</p>
+                          <p className="text-sm text-gray-600">
+                            {formatPrice(
+                              selectedTimeSlot.price,
+                              selectedTour.currency
+                            )}{" "}
+                            per person
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-gray-900">
+                            {formatPrice(
+                              selectedTimeSlot.price * guests,
+                              selectedTour.currency
+                            )}
+                          </p>
+                        </div>
+                      </div>
                     </div>
+                  </div>
+                )}
 
-                    <div className="flex items-end">
-                      <button
-                        onClick={handleCheckAvailability}
-                        disabled={!selectedDate || isLoading}
-                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                      >
-                        {isLoading ? (
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                        ) : (
-                          <>
-                            <MagnifyingGlassIcon className="h-4 w-4 mr-2" />
-                            Check Availability
-                          </>
-                        )}
+                {/* Additional Trip Details */}
+                <div className="bg-white border border-gray-200 rounded-lg p-6">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                    Trip Information
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Duration:</span>
+                      <span className="font-medium text-gray-900">
+                        10 hours
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Guide:</span>
+                      <span className="font-medium text-gray-900">English</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Pickup Area:</span>
+                      <button className="text-blue-600 hover:text-blue-800 font-medium">
+                        View pickup area
                       </button>
                     </div>
-                  </div>
-                )}
-
-                {/* Availability Results */}
-                {availability && (
-                  <div>
-                    <h3 className="text-lg font-medium mb-4">
-                      Available Time Slots for{" "}
-                      {new Date(availability.date).toLocaleDateString()}
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                      {availability.timeSlots.map((slot, index) => (
-                        <div
-                          key={index}
-                          onClick={() =>
-                            slot.available && handleSelectTimeSlot(slot)
-                          }
-                          className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                            selectedTimeSlot?.time === slot.time
-                              ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
-                              : slot.available
-                              ? "border-green-200 bg-green-50 hover:border-green-300"
-                              : "border-red-200 bg-red-50 cursor-not-allowed"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center">
-                              <ClockIcon className="h-5 w-5 mr-2 text-gray-600" />
-                              <span className="font-semibold">{slot.time}</span>
-                            </div>
-                            {slot.available ? (
-                              <CheckCircleSolidIcon className="h-5 w-5 text-green-600" />
-                            ) : (
-                              <XCircleIcon className="h-5 w-5 text-red-600" />
-                            )}
-                          </div>
-
-                          <div className="mb-3">
-                            <div className="text-lg font-bold text-blue-600">
-                              {formatPrice(slot.price, selectedTour!.currency)}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              per person
-                            </div>
-                          </div>
-
-                          {slot.available ? (
-                            <div className="mb-3">
-                              <div className="flex items-center text-sm text-green-700">
-                                <InformationCircleIcon className="h-4 w-4 mr-1" />
-                                {slot.spotsLeft} spots left
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="mb-3">
-                              <div className="flex items-center text-sm text-red-700">
-                                <XCircleIcon className="h-4 w-4 mr-1" />
-                                Not available
-                              </div>
-                            </div>
-                          )}
-
-                          {selectedTimeSlot?.time === slot.time && (
-                            <div className="text-sm font-medium text-blue-600">
-                              ✓ Selected
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                    <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+                      Check to see if your accommodation is within the eligible
+                      area for pickup.
                     </div>
-                  </div>
-                )}
-
-                {/* Selected Tour Summary */}
-                {selectedTour && (
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-semibold">{selectedTour.title}</h3>
-                        <div className="flex items-center text-sm text-gray-600 mt-1">
-                          <MapPinIcon className="h-4 w-4 mr-1" />
-                          {selectedTour.city}, {selectedTour.country}
-                          <ClockIcon className="h-4 w-4 ml-4 mr-1" />
-                          {formatDuration(selectedTour.duration)}
-                        </div>
+                    <div className="border-t pt-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-gray-600">Starting time:</span>
+                        <span className="font-medium text-gray-900">
+                          Tuesday, September 16, 2025
+                        </span>
                       </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-blue-600">
-                          {selectedTimeSlot
-                            ? formatPrice(
-                                selectedTimeSlot.price,
-                                selectedTour.currency
-                              )
-                            : formatPrice(
-                                selectedTour.basePrice,
-                                selectedTour.currency
-                              )}
-                        </div>
-                        <div className="text-sm text-gray-600">per person</div>
+                      <div className="text-lg font-semibold text-gray-900">
+                        8:00 AM
                       </div>
                     </div>
+                    <div className="bg-yellow-50 border border-yellow-200 rounded p-3">
+                      <p className="text-yellow-800 font-medium">
+                        Only 20 hours left to book
+                      </p>
+                    </div>
+                    <div className="bg-green-50 border border-green-200 rounded p-3">
+                      <p className="text-green-800 font-medium">
+                        Cancel before 8:00 AM on September 15 for a full refund
+                      </p>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             )}
 
             {currentStep === 2 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">
-                  Step 2: Trip Details
-                </h2>
-                <p className="text-gray-600 mb-4">
-                  Review and confirm your tour selection.
-                </p>
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    Personal Details
+                  </h2>
+                  <p className="text-gray-600">
+                    Please provide your information
+                  </p>
+                </div>
 
-                {selectedTour && selectedTimeSlot && (
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <h3 className="font-semibold text-lg mb-4">
-                      Booking Summary
-                    </h3>
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Tour:</span>
-                        <span className="font-medium">
-                          {selectedTour.title}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Date:</span>
-                        <span className="font-medium">
-                          {new Date(selectedDate).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Time:</span>
-                        <span className="font-medium">
-                          {selectedTimeSlot.time}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Guests:</span>
-                        <span className="font-medium">{guests}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Price per person:</span>
-                        <span className="font-medium">
-                          {formatPrice(
-                            selectedTimeSlot.price,
-                            selectedTour.currency
-                          )}
-                        </span>
-                      </div>
-                      <div className="border-t pt-3 flex justify-between font-bold text-lg">
-                        <span>Total:</span>
-                        <span>
-                          {formatPrice(
-                            selectedTimeSlot.price * guests,
-                            selectedTour.currency
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {currentStep === 3 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">
-                  Step 3: Personal Details
-                </h2>
-                <p className="text-gray-600">
-                  Please provide your contact information.
-                </p>
-                {/* Add form fields here */}
-                <div className="space-y-4 mt-6">
+                <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -529,7 +417,7 @@ export default function BookingFlow() {
                       </label>
                       <input
                         type="text"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Enter your first name"
                       />
                     </div>
@@ -539,77 +427,184 @@ export default function BookingFlow() {
                       </label>
                       <input
                         type="text"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Enter your last name"
                       />
                     </div>
                   </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email
+                      Email Address
                     </label>
                     <input
                       type="email"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter your email"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="your@email.com"
                     />
                   </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone
+                      Phone Number
                     </label>
                     <input
                       type="tel"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter your phone number"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="+1 (555) 123-4567"
                     />
                   </div>
                 </div>
               </div>
             )}
 
-            {currentStep === 4 && (
-              <div>
-                <h2 className="text-xl font-semibold mb-4">Step 4: Payment</h2>
-                <p className="text-gray-600">
-                  Complete your booking by providing payment information.
-                </p>
-                {/* Add payment form here */}
-                <div className="bg-gray-50 rounded-lg p-6 mt-6">
-                  <div className="text-center">
-                    <CurrencyDollarIcon className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">
-                      Payment Information
-                    </h3>
-                    <p className="text-gray-600 mb-4">
-                      Secure payment processing coming soon...
-                    </p>
-                    <div className="text-sm text-gray-500">
-                      This is a demo - payment integration would be implemented
-                      here
-                    </div>
+            {currentStep === 3 && (
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    Payment Details
+                  </h2>
+                  <p className="text-gray-600">Choose your payment method</p>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Payment Method
+                    </label>
+                    <select
+                      value={paymentMethod}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="card">Credit/Debit Card</option>
+                      <option value="paypal">PayPal</option>
+                      <option value="applepay">Apple Pay</option>
+                      <option value="googlepay">Google Pay</option>
+                    </select>
                   </div>
+
+                  {paymentMethod === "card" && (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Card Number
+                        </label>
+                        <input
+                          type="text"
+                          value={cardNumber}
+                          onChange={(e) => setCardNumber(e.target.value)}
+                          placeholder="1234 5678 9012 3456"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          maxLength={19}
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Expiry Date
+                          </label>
+                          <input
+                            type="text"
+                            value={expiryDate}
+                            onChange={(e) => setExpiryDate(e.target.value)}
+                            placeholder="MM/YY"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            maxLength={5}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            CVV
+                          </label>
+                          <input
+                            type="text"
+                            value={cvv}
+                            onChange={(e) => setCvv(e.target.value)}
+                            placeholder="123"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            maxLength={4}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Cardholder Name
+                        </label>
+                        <input
+                          type="text"
+                          value={cardName}
+                          onChange={(e) => setCardName(e.target.value)}
+                          placeholder="John Doe"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {paymentMethod === "paypal" && (
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <p className="text-gray-600 mb-2">
+                        You will be redirected to PayPal to complete your
+                        payment securely.
+                      </p>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          PayPal Email (Optional)
+                        </label>
+                        <input
+                          type="email"
+                          value={paypalEmail}
+                          onChange={(e) => setPaypalEmail(e.target.value)}
+                          placeholder="your@email.com"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {(paymentMethod === "applepay" ||
+                    paymentMethod === "googlepay") && (
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <p className="text-gray-600">
+                        {paymentMethod === "applepay"
+                          ? "Use Touch ID or Face ID to complete your payment."
+                          : "Use your Google account to complete your payment."}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
           </div>
 
           {/* Navigation Buttons */}
-          <div className="flex justify-between">
+          <div className="flex justify-between pt-6 border-t border-gray-200">
             <button
               onClick={prevStep}
               disabled={currentStep === 1}
-              className="px-6 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+              className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-pointer"
             >
               Previous
             </button>
 
-            {currentStep === 4 ? (
+            {currentStep === 3 ? (
               <button
-                onClick={() =>
-                  alert("Booking completed! Thank you for your reservation.")
-                }
-                className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                onClick={() => {
+                  let message = "Booking completed! ";
+                  if (paymentMethod === "card") {
+                    message += "Payment processed with your card. ";
+                  } else if (paymentMethod === "paypal") {
+                    message += "Redirecting to PayPal for payment. ";
+                  } else if (paymentMethod === "applepay") {
+                    message += "Payment processed with Apple Pay. ";
+                  } else if (paymentMethod === "googlepay") {
+                    message += "Payment processed with Google Pay. ";
+                  }
+                  message += "Thank you for your reservation.";
+                  alert(message);
+                }}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 Complete Booking
               </button>
@@ -617,7 +612,7 @@ export default function BookingFlow() {
               <button
                 onClick={nextStep}
                 disabled={!canProceedToNextStep()}
-                className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-pointer"
               >
                 Next
               </button>

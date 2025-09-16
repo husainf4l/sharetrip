@@ -55,23 +55,19 @@ export default function TourBookingsPage() {
   const router = useRouter();
   const tourId = params?.tourId as string;
 
-  // Redirect if no tourId
-  useEffect(() => {
-    if (!tourId) {
-      router.push("/dashboard/host");
-    }
-  }, [tourId, router]);
-
-  // All hooks must come before early returns
+  // All hooks must come before any early returns or conditional logic
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [tour, setTour] = useState<Tour | null>(null);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  if (!tourId) {
-    return null;
-  }
+  // Redirect if no tourId
+  useEffect(() => {
+    if (!tourId) {
+      router.push("/dashboard/host");
+    }
+  }, [tourId, router]);
 
   // Mock tour data
   useEffect(() => {

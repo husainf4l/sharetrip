@@ -6,6 +6,11 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { TourModule } from './tour/tour.module';
 import { BookingModule } from './booking/booking.module';
+import { CartModule } from './cart/cart.module';
+import { WishlistModule } from './wishlist/wishlist.module';
+import { UploadModule } from './upload/upload.module';
+import { MediaModule } from './media/media.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -16,7 +21,12 @@ import { BookingModule } from './booking/booking.module';
     PrismaModule,
     AuthModule,
     TourModule,
-    BookingModule
+    BookingModule,
+    CartModule,
+    WishlistModule,
+    UploadModule,
+    MediaModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

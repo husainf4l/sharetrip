@@ -26,7 +26,11 @@ export class BookingService {
       }
 
       if (tour.status !== 'published') {
-        throw new BadRequestException('Tour is not available for booking');
+        // Also check trimmed status to handle whitespace issues
+        const trimmedStatus = tour.status?.trim().toLowerCase();
+        if (trimmedStatus !== 'published') {
+          throw new BadRequestException('Tour is not available for booking');
+        }
       }
 
       // Verify traveler exists
@@ -681,7 +685,11 @@ export class BookingService {
     }
 
     if (tour.status !== 'published' && tour.status !== 'approved') {
-      throw new BadRequestException('Tour is not available for booking');
+      // Also check trimmed status to handle whitespace issues
+      const trimmedStatus = tour.status?.trim().toLowerCase();
+      if (trimmedStatus !== 'published' && trimmedStatus !== 'approved') {
+        throw new BadRequestException('Tour is not available for booking');
+      }
     }
 
     // Count confirmed bookings for this tour

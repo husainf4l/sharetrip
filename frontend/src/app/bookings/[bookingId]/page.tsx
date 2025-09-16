@@ -100,7 +100,7 @@ export default function BookingDetailsPage() {
           : bookingId === "2"
           ? "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=250&fit=crop"
           : bookingId === "3"
-          ? "https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=400&h=250&fit=crop"
+          ? "https://images.unsplash.com/photo-1509439581779-6298f75bf6e5?w=400&h=250&fit=crop"
           : "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&h=250&fit=crop",
       tourLocation:
         bookingId === "1"

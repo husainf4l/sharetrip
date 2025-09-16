@@ -13,9 +13,11 @@ import {
   SunIcon,
   StarIcon,
   TicketIcon,
+  ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../contexts/AuthContext";
 import { getDashboardUrl, canHost } from "../utils/roleUtils";
+import { useCart } from "../contexts/CartContext";
 import Logo from "./Logo";
 
 // Type definitions for navigation items
@@ -42,6 +44,7 @@ type ExperienceCategory = {
 
 export default function Header() {
   const { user, logout, loading } = useAuth();
+  const { cartItemCount, wishlistItemCount } = useCart();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
@@ -458,9 +461,30 @@ export default function Header() {
           </div>
 
           {/* Wishlist */}
-          <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <Link
+            href="/wishlist"
+            className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
             <HeartIcon className="w-6 h-6 text-gray-600" />
-          </button>
+            {wishlistItemCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {wishlistItemCount}
+              </span>
+            )}
+          </Link>
+
+          {/* Cart */}
+          <Link
+            href="/cart"
+            className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <ShoppingBagIcon className="w-6 h-6 text-gray-600" />
+            {cartItemCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {cartItemCount}
+              </span>
+            )}
+          </Link>
 
           {/* Account */}
           {user ? (
@@ -558,6 +582,30 @@ export default function Header() {
               >
                 <TicketIcon className="h-6 w-6" />
                 <span className="text-xs mt-1">Bookings</span>
+              </Link>
+              <Link
+                href="/wishlist"
+                className="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-gray-50 relative"
+              >
+                <HeartIcon className="h-6 w-6" />
+                <span className="text-xs mt-1">Wishlist</span>
+                {wishlistItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
+                    {wishlistItemCount}
+                  </span>
+                )}
+              </Link>
+              <Link
+                href="/cart"
+                className="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-gray-50 relative"
+              >
+                <ShoppingBagIcon className="h-6 w-6" />
+                <span className="text-xs mt-1">Cart</span>
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
+                    {cartItemCount}
+                  </span>
+                )}
               </Link>
               {user && !canHost(user.role) && (
                 <Link

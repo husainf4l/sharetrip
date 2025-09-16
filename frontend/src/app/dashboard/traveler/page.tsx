@@ -95,7 +95,7 @@ export default function TravelerDashboard() {
         participants: 1,
         totalPrice: 25,
         image:
-          "https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=400&h=250&fit=crop",
+          "https://images.unsplash.com/photo-1509439581779-6298f75bf6e5?w=400&h=250&fit=crop",
         hostName: "Sophie Dubois",
         duration: "2 hours",
         meetingPoint: "Sacré-Cœur Basilica main entrance",

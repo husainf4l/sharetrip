@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -30,6 +30,8 @@ model User {
   refreshTokens      RefreshToken[]
   verificationTokens VerificationToken[]
   hostApplication    HostApplication?
+  cart               Cart?
+  wishlist           Wishlist?
 }
 
 model GuideProfile {
@@ -55,25 +57,25 @@ model Tour {
   country          String
   category         String // SHARE_TRIP, PRIVATE, GROUP, etc.
   description      String?
-  startTimes       DateTime[]
+  startTimes       Json? // Array of DateTime strings
   basePrice        Int // Price in cents
   currency         String       @default("USD")
   minGroup         Int
   maxGroup         Int
   durationMins     Int
   language         String
-  languages        String[]     @default([]) // Multi-language support
+  languages        Json? // Multi-language support
   isPayWhatYouWant Boolean      @default(false)
   status           String       @default("draft")
   createdAt        DateTime     @default(now())
 
   // Enhanced filtering fields
-  travelStyles       String[] @default([]) // relaxed, adventurous, foodie, culture, nightlife, family
-  accessibility      String[] @default([]) // wheelchair-friendly, low-walking, kid-friendly, women-only
+  travelStyles       Json? // relaxed, adventurous, foodie, culture, nightlife, family
+  accessibility      Json? // wheelchair-friendly, low-walking, kid-friendly, women-only
   startWindow        String? // morning, afternoon, evening
-  instantBook        Boolean  @default(false)
-  hostRating         Float?   @default(0)
-  cancellationPolicy String   @default("standard") // flexible, standard, strict
+  instantBook        Boolean @default(false)
+  hostRating         Float?  @default(0)
+  cancellationPolicy String  @default("standard") // flexible, standard, strict
 
   // Deal states
   isDropIn    Boolean @default(false) // <2h to start
@@ -85,21 +87,23 @@ model Tour {
   meetingPoint String?
 
   // SEO and searchability
-  tags           String[] @default([])
-  searchKeywords String[] @default([])
+  tags           Json?
+  searchKeywords Json?
 
   // Additional tour details
-  whatsIncluded  String[] @default([])
-  whatsExcluded  String[] @default([])
-  requirements   String[] @default([])
-  highlights     String[] @default([])
+  whatsIncluded  Json?
+  whatsExcluded  Json?
+  requirements   Json?
+  highlights     Json?
   itinerary      String?
   difficulty     String?
   ageRestriction Int?
 
-  media     TourMedia[]
-  bookings  Booking[]
-  groupFill GroupFill?
+  media         TourMedia[]
+  bookings      Booking[]
+  groupFill     GroupFill?
+  cartItems     CartItem[]
+  wishlistItems WishlistItem[]
 }
 
 model TourMedia {
@@ -175,27 +179,27 @@ model GroupFill {
 }
 
 model Preference {
-  id                 String   @id @default(uuid())
-  user               User     @relation(fields: [userId], references: [id])
-  userId             String   @unique
+  id                 String  @id @default(uuid())
+  user               User    @relation(fields: [userId], references: [id])
+  userId             String  @unique
   budgetMin          Int?
   budgetMax          Int?
-  categories         String[] @default([])
-  cities             String[] @default([])
-  countries          String[] @default([])
+  categories         Json?
+  cities             Json?
+  countries          Json?
   preferredGroupSize String?
-  flexibleDates      Boolean  @default(false)
+  flexibleDates      Boolean @default(false)
 
   // Enhanced filtering preferences
-  preferredLanguages String[] @default([])
-  travelStyles       String[] @default([]) // relaxed, adventurous, foodie, culture, nightlife, family
-  accessibility      String[] @default([]) // wheelchair-friendly, low-walking, kid-friendly, women-only
-  preferredDuration  String[] @default([]) // 30-60m, 1-2h, 3-4h, full-day
-  startWindows       String[] @default([]) // morning, afternoon, evening
-  cancellationPolicy String[] @default([]) // flexible, standard, strict
-  maxBudgetAtFull    Boolean  @default(false) // Consider max price at full group
-  minHostRating      Float?   @default(0)
-  instantBookOnly    Boolean  @default(false)
+  preferredLanguages Json?
+  travelStyles       Json? // relaxed, adventurous, foodie, culture, nightlife, family
+  accessibility      Json? // wheelchair-friendly, low-walking, kid-friendly, women-only
+  preferredDuration  Json? // 30-60m, 1-2h, 3-4h, full-day
+  startWindows       Json? // morning, afternoon, evening
+  cancellationPolicy Json? // flexible, standard, strict
+  maxBudgetAtFull    Boolean @default(false) // Consider max price at full group
+  minHostRating      Float?  @default(0)
+  instantBookOnly    Boolean @default(false)
 
   // Notification preferences
   notifyDropIns    Boolean @default(true)
@@ -232,4 +236,56 @@ model Referral {
   referredUserId String
   status         String
   creditAmount   Int
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  user      User       @relation(fields: [userId], references: [id])
+  userId    String
+  items     CartItem[]
+  promoCode String?
+  discount  Int        @default(0) // Discount amount in cents
+  total     Int        @default(0) // Total amount in cents
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@unique([userId])
+}
+
+model CartItem {
+  id         String    @id @default(uuid())
+  cart       Cart      @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId     String
+  tour       Tour      @relation(fields: [tourId], references: [id])
+  tourId     String
+  quantity   Int       @default(1)
+  priceAtAdd Int // Price at the time of adding to cart in cents
+  headcount  Int       @default(1) // Number of people for this booking
+  startTime  DateTime? // Selected start time for the tour
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([cartId, tourId])
+}
+
+model Wishlist {
+  id        String         @id @default(uuid())
+  user      User           @relation(fields: [userId], references: [id])
+  userId    String
+  tours     WishlistItem[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@unique([userId])
+}
+
+model WishlistItem {
+  id         String   @id @default(uuid())
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  wishlistId String
+  tour       Tour     @relation(fields: [tourId], references: [id])
+  tourId     String
+  addedAt    DateTime @default(now())
+
+  @@unique([wishlistId, tourId])
 }

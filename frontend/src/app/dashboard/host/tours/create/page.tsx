@@ -10,6 +10,21 @@ import {
 import { tourService } from "../../../../../services/tour.service";
 import { CheckIcon, XMarkIcon, PlusIcon } from "@heroicons/react/24/outline";
 
+const getExponent = (currency: string): number => {
+  // Currency exponents (number of decimal places)
+  const exponents: Record<string, number> = {
+    USD: 2,
+    EUR: 2,
+    GBP: 2,
+    JPY: 0,
+    KRW: 0,
+    VND: 0,
+    THB: 2,
+    // Add more currencies as needed
+  };
+  return exponents[currency] || 2; // Default to 2 decimals
+};
+
 export default function CreateTourPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,7 +82,7 @@ export default function CreateTourPage() {
     field: keyof CreateTourDto,
     value: string | number | string[] | boolean | CancellationPolicy
   ) => {
-    console.log('Input change:', field, value); // Debug log
+    console.log("Input change:", field, value); // Debug log
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -80,7 +95,7 @@ export default function CreateTourPage() {
           alert("Please enter a valid date and time");
           return;
         }
-        
+
         // Ensure it's in the future
         if (date <= new Date()) {
           alert("Start time must be in the future");
@@ -361,7 +376,7 @@ export default function CreateTourPage() {
 
     // Numeric validations - ensure they're positive numbers
     const basePrice = Number(formData.basePrice);
-    if (!basePrice || isNaN(basePrice) || basePrice < 1) {
+    if (!basePrice || isNaN(basePrice) || basePrice <= 0) {
       errors.push("Base price must be a number greater than or equal to 1");
     }
 
@@ -461,6 +476,13 @@ export default function CreateTourPage() {
     console.log("- Cover photo index:", coverPhotoIndex);
 
     // Prepare clean data for submission with enhanced validation
+    const exponent = getExponent(formData.currency || "USD");
+    const factor = Math.pow(10, exponent);
+    const roundedBasePrice = Math.max(
+      0,
+      Math.round((Number(formData.basePrice) || 0) * factor) / factor
+    );
+
     const cleanFormData: CreateTourDto = {
       // Required string fields - ensure they're trimmed and not empty
       title: formData.title?.trim() || "",
@@ -505,8 +527,8 @@ export default function CreateTourPage() {
             }
           }) || [],
 
-      // Required numeric fields - ensure they're positive integers >= 1
-      basePrice: Math.max(1, Math.round(Number(formData.basePrice) || 1)),
+      // Required numeric fields - ensure they're positive and properly rounded
+      basePrice: roundedBasePrice,
       minGroup: Math.max(1, Math.round(Number(formData.minGroup) || 1)),
       maxGroup: Math.max(1, Math.round(Number(formData.maxGroup) || 1)),
       durationMins: Math.max(
@@ -567,57 +589,100 @@ export default function CreateTourPage() {
     // Final validation of clean data - ensure all required fields meet backend expectations
     const finalValidationErrors: string[] = [];
 
-    if (!cleanFormData.title || typeof cleanFormData.title !== 'string' || cleanFormData.title.trim().length === 0) {
+    if (
+      !cleanFormData.title ||
+      typeof cleanFormData.title !== "string" ||
+      cleanFormData.title.trim().length === 0
+    ) {
       finalValidationErrors.push("Title must be a non-empty string");
     }
-    if (!cleanFormData.city || typeof cleanFormData.city !== 'string' || cleanFormData.city.trim().length === 0) {
+    if (
+      !cleanFormData.city ||
+      typeof cleanFormData.city !== "string" ||
+      cleanFormData.city.trim().length === 0
+    ) {
       finalValidationErrors.push("City must be a non-empty string");
     }
-    if (!cleanFormData.country || typeof cleanFormData.country !== 'string' || cleanFormData.country.trim().length === 0) {
+    if (
+      !cleanFormData.country ||
+      typeof cleanFormData.country !== "string" ||
+      cleanFormData.country.trim().length === 0
+    ) {
       finalValidationErrors.push("Country must be a non-empty string");
     }
-    if (!cleanFormData.language || typeof cleanFormData.language !== 'string' || cleanFormData.language.trim().length === 0) {
+    if (
+      !cleanFormData.language ||
+      typeof cleanFormData.language !== "string" ||
+      cleanFormData.language.trim().length === 0
+    ) {
       finalValidationErrors.push("Language must be a non-empty string");
     }
     if (
       !cleanFormData.category ||
-      typeof cleanFormData.category !== 'string' ||
-      !Object.values(TourCategory).includes(cleanFormData.category as TourCategory)
+      typeof cleanFormData.category !== "string" ||
+      !Object.values(TourCategory).includes(
+        cleanFormData.category as TourCategory
+      )
     ) {
-      finalValidationErrors.push(`Category must be one of: ${Object.values(TourCategory).join(", ")}`);
+      finalValidationErrors.push(
+        `Category must be one of: ${Object.values(TourCategory).join(", ")}`
+      );
     }
-    if (!Array.isArray(cleanFormData.startTimes) || cleanFormData.startTimes.length === 0) {
+    if (
+      !Array.isArray(cleanFormData.startTimes) ||
+      cleanFormData.startTimes.length === 0
+    ) {
       finalValidationErrors.push("At least one valid start time is required");
     } else {
       // Validate each start time is a valid ISO string
       cleanFormData.startTimes.forEach((time, index) => {
-        if (typeof time !== 'string') {
-          finalValidationErrors.push(`Start time ${index + 1} must be a string`);
+        if (typeof time !== "string") {
+          finalValidationErrors.push(
+            `Start time ${index + 1} must be a string`
+          );
         } else {
           try {
             const date = new Date(time);
             if (isNaN(date.getTime())) {
-              finalValidationErrors.push(`Start time ${index + 1} must be a valid ISO 8601 date string`);
+              finalValidationErrors.push(
+                `Start time ${index + 1} must be a valid ISO 8601 date string`
+              );
             }
           } catch {
-            finalValidationErrors.push(`Start time ${index + 1} must be a valid ISO 8601 date string`);
+            finalValidationErrors.push(
+              `Start time ${index + 1} must be a valid ISO 8601 date string`
+            );
           }
         }
       });
     }
-    if (typeof cleanFormData.basePrice !== 'number' || cleanFormData.basePrice < 1) {
+    if (
+      typeof cleanFormData.basePrice !== "number" ||
+      cleanFormData.basePrice <= 0
+    ) {
       finalValidationErrors.push("Base price must be a number >= 1");
     }
-    if (typeof cleanFormData.minGroup !== 'number' || cleanFormData.minGroup < 1) {
+    if (
+      typeof cleanFormData.minGroup !== "number" ||
+      cleanFormData.minGroup < 1
+    ) {
       finalValidationErrors.push("Minimum group size must be a number >= 1");
     }
-    if (typeof cleanFormData.maxGroup !== 'number' || cleanFormData.maxGroup < 1) {
+    if (
+      typeof cleanFormData.maxGroup !== "number" ||
+      cleanFormData.maxGroup < 1
+    ) {
       finalValidationErrors.push("Maximum group size must be a number >= 1");
     }
     if (cleanFormData.minGroup > cleanFormData.maxGroup) {
-      finalValidationErrors.push("Minimum group size cannot be greater than maximum");
+      finalValidationErrors.push(
+        "Minimum group size cannot be greater than maximum"
+      );
     }
-    if (typeof cleanFormData.durationMins !== 'number' || cleanFormData.durationMins < 1) {
+    if (
+      typeof cleanFormData.durationMins !== "number" ||
+      cleanFormData.durationMins < 1
+    ) {
       finalValidationErrors.push("Duration must be a number >= 1");
     }
 
@@ -703,7 +768,7 @@ export default function CreateTourPage() {
               <pre>{JSON.stringify(formData, null, 2)}</pre>
             </details>
           </div>
-          
+
           {/* Step 1: Basic Info */}
           {currentStep === 1 && (
             <div className="space-y-6">
@@ -900,7 +965,7 @@ export default function CreateTourPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Base Price (cents) *
+                    Base Price *
                   </label>
                   <input
                     type="number"
@@ -908,15 +973,27 @@ export default function CreateTourPage() {
                     onChange={(e) =>
                       handleInputChange(
                         "basePrice",
-                        parseInt(e.target.value) || 0
+                        parseFloat(e.target.value) || 0
                       )
                     }
-                    placeholder="2500"
+                    placeholder={
+                      getExponent(formData.currency || "USD") === 0
+                        ? "2500"
+                        : "25.00"
+                    }
                     min="0"
+                    step={Math.pow(
+                      10,
+                      -getExponent(formData.currency || "USD")
+                    )}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   <p className="mt-1 text-sm text-gray-500">
-                    Price in cents (e.g., 2500 = $25.00)
+                    Price in {formData.currency || "USD"} (e.g.,{" "}
+                    {getExponent(formData.currency || "USD") === 0
+                      ? "2500"
+                      : "25.00"}
+                    )
                   </p>
                 </div>
                 <div>

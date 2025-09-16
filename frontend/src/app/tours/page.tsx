@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { tourService } from "@/services/tour.service";
 import { Tour, ToursResponse, TourQueryDto } from "@/types/tour";
+import AdBanner from "@/components/AdBanner";
 import {
   AdjustmentsHorizontalIcon,
   MapIcon,
   ViewColumnsIcon,
+  HeartIcon,
 } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 
 // Convert API Tour to TourCard format
 function convertTourForCard(tour: Tour) {
@@ -38,6 +42,9 @@ function convertTourForCard(tour: Tour) {
 }
 
 export default function ToursPage() {
+  const searchParams = useSearchParams();
+  const tourType = searchParams?.get("type");
+
   const [tours, setTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,6 +54,9 @@ export default function ToursPage() {
   const [sortBy, setSortBy] = useState("recommended");
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
   const [showFilters, setShowFilters] = useState(false);
+  const [wishlistedTours, setWishlistedTours] = useState<Set<string>>(
+    new Set()
+  );
 
   const itemsPerPage = 12;
 
@@ -87,6 +97,18 @@ export default function ToursPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleWishlistToggle = (tourId: string) => {
+    setWishlistedTours((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(tourId)) {
+        newSet.delete(tourId);
+      } else {
+        newSet.add(tourId);
+      }
+      return newSet;
+    });
   };
 
   const convertedTours = tours.map(convertTourForCard);
@@ -186,6 +208,11 @@ export default function ToursPage() {
           </div>
         </div>
 
+        {/* Ads for private tours */}
+        {tourType === "private" && (
+          <AdBanner category="private" className="mb-8" />
+        )}
+
         {/* Tours Grid */}
         {tours.length === 0 ? (
           <div className="text-center py-12">
@@ -217,6 +244,17 @@ export default function ToursPage() {
                           {tour.badge}
                         </span>
                       )}
+                      {/* Wishlist Heart */}
+                      <button
+                        onClick={() => handleWishlistToggle(tour.id)}
+                        className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-colors"
+                      >
+                        {wishlistedTours.has(tour.id) ? (
+                          <HeartSolidIcon className="w-5 h-5 text-red-500" />
+                        ) : (
+                          <HeartIcon className="w-5 h-5 text-gray-600" />
+                        )}
+                      </button>
                     </div>
 
                     <div className="p-4">

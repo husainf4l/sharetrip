@@ -8,10 +8,12 @@ import {
   UsersIcon,
   MapPinIcon,
   UserGroupIcon,
+  ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import { createBooking } from "../services/booking";
 import { Tour as TourType } from "../types/tour";
+import { useCart } from "../contexts/CartContext";
 
 const getCategoryDisplayName = (category: string): string => {
   const categoryMap: Record<string, string> = {
@@ -49,11 +51,16 @@ interface Tour {
 }
 
 export default function TourCard({ tour }: { tour: Tour | TourType }) {
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isBooking, setIsBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
+
+  const { addToCart, addToWishlist, removeFromWishlist, wishlistItems } =
+    useCart();
+
+  // Check if tour is in wishlist
+  const isWishlisted = wishlistItems.some((item) => item.id === tour.id);
 
   // Handle different property names for rating and price
   const rating = (tour as Tour).rating || (tour as TourType).hostRating || 4.5;
@@ -82,7 +89,31 @@ export default function TourCard({ tour }: { tour: Tour | TourType }) {
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
+
+    if (isWishlisted) {
+      removeFromWishlist(tour.id);
+    } else {
+      addToWishlist({
+        id: tour.id,
+        title: tour.title,
+        price: price, // Keep original price format
+        currency: "USD",
+        image: image,
+      });
+    }
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    addToCart({
+      id: tour.id,
+      title: tour.title,
+      price: price, // Keep original price format
+      currency: "USD",
+      image: image,
+    });
   };
 
   const handleBookNow = async (e: React.MouseEvent) => {
@@ -267,7 +298,7 @@ export default function TourCard({ tour }: { tour: Tour | TourType }) {
             </div>
           </div>
 
-          {/* Price and Book Button */}
+          {/* Price and Action Buttons */}
           <div className="flex items-center justify-between pt-3 border-t border-gray-100">
             <div>
               <div className="flex items-baseline gap-1">
@@ -278,13 +309,22 @@ export default function TourCard({ tour }: { tour: Tour | TourType }) {
               </div>
               <div className="text-sm text-gray-500">per person</div>
             </div>
-            <button
-              onClick={handleBookNow}
-              disabled={isBooking}
-              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed"
-            >
-              {isBooking ? "Booking..." : "Book now"}
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleAddToCart}
+                className="flex items-center gap-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+              >
+                <ShoppingBagIcon className="w-4 h-4" />
+                <span className="text-sm">Add to Cart</span>
+              </button>
+              <button
+                onClick={handleBookNow}
+                disabled={isBooking}
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed"
+              >
+                {isBooking ? "Booking..." : "Book now"}
+              </button>
+            </div>
           </div>
 
           {/* Booking Status Messages */}

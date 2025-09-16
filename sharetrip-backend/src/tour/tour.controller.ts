@@ -21,10 +21,17 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { TourService } from './tour.service';
 import { CreateTourDto, UpdateTourDto, TourQueryDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CartService } from '../cart/cart.service';
+import { WishlistService } from '../wishlist/wishlist.service';
+import { AddToCartDto } from '../cart/dto';
 
 @Controller('tours')
 export class TourController {
-  constructor(private readonly tourService: TourService) {}
+  constructor(
+    private readonly tourService: TourService,
+    private readonly cartService: CartService,
+    private readonly wishlistService: WishlistService,
+  ) {}
 
   @Post('create')
   @UseGuards(JwtAuthGuard)
@@ -199,5 +206,44 @@ export class TourController {
     @Request() req,
   ) {
     return this.tourService.deleteTourMedia(id, mediaId, req.user.id);
+  }
+
+  // Cart and Wishlist endpoints
+
+  @Post(':id/add-to-cart')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  async addToCart(
+    @Param('id') tourId: string,
+    @Body() addToCartDto: AddToCartDto,
+    @Request() req,
+  ) {
+    const userId = req.user.id;
+    return this.cartService.addToCart(userId, { ...addToCartDto, tourId });
+  }
+
+  @Post(':id/add-to-wishlist')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  async addToWishlist(@Param('id') tourId: string, @Request() req) {
+    const userId = req.user.id;
+    return this.wishlistService.addToWishlist(userId, { tourId });
+  }
+
+  @Delete(':id/remove-from-wishlist')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async removeFromWishlist(@Param('id') tourId: string, @Request() req) {
+    const userId = req.user.id;
+    return this.wishlistService.removeFromWishlist(userId, tourId);
+  }
+
+  @Get(':id/wishlist-status')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async getWishlistStatus(@Param('id') tourId: string, @Request() req) {
+    const userId = req.user.id;
+    const isInWishlist = await this.wishlistService.isInWishlist(userId, tourId);
+    return { isInWishlist };
   }
 }

@@ -73,7 +73,7 @@ export class CreateTourDto {
 
   @IsOptional()
   @IsString()
-  status?: string = 'draft';
+  status?: string = 'published';
 
   // Enhanced filtering fields
   @IsOptional()

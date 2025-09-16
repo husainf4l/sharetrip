@@ -90,15 +90,19 @@ export default function ToursPage() {
           search: queryParams.destination || searchQuery || undefined,
           city: queryParams.city || undefined,
           country: queryParams.country || undefined,
-          category: queryParams.category as any || undefined,
-          minPrice: queryParams.minPrice ? Number(queryParams.minPrice) : undefined,
-          maxPrice: queryParams.maxPrice ? Number(queryParams.maxPrice) : undefined,
-          sortBy: sortBy === 'recommended' ? undefined : sortBy,
-          sortOrder: 'desc'
+          category: (queryParams.category as any) || undefined,
+          minPrice: queryParams.minPrice
+            ? Number(queryParams.minPrice)
+            : undefined,
+          maxPrice: queryParams.maxPrice
+            ? Number(queryParams.maxPrice)
+            : undefined,
+          sortBy: sortBy === "recommended" ? undefined : sortBy,
+          sortOrder: "desc",
         };
 
         const response: ToursResponse = await tourService.getAllTours(query);
-        
+
         setResults(response.data);
         setFilteredResults(response.data);
         setTotalResults(response.meta.total);
@@ -146,17 +150,17 @@ export default function ToursPage() {
       // Apply filters
       if (filterParams.minPrice) {
         filtered = filtered.filter(
-          (tour) => tour.priceCents / 100 >= Number(filterParams.minPrice)
+          (tour) => tour.basePrice / 100 >= Number(filterParams.minPrice)
         );
       }
       if (filterParams.maxPrice) {
         filtered = filtered.filter(
-          (tour) => tour.priceCents / 100 <= Number(filterParams.maxPrice)
+          (tour) => tour.basePrice / 100 <= Number(filterParams.maxPrice)
         );
       }
       if (filterParams.minRating) {
         filtered = filtered.filter(
-          (tour) => (tour.rating || 0) >= Number(filterParams.minRating)
+          (tour) => (tour.hostRating || 0) >= Number(filterParams.minRating)
         );
       }
       if (filterParams.categories) {
@@ -166,11 +170,11 @@ export default function ToursPage() {
         );
       }
       if (filterParams.duration) {
-        filtered = filtered.filter(
-          (tour) =>
-            tour.duration &&
-            tour.duration.includes(filterParams.duration.split("-")[0])
-        );
+        filtered = filtered.filter((tour) => {
+          const durationHours = tour.durationMins / 60;
+          const filterDuration = filterParams.duration.split("-")[0];
+          return durationHours >= Number(filterDuration);
+        });
       }
 
       setFilteredResults(filtered);
@@ -185,13 +189,13 @@ export default function ToursPage() {
 
     switch (sortType) {
       case "price_low":
-        sorted.sort((a, b) => a.priceCents - b.priceCents);
+        sorted.sort((a, b) => a.basePrice - b.basePrice);
         break;
       case "price_high":
-        sorted.sort((a, b) => b.priceCents - a.priceCents);
+        sorted.sort((a, b) => b.basePrice - a.basePrice);
         break;
       case "rating":
-        sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        sorted.sort((a, b) => (b.hostRating || 0) - (a.hostRating || 0));
         break;
       case "newest":
         sorted.sort((a, b) => b.id.localeCompare(a.id));
@@ -200,9 +204,9 @@ export default function ToursPage() {
         // Recommended - mix of rating and popularity
         sorted.sort(
           (a, b) =>
-            (b.rating || 0) * 1.2 +
+            (b.hostRating || 0) * 1.2 +
             Math.random() -
-            ((a.rating || 0) * 1.2 + Math.random())
+            ((a.hostRating || 0) * 1.2 + Math.random())
         );
     }
 
@@ -238,7 +242,10 @@ export default function ToursPage() {
     currentPage * itemsPerPage
   );
 
-  const totalPages = Math.ceil(filteredResults.length / itemsPerPage);
+  // Update totalPages state
+  useEffect(() => {
+    setTotalPages(Math.ceil(filteredResults.length / itemsPerPage));
+  }, [filteredResults.length, itemsPerPage]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">

@@ -5,7 +5,13 @@
       "Read(//c/Users/Al-hu/sharetripx/frontend/src/app/dashboard/host/tours/create/**)",
       "Bash(npm run build:*)",
       "Bash(npm run start:dev:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npx prisma:*)",
+      "Bash(sqlite3:*)",
+      "Bash(node:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(bash:*)"
     ],
     "deny": [],
     "ask": []
