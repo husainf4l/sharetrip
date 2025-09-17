@@ -99,9 +99,9 @@ const demoApartments: Apartment[] = [
 class AccommodationService {
   async getAccommodations(): Promise<Apartment[]> {
     try {
-      const response = await apiService.get('/accommodations');
+      const response = await apiService.get('/accommodations') as Apartment[] | { data: Apartment[] };
       // The API returns the array directly, not wrapped in a data property
-      return Array.isArray(response) ? response : response.data || [];
+      return Array.isArray(response) ? response : (response as { data: Apartment[] }).data || [];
     } catch (error) {
       console.error('Failed to fetch accommodations:', error);
       // Fallback to demo data if API fails
@@ -111,9 +111,9 @@ class AccommodationService {
 
   async getAccommodationsByCategory(type: string): Promise<Apartment[]> {
     try {
-      const response = await apiService.get(`/accommodations/categories/${type}/accommodations`);
+      const response = await apiService.get(`/accommodations/categories/${type}/accommodations`) as Apartment[] | { data: Apartment[] };
       // The API returns the array directly, not wrapped in a data property
-      return Array.isArray(response) ? response : response.data || [];
+      return Array.isArray(response) ? response : (response as { data: Apartment[] }).data || [];
     } catch (error) {
       console.error(`Failed to fetch accommodations for category ${type}:`, error);
       // Fallback to filtering demo data by category
@@ -128,9 +128,9 @@ class AccommodationService {
 
   async getCategories(): Promise<AccommodationCategory[]> {
     try {
-      const response = await apiService.get('/accommodations/categories');
+      const response = await apiService.get('/accommodations/categories') as AccommodationCategory[] | { data: AccommodationCategory[] };
       // The API returns the array directly, not wrapped in a data property
-      return Array.isArray(response) ? response : response.data || [];
+      return Array.isArray(response) ? response : (response as { data: AccommodationCategory[] }).data || [];
     } catch (error) {
       console.error('Failed to fetch accommodation categories:', error);
       // Fallback to demo categories if API fails
@@ -282,7 +282,7 @@ class AccommodationService {
 
   async getAccommodationById(id: string): Promise<Apartment | null> {
     try {
-      const response = await apiService.get(`/accommodations/${id}`);
+      const response = await apiService.get(`/accommodations/${id}`) as Apartment | null;
       // The API returns the object directly, not wrapped in a data property
       return response || null;
     } catch (error) {
@@ -293,7 +293,24 @@ class AccommodationService {
     }
   }
 
-  async createAccommodation(accommodationData: any) {
+  async createAccommodation(accommodationData: {
+    title: string;
+    description: string;
+    categoryId: string;
+    city: string;
+    country: string;
+    address: string;
+    latitude?: number;
+    longitude?: number;
+    basePrice: number;
+    currency: string;
+    maxGuests: number;
+    bedrooms: number;
+    bathrooms: number;
+    amenities: string[];
+    images: string[];
+    isAvailable: boolean;
+  }) {
     try {
       const response = await apiService.post('/accommodations', accommodationData);
       return response;
@@ -325,9 +342,9 @@ class AccommodationService {
       const queryString = queryParams.toString();
       const endpoint = queryString ? `/accommodations/search?${queryString}` : '/accommodations';
 
-      const response = await apiService.get(endpoint);
+      const response = await apiService.get(endpoint) as Apartment[] | { data: Apartment[] };
       // The API returns the array directly, not wrapped in a data property
-      return Array.isArray(response) ? response : response.data || [];
+      return Array.isArray(response) ? response : (response as { data: Apartment[] }).data || [];
     } catch (error) {
       console.error('Failed to search accommodations:', error);
       // Fallback to client-side filtering of demo data

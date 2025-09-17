@@ -5,11 +5,9 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  StarIcon,
   HeartIcon,
   MapPinIcon,
   ArrowLeftIcon,
-  CalendarDaysIcon,
   UsersIcon,
   WifiIcon,
   TruckIcon,
@@ -17,15 +15,10 @@ import {
   CakeIcon,
   SparklesIcon,
   PhoneIcon,
-  EnvelopeIcon,
-  GlobeAltIcon,
-  CheckCircleIcon,
   ClockIcon,
-  CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
 import {
   HeartIcon as HeartSolidIcon,
-  StarIcon as StarSolidIcon,
 } from "@heroicons/react/24/solid";
 import { Apartment } from "@/types/common";
 import { accommodationService } from "@/services/accommodation.service";
@@ -372,7 +365,7 @@ export default function AccommodationDetail() {
                 Check Availability
               </button>
               <div className="text-center text-sm text-gray-500">
-                You won't be charged yet
+                You won&apos;t be charged yet
               </div>
             </div>
 

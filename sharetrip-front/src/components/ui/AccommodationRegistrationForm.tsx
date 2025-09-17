@@ -112,7 +112,7 @@ export default function AccommodationRegistrationForm({
     }
   };
 
-  const handleInputChange = (field: keyof AccommodationFormData, value: any) => {
+  const handleInputChange = (field: keyof AccommodationFormData, value: string | number | boolean | string[] | undefined) => {
     setFormData(prev => ({
       ...prev,
       [field]: value,
@@ -171,8 +171,8 @@ export default function AccommodationRegistrationForm({
 
       console.log("Accommodation created successfully:", response);
       onSubmit?.(formData);
-    } catch (err: any) {
-      setError(err.message || "Failed to create accommodation");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to create accommodation");
     } finally {
       setLoading(false);
     }
@@ -312,7 +312,7 @@ export default function AccommodationRegistrationForm({
           <input
             type="number"
             value={formData.latitude || ""}
-            onChange={(e) => handleInputChange("latitude", e.target.value ? parseFloat(e.target.value) : undefined)}
+            onChange={(e) => handleInputChange("latitude", e.target.value ? parseFloat(e.target.value) : 0)}
             step="any"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             placeholder="e.g., 34.7071"
@@ -326,7 +326,7 @@ export default function AccommodationRegistrationForm({
           <input
             type="number"
             value={formData.longitude || ""}
-            onChange={(e) => handleInputChange("longitude", e.target.value ? parseFloat(e.target.value) : undefined)}
+            onChange={(e) => handleInputChange("longitude", e.target.value ? parseFloat(e.target.value) : 0)}
             step="any"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             placeholder="e.g., 33.0226"

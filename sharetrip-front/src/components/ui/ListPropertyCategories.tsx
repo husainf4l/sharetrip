@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { accommodationService } from "@/services/accommodation.service";
 
 // Types from the header component
@@ -193,14 +193,7 @@ export default function ListPropertyCategories({
     },
   ];
 
-  // Load accommodation types when accommodations is selected
-  useEffect(() => {
-    if (selectedMainCategory === "accommodations") {
-      fetchAccommodationTypes();
-    }
-  }, [selectedMainCategory]);
-
-  const fetchAccommodationTypes = async () => {
+  const fetchAccommodationTypes = useCallback(async () => {
     setLoading(true);
     try {
       const categories = await accommodationService.getCategories();
@@ -215,7 +208,14 @@ export default function ListPropertyCategories({
     } finally {
       setLoading(false);
     }
-  };
+  }, [defaultAccommodationTypes]);
+
+  // Load accommodation types when accommodations is selected
+  useEffect(() => {
+    if (selectedMainCategory === "accommodations") {
+      fetchAccommodationTypes();
+    }
+  }, [selectedMainCategory, fetchAccommodationTypes]);
 
   const handleMainCategorySelect = (category: string) => {
     setSelectedMainCategory(category);

@@ -12,7 +12,7 @@ export enum KycStatus {
 }
 
 export interface RegisterDto {
-  name?: string;
+  name: string;
   email: string;
   password: string;
   role?: Role;
@@ -29,7 +29,7 @@ export interface GuideProfile {
 }
 
 export interface RegisterDto {
-  name?: string;
+  name: string;
   email: string;
   password: string;
   role?: Role;

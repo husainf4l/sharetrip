@@ -25,7 +25,24 @@ export default function HostDashboard() {
     }
   };
 
-  const handleFormSubmit = (data: any) => {
+  const handleFormSubmit = (data: {
+    title: string;
+    description: string;
+    categoryId: string;
+    city: string;
+    country: string;
+    address: string;
+    latitude?: number;
+    longitude?: number;
+    basePrice: number;
+    currency: string;
+    maxGuests: number;
+    bedrooms: number;
+    bathrooms: number;
+    amenities: string[];
+    images: string[];
+    isAvailable: boolean;
+  }) => {
     console.log('Form submitted with data:', data);
     // Handle successful form submission
     // You can show a success message and redirect back to categories or dashboard

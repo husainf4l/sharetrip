@@ -1,14 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect } from "react";
 
 export default function Home() {
-  const router = useRouter();
-
   useEffect(() => {
     // Redirect to accommodations page
-    window.location.href = 'http://localhost:3001/accommodations';
+    window.location.href = "http://localhost:3001/accommodations";
   }, []);
 
   return (

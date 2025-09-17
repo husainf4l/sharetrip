@@ -10,7 +10,7 @@ class ApiService {
     this.baseURL = API_BASE_URL;
   }
 
-  private async request(endpoint: string, options: RequestInit = {}, isRetry = false): Promise<any> {
+  private async request(endpoint: string, options: RequestInit = {}, isRetry = false): Promise<unknown> {
     const url = `${this.baseURL}${endpoint}`;
 
     const config: RequestInit = {
@@ -37,7 +37,7 @@ class ApiService {
           const refreshToken = localStorage.getItem('refreshToken');
           if (refreshToken) {
             try {
-              const refreshResponse = await this.refreshAccessToken();
+              const refreshResponse = await this.refreshAccessToken() as { accessToken?: string };
               if (refreshResponse.accessToken) {
                 // Retry the original request with new token
                 localStorage.setItem('accessToken', refreshResponse.accessToken);
@@ -216,7 +216,7 @@ class ApiService {
   }
 
   // Generic POST method for creating data
-  async post(endpoint: string, data: any) {
+  async post(endpoint: string, data: Record<string, unknown>) {
     return this.request(endpoint, {
       method: 'POST',
       body: JSON.stringify(data),
@@ -224,7 +224,7 @@ class ApiService {
   }
 
   // Generic PUT method for updating data
-  async put(endpoint: string, data: any) {
+  async put(endpoint: string, data: Record<string, unknown>) {
     return this.request(endpoint, {
       method: 'PUT',
       body: JSON.stringify(data),

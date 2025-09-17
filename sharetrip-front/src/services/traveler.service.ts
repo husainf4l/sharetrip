@@ -10,7 +10,7 @@ import {
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3003/api';
 
 class TravelerService {
-  private async request(endpoint: string, options: RequestInit = {}): Promise<any> {
+  private async request(endpoint: string, options: RequestInit = {}): Promise<unknown> {
     const url = `${API_BASE_URL}${endpoint}`;
 
     const config: RequestInit = {
@@ -38,27 +38,27 @@ class TravelerService {
 
   // Get dashboard stats
   async getStats(): Promise<TravelerStats> {
-    return this.request('/traveler/dashboard');
+    return this.request('/traveler/dashboard') as Promise<TravelerStats>;
   }
 
   // Get upcoming bookings
   async getUpcomingBookings(): Promise<TripBooking[]> {
-    return this.request('/traveler/bookings/upcoming');
+    return this.request('/traveler/bookings/upcoming') as Promise<TripBooking[]>;
   }
 
   // Get recent activity
   async getRecentActivity(): Promise<RecentActivity[]> {
-    return this.request('/traveler/activity/recent');
+    return this.request('/traveler/activity/recent') as Promise<RecentActivity[]>;
   }
 
   // Get favorite destinations
   async getFavoriteDestinations(): Promise<FavoriteDestination[]> {
-    return this.request('/traveler/destinations/favorites');
+    return this.request('/traveler/destinations/favorites') as Promise<FavoriteDestination[]>;
   }
 
   // Get traveler profile
   async getProfile(): Promise<TravelerProfile> {
-    return this.request('/traveler/profile');
+    return this.request('/traveler/profile') as Promise<TravelerProfile>;
   }
 
   // Get complete dashboard data

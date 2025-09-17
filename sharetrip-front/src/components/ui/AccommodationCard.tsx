@@ -15,7 +15,6 @@ import {
 } from "@heroicons/react/24/outline";
 import {
   HeartIcon as HeartSolidIcon,
-  StarIcon as StarSolidIcon,
 } from "@heroicons/react/24/solid";
 import { AccommodationCardProps } from "@/types/common";
 

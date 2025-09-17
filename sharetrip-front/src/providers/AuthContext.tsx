@@ -10,13 +10,13 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import apiService from "@/services/api";
-import { User } from "@/types/auth";
+import { User, RegisterDto } from "@/types/auth";
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (signupData: any) => Promise<void>;
+  signup: (signupData: RegisterDto) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
 }
@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const userData = await apiService.getCurrentUser();
+      const userData = await apiService.getCurrentUser() as User;
       setUser(userData);
     } catch (err: unknown) {
       // Only clear tokens if it's a 401 Unauthorized error or token expiration
@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const data = await apiService.login({ email, password });
+    const data = await apiService.login({ email, password }) as { accessToken: string; refreshToken: string; user: User };
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("refreshToken", data.refreshToken);
 
@@ -95,8 +95,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(data.user);
   };
 
-  const signup = async (signupData: any) => {
-    const data = await apiService.signup(signupData);
+  const signup = async (signupData: RegisterDto) => {
+    const data = await apiService.signup(signupData) as { accessToken: string; refreshToken: string; user: User };
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("refreshToken", data.refreshToken);
 
@@ -137,7 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     initializeCookies();
     checkAuth();
-  }, []);
+  }, [checkAuth]);
 
   const value = {
     user,

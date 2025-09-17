@@ -11,20 +11,10 @@ import {
 import Logo from "./Logo";
 import { useAuth } from "@/providers/AuthContext";
 import { useCart } from "@/providers/CartContext";
-import { canHost, getDashboardUrl } from "@/utils/roleUtils";
+import { getDashboardUrl } from "@/utils/roleUtils";
 import { accommodationService } from "@/services/accommodation.service";
 
 // Type definitions for navigation items
-type ExperienceItem = {
-  name: string;
-  href: string;
-  description: string;
-};
-
-type ExperienceCategory = {
-  title: string;
-  items: ExperienceItem[];
-};
 
 type AccommodationType = {
   id: string;
