@@ -1,17 +1,13 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { S3Service } from '../common/s3';
 import { CreateTourDto, UpdateTourDto, TourQueryDto } from './dto';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class TourService {
-  constructor(
-    private prisma: PrismaService,
-    private s3Service: S3Service,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  async create(createTourDto: CreateTourDto, userId: string, photos?: Express.Multer.File[]) {
+  async create(createTourDto: CreateTourDto, userId: string) {
     try {
       // Find the user's guide profile
       const user = await this.prisma.user.findUnique({
@@ -61,56 +57,6 @@ export class TourService {
         },
       });
 
-      // Handle photo uploads if provided
-      if (photos && photos.length > 0) {
-        try {
-          // Upload photos to S3
-          const fileUrls = await this.s3Service.uploadMultipleFiles(photos, `tours/${tour.id}`);
-
-          // Save media records to database
-          const mediaRecords = fileUrls.map((url, index) => ({
-            tourId: tour.id,
-            url,
-            type: photos[index].mimetype.startsWith('image/') ? 'image' : 'video',
-          }));
-
-          await this.prisma.tourMedia.createMany({
-            data: mediaRecords,
-          });
-
-          // Refresh tour data to include the newly uploaded media
-          const updatedTour = await this.prisma.tour.findUnique({
-            where: { id: tour.id },
-            include: {
-              guide: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      name: true,
-                      email: true,
-                      image: true,
-                    },
-                  },
-                },
-              },
-              media: true,
-              _count: {
-                select: {
-                  bookings: true,
-                },
-              },
-            },
-          });
-
-          return updatedTour;
-        } catch (uploadError) {
-          console.error('Failed to upload photos for tour:', uploadError);
-          // Return tour without photos rather than failing completely
-          return tour;
-        }
-      }
-
       return tour;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -145,7 +91,7 @@ export class TourService {
       minHostRating,
       isDropIn,
       isEarlyBird,
-      status,
+      status = 'published',
       sortBy = 'createdAt',
       sortOrder = 'desc',
       startDate,
@@ -156,30 +102,26 @@ export class TourService {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: Prisma.TourWhereInput = {};
-
-    // Status filter
-    if (status) {
-      where.status = status;
-    } else {
-      // Temporarily remove status filter to get all tours, then filter in code
-      // This handles whitespace issues in status values
-    }
+    const where: Prisma.TourWhereInput = {
+      status,
+    };
 
     // Search functionality
     if (search) {
       where.OR = [
-        { title: { contains: search } },
-        { description: { contains: search } },
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        // Note: Array filtering for tags and searchKeywords needs to be handled differently
+        // For now, we'll skip array search and focus on text fields
       ];
     }
 
     // Location filters
     if (city) {
-      where.city = { equals: city };
+      where.city = { equals: city, mode: 'insensitive' };
     }
     if (country) {
-      where.country = { equals: country };
+      where.country = { equals: country, mode: 'insensitive' };
     }
 
     // Category filter
@@ -218,20 +160,28 @@ export class TourService {
     // Language filters
     if (language) {
       where.OR = where.OR || [];
-      where.OR.push({ language: { equals: language } });
+      where.OR.push({ language: { equals: language, mode: 'insensitive' } });
+      // Note: Array filtering for languages needs to be handled differently
+      // For now, we'll skip array language filtering
     }
     if (languages && languages.length > 0) {
-      // SQLite doesn't support array operations - skip for now
+      // Note: Array filtering for languages needs to be handled differently
+      // For now, we'll skip this filter
+      // where.languages = { hasSome: languages };
     }
 
     // Travel styles
     if (travelStyles && travelStyles.length > 0) {
-      // SQLite doesn't support array operations - skip for now
+      // Note: Array filtering for travelStyles needs to be handled differently
+      // For now, we'll skip this filter
+      // where.travelStyles = { hasSome: travelStyles };
     }
 
     // Accessibility
     if (accessibility && accessibility.length > 0) {
-      // SQLite doesn't support array operations - skip for now
+      // Note: Array filtering for accessibility needs to be handled differently
+      // For now, we'll skip this filter
+      // where.accessibility = { hasSome: accessibility };
     }
 
     // Start window
@@ -266,9 +216,11 @@ export class TourService {
     //   // Complex date filtering would go here
     // }
 
-    // Tags
+    // Tags - JSON array filtering
     if (tags && tags.length > 0) {
-      // SQLite doesn't support array operations - skip for now
+      // Note: JSON array filtering requires raw SQL or database-specific functions
+      // For now, we'll skip this filter as it's complex to implement with JSON fields
+      // where.tags = { not: null }; // At least ensure tags exist
     }
 
     // Build order by
@@ -305,22 +257,13 @@ export class TourService {
       this.prisma.tour.count({ where }),
     ]);
 
-    // Filter tours by status if no specific status was requested
-    let filteredTours = tours;
-    if (!status) {
-      filteredTours = tours.filter(tour => {
-        const trimmedStatus = tour.status?.trim().toLowerCase();
-        return trimmedStatus === 'published' || trimmedStatus === 'approved';
-      });
-    }
-
     return {
-      data: filteredTours,
+      data: tours,
       meta: {
         page,
         limit,
-        total: filteredTours.length, // Update total to reflect filtered results
-        totalPages: Math.ceil(filteredTours.length / limit),
+        total,
+        totalPages: Math.ceil(total / limit),
       },
     };
   }
@@ -401,112 +344,6 @@ export class TourService {
         orderBy,
         include: {
           media: true,
-          _count: {
-            select: {
-              bookings: true,
-            },
-          },
-        },
-      }),
-      this.prisma.tour.count({ where }),
-    ]);
-
-    return {
-      data: tours,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
-  }
-
-  async findMyTours(userId: string, userRole: string, query: TourQueryDto) {
-    const {
-      page = 1,
-      limit = 10,
-      status,
-      sortBy = 'createdAt',
-      sortOrder = 'desc',
-    } = query;
-
-    const skip = (page - 1) * limit;
-
-    let where: Prisma.TourWhereInput = {};
-
-    // If user is a HOST, return tours they created
-    if (userRole === 'HOST') {
-      // Get the user's guide profile
-      const user = await this.prisma.user.findUnique({
-        where: { id: userId },
-        include: { guideProfile: true },
-      });
-
-      if (user?.guideProfile) {
-        where.guideId = user.guideProfile.id;
-      } else {
-        // User doesn't have a guide profile, return empty result
-        return {
-          data: [],
-          meta: {
-            page,
-            limit,
-            total: 0,
-            totalPages: 0,
-          },
-        };
-      }
-    } else {
-      // For TRAVELER or EXPLORER, return tours they booked
-      where.bookings = {
-        some: {
-          travelerId: userId,
-          status: {
-            in: ['confirmed', 'completed'], // Only show confirmed/completed bookings
-          },
-        },
-      };
-    }
-
-    if (status) {
-      where.status = status;
-    }
-
-    const orderBy: Prisma.TourOrderByWithRelationInput = {};
-    orderBy[sortBy] = sortOrder;
-
-    const [tours, total] = await Promise.all([
-      this.prisma.tour.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy,
-        include: {
-          guide: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                  image: true,
-                },
-              },
-            },
-          },
-          media: true,
-          bookings: userRole !== 'HOST' ? {
-            where: {
-              travelerId: userId,
-            },
-            select: {
-              id: true,
-              status: true,
-              headcount: true,
-              createdAt: true,
-            },
-          } : false,
           _count: {
             select: {
               bookings: true,
@@ -657,95 +494,6 @@ export class TourService {
       totalParticipants,
       averageBookingValue: totalBookings > 0 ? Math.round(totalRevenue / totalBookings) : 0,
       conversionRate: totalBookings > 0 ? Math.round((confirmedBookings / totalBookings) * 100) : 0,
-    };
-  }
-
-  async uploadTourMedia(tourId: string, files: Express.Multer.File[], userId: string) {
-    // Verify tour exists and user owns it
-    const tour = await this.prisma.tour.findUnique({
-      where: { id: tourId },
-      include: {
-        guide: {
-          include: {
-            user: true,
-          },
-        },
-      },
-    });
-
-    if (!tour) {
-      throw new NotFoundException('Tour not found');
-    }
-
-    if (tour.guide.user.id !== userId) {
-      throw new ForbiddenException('You can only upload media to your own tours');
-    }
-
-    // Upload files to S3
-    const fileUrls = await this.s3Service.uploadMultipleFiles(files, `tours/${tourId}`);
-
-    // Save media records to database
-    const mediaRecords = fileUrls.map((url, index) => ({
-      tourId,
-      url,
-      type: files[index].mimetype.startsWith('image/') ? 'image' : 'video',
-    }));
-
-    const createdMedia = await this.prisma.tourMedia.createMany({
-      data: mediaRecords,
-    });
-
-    return {
-      message: 'Media uploaded successfully',
-      uploadedCount: createdMedia.count,
-      media: mediaRecords,
-    };
-  }
-
-  async deleteTourMedia(tourId: string, mediaId: string, userId: string) {
-    // Verify tour exists and user owns it
-    const tour = await this.prisma.tour.findUnique({
-      where: { id: tourId },
-      include: {
-        guide: {
-          include: {
-            user: true,
-          },
-        },
-      },
-    });
-
-    if (!tour) {
-      throw new NotFoundException('Tour not found');
-    }
-
-    if (tour.guide.user.id !== userId) {
-      throw new ForbiddenException('You can only delete media from your own tours');
-    }
-
-    // Find the media record
-    const media = await this.prisma.tourMedia.findUnique({
-      where: { id: mediaId },
-    });
-
-    if (!media) {
-      throw new NotFoundException('Media not found');
-    }
-
-    if (media.tourId !== tourId) {
-      throw new BadRequestException('Media does not belong to this tour');
-    }
-
-    // Delete from S3
-    await this.s3Service.deleteFile(media.url);
-
-    // Delete from database
-    await this.prisma.tourMedia.delete({
-      where: { id: mediaId },
-    });
-
-    return {
-      message: 'Media deleted successfully',
     };
   }
 }

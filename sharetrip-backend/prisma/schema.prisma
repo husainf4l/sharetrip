@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -15,23 +15,25 @@ enum Role {
 
 // Main user table
 model User {
-  id                 String              @id @default(uuid())
-  name               String?
-  email              String              @unique
-  passwordHash       String?
-  image              String?
-  role               Role                @default(TRAVELER)
-  travelStyle        String?
-  createdAt          DateTime            @default(now())
-  guideProfile       GuideProfile?
-  preferences        Preference?
-  bookings           Booking[]
-  alerts             Alert[]
-  refreshTokens      RefreshToken[]
-  verificationTokens VerificationToken[]
-  hostApplication    HostApplication?
-  cart               Cart?
-  wishlist           Wishlist?
+  id                    String                 @id @default(uuid())
+  name                  String?
+  email                 String                 @unique
+  passwordHash          String?
+  image                 String?
+  role                  Role                   @default(TRAVELER)
+  travelStyle           String?
+  createdAt             DateTime               @default(now())
+  guideProfile          GuideProfile?
+  preferences           Preference?
+  bookings              Booking[]
+  alerts                Alert[]
+  refreshTokens         RefreshToken[]
+  verificationTokens    VerificationToken[]
+  hostApplication       HostApplication?
+  cart                  Cart?
+  wishlist              Wishlist?
+  accommodations        Accommodation[]
+  accommodationBookings AccommodationBooking[]
 }
 
 model GuideProfile {
@@ -288,4 +290,84 @@ model WishlistItem {
   addedAt    DateTime @default(now())
 
   @@unique([wishlistId, tourId])
+}
+
+model Category {
+  id             String          @id @default(uuid())
+  type           String          @unique // hotel, apartment, resorts, hostels, etc.
+  title          String
+  subtitle       String
+  image          String
+  sectionTitle   String
+  message        String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  accommodations Accommodation[]
+}
+
+model Accommodation {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  host        User     @relation(fields: [hostId], references: [id])
+  hostId      String
+
+  // Location details
+  city      String
+  country   String
+  address   String?
+  latitude  Float?
+  longitude Float?
+
+  // Pricing
+  basePrice Int // Price in cents
+  currency  String @default("USD")
+
+  // Capacity
+  maxGuests Int
+  bedrooms  Int?
+  bathrooms Int?
+
+  // Features and amenities
+  amenities Json? // WiFi, parking, pool, etc.
+  images    Json? // Array of image URLs
+
+  // Availability
+  isAvailable Boolean @default(true)
+  status      String  @default("active") // active, inactive, maintenance
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  bookings AccommodationBooking[]
+}
+
+model AccommodationBooking {
+  id              String        @id @default(uuid())
+  accommodation   Accommodation @relation(fields: [accommodationId], references: [id])
+  accommodationId String
+  traveler        User          @relation(fields: [travelerId], references: [id])
+  travelerId      String
+
+  // Booking details
+  checkIn    DateTime
+  checkOut   DateTime
+  guests     Int
+  totalPrice Int // Price in cents
+  currency   String   @default("USD")
+
+  // Status
+  status        String @default("pending") // pending, confirmed, cancelled, completed
+  paymentStatus String @default("pending") // pending, paid, refunded
+
+  // Special requests
+  specialRequests String?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

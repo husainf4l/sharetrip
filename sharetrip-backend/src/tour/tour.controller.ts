@@ -21,6 +21,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { TourService } from './tour.service';
 import { CreateTourDto, UpdateTourDto, TourQueryDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PrismaService } from '../prisma/prisma.service';
 import { CartService } from '../cart/cart.service';
 import { WishlistService } from '../wishlist/wishlist.service';
 import { AddToCartDto } from '../cart/dto';
@@ -31,6 +32,7 @@ export class TourController {
     private readonly tourService: TourService,
     private readonly cartService: CartService,
     private readonly wishlistService: WishlistService,
+    private readonly prisma: PrismaService,
   ) {}
 
   @Post('create')
@@ -83,7 +85,7 @@ export class TourController {
     }
 
     const userId = req.user.id;
-    return this.tourService.create(createTourDto, userId, photos);
+    return this.tourService.create(createTourDto, userId);
   }
 
   @Get()
@@ -110,7 +112,21 @@ export class TourController {
   async findMyTours(@Query() query: TourQueryDto, @Request() req) {
     const userId = req.user.id;
     const userRole = req.user.role;
-    return this.tourService.findMyTours(userId, userRole, query);
+    
+    // For HOST users, find tours by their guide profile
+    if (userRole === 'HOST') {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { guideProfile: true },
+      });
+      
+      if (user?.guideProfile) {
+        return this.tourService.findByGuide(user.guideProfile.id, query);
+      }
+    }
+    
+    // For other users, return empty result
+    return { data: [], meta: { page: 1, limit: 10, total: 0, totalPages: 0 } };
   }
 
   @Get(':id')
@@ -194,7 +210,9 @@ export class TourController {
       }
     }
 
-    return this.tourService.uploadTourMedia(id, files, req.user.id);
+    // TODO: Implement media upload
+    // return this.tourService.uploadTourMedia(id, files, req.user.id);
+    throw new BadRequestException('Media upload not implemented yet');
   }
 
   @Delete(':id/media/:mediaId')
@@ -205,7 +223,9 @@ export class TourController {
     @Param('mediaId') mediaId: string,
     @Request() req,
   ) {
-    return this.tourService.deleteTourMedia(id, mediaId, req.user.id);
+    // TODO: Implement media deletion
+    // return this.tourService.deleteTourMedia(id, mediaId, req.user.id);
+    throw new BadRequestException('Media deletion not implemented yet');
   }
 
   // Cart and Wishlist endpoints

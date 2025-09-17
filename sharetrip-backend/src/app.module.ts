@@ -11,6 +11,8 @@ import { WishlistModule } from './wishlist/wishlist.module';
 import { UploadModule } from './upload/upload.module';
 import { MediaModule } from './media/media.module';
 import { HealthModule } from './health/health.module';
+import { AccommodationsModule } from './accommodations/accommodations.module';
+import { TravelerModule } from './traveler/traveler.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { HealthModule } from './health/health.module';
     UploadModule,
     MediaModule,
     HealthModule,
+    AccommodationsModule,
+    TravelerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
