@@ -1,15 +1,22 @@
 import {
   Controller,
   Get,
+  Post,
+  Put,
+  Delete,
   Param,
   Query,
+  Body,
   UseGuards,
+  Request,
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AccommodationsService } from './accommodations.service';
 import { Category, Accommodation } from '@prisma/client';
+import { CreateAccommodationDto, UpdateAccommodationDto } from './dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('accommodations')
 @Controller('accommodations')
@@ -88,5 +95,106 @@ export class AccommodationsController {
   })
   async getAccommodationById(@Param('id') id: string): Promise<Accommodation> {
     return this.accommodationsService.getAccommodationById(id);
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create a new accommodation' })
+  @ApiResponse({
+    status: 201,
+    description: 'Accommodation created successfully',
+    type: Object,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  async createAccommodation(
+    @Body() createAccommodationDto: CreateAccommodationDto,
+    @Request() req,
+  ): Promise<Accommodation> {
+    const hostId = req.user.id;
+    return this.accommodationsService.createAccommodation(createAccommodationDto, hostId);
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update an accommodation' })
+  @ApiResponse({
+    status: 200,
+    description: 'Accommodation updated successfully',
+    type: Object,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - not your accommodation',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Accommodation not found',
+  })
+  async updateAccommodation(
+    @Param('id') id: string,
+    @Body() updateAccommodationDto: UpdateAccommodationDto,
+    @Request() req,
+  ): Promise<Accommodation> {
+    const hostId = req.user.id;
+    return this.accommodationsService.updateAccommodation(id, updateAccommodationDto, hostId);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete an accommodation' })
+  @ApiResponse({
+    status: 204,
+    description: 'Accommodation deleted successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - not your accommodation',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Accommodation not found',
+  })
+  async deleteAccommodation(
+    @Param('id') id: string,
+    @Request() req,
+  ): Promise<void> {
+    const hostId = req.user.id;
+    return this.accommodationsService.deleteAccommodation(id, hostId);
+  }
+
+  @Get('my-accommodations')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get accommodations for the authenticated host' })
+  @ApiResponse({
+    status: 200,
+    description: 'Host accommodations retrieved successfully',
+    type: [Object],
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  async getMyAccommodations(@Request() req): Promise<Accommodation[]> {
+    const hostId = req.user.id;
+    return this.accommodationsService.getHostAccommodations(hostId);
   }
 }

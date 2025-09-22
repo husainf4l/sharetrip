@@ -11,7 +11,16 @@
       "Bash(node:*)",
       "Bash(npm install:*)",
       "Bash(npx tsc:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Read(//c/Users/Al-hu/OneDrive/Desktop/sharetrip/sharetrip-front/src/app/hostdashboard/tours/**)",
+      "Read(//c/Users/Al-hu/OneDrive/Desktop/sharetrip/sharetrip-front/**)",
+      "Bash(npm run lint:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

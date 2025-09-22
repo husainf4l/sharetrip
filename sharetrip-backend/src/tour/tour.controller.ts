@@ -19,7 +19,7 @@ import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { TourService } from './tour.service';
-import { CreateTourDto, UpdateTourDto, TourQueryDto } from './dto';
+import { CreateTourDto, UpdateTourDto, TourQueryDto, TourCategory } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PrismaService } from '../prisma/prisma.service';
 import { CartService } from '../cart/cart.service';
@@ -92,6 +92,18 @@ export class TourController {
   @HttpCode(HttpStatus.OK)
   async findAll(@Query() query: TourQueryDto) {
     return this.tourService.findAll(query);
+  }
+
+  @Get('categories/:category/tours')
+  @HttpCode(HttpStatus.OK)
+  async findByCategory(@Param('category') category: string, @Query() query: TourQueryDto) {
+    return this.tourService.findAll({ ...query, category: category.toUpperCase() as TourCategory });
+  }
+
+  @Get('categories')
+  @HttpCode(HttpStatus.OK)
+  async getCategories() {
+    return Object.values(TourCategory);
   }
 
   @Get('guide/:guideId')
