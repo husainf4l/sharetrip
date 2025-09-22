@@ -12,9 +12,11 @@ import {
   TvIcon,
   HomeIcon,
   UsersIcon,
+  StarIcon,
 } from "@heroicons/react/24/outline";
 import {
   HeartIcon as HeartSolidIcon,
+  StarIcon as StarSolidIcon,
 } from "@heroicons/react/24/solid";
 import { AccommodationCardProps } from "@/types/common";
 
@@ -24,8 +26,51 @@ const getAmenityIcon = (amenity: string) => {
     Parking: <TruckIcon className="w-3 h-3" />,
     TV: <TvIcon className="w-3 h-3" />,
     Kitchen: <HomeIcon className="w-3 h-3" />,
+    Pool: <HomeIcon className="w-3 h-3" />,
+    Spa: <HomeIcon className="w-3 h-3" />,
+    "Beach Access": <HomeIcon className="w-3 h-3" />,
+    "Room Service": <HomeIcon className="w-3 h-3" />,
+    "Ocean View": <HomeIcon className="w-3 h-3" />,
+    Gym: <HomeIcon className="w-3 h-3" />,
+    "Rooftop Bar": <HomeIcon className="w-3 h-3" />,
+    "Business Center": <HomeIcon className="w-3 h-3" />,
+    Concierge: <HomeIcon className="w-3 h-3" />,
+    Fireplace: <HomeIcon className="w-3 h-3" />,
+    "Hot Tub": <HomeIcon className="w-3 h-3" />,
+    "Mountain Views": <HomeIcon className="w-3 h-3" />,
+    "Hiking Trails": <HomeIcon className="w-3 h-3" />,
   };
   return iconMap[amenity] || <HomeIcon className="w-3 h-3" />;
+};
+
+const renderStars = (rating: number) => {
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 !== 0;
+  const stars = [];
+
+  for (let i = 0; i < fullStars; i++) {
+    stars.push(<StarSolidIcon key={i} className="w-4 h-4 text-yellow-400" />);
+  }
+
+  if (hasHalfStar) {
+    stars.push(
+      <div key="half" className="relative">
+        <StarIcon className="w-4 h-4 text-yellow-400" />
+        <div className="absolute inset-0 overflow-hidden w-1/2">
+          <StarSolidIcon className="w-4 h-4 text-yellow-400" />
+        </div>
+      </div>
+    );
+  }
+
+  const emptyStars = 5 - Math.ceil(rating);
+  for (let i = 0; i < emptyStars; i++) {
+    stars.push(
+      <StarIcon key={`empty-${i}`} className="w-4 h-4 text-gray-300" />
+    );
+  }
+
+  return stars;
 };
 
 export default function AccommodationCard({
@@ -77,6 +122,21 @@ export default function AccommodationCard({
                 <HeartIcon className="w-5 h-5 text-gray-600" />
               )}
             </button>
+
+            {/* Image Gallery Indicator */}
+            {apartment.images.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  // Could implement image gallery modal here
+                  console.log("View gallery for", apartment.title);
+                }}
+                className="absolute bottom-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-sm text-white text-xs rounded-full hover:bg-black/80 transition-colors z-10"
+              >
+                📷 {apartment.images.length}
+              </button>
+            )}
           </div>
 
           {/* Apartment Details */}
@@ -92,6 +152,23 @@ export default function AccommodationCard({
                 <div className="text-sm text-gray-500">per night</div>
               </div>
             </div>
+
+            {/* Rating and Reviews */}
+            {apartment.rating && (
+              <div className="flex items-center mb-3">
+                <div className="flex items-center mr-2">
+                  {renderStars(apartment.rating)}
+                </div>
+                <span className="text-sm font-medium text-gray-900 mr-1">
+                  {apartment.rating.toFixed(1)}
+                </span>
+                {apartment.reviewCount && (
+                  <span className="text-sm text-gray-600">
+                    ({apartment.reviewCount} reviews)
+                  </span>
+                )}
+              </div>
+            )}
 
             <div className="flex items-center mb-3">
               <MapPinIcon className="w-4 h-4 text-gray-400 mr-1" />
@@ -151,10 +228,20 @@ export default function AccommodationCard({
               </Link>
               <Link
                 href={`/accommodations/${apartment.id}#booking`}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 border border-green-600 text-green-600 hover:bg-green-50 rounded-lg transition-colors font-medium"
               >
-                Book Now
+                Quick Book
               </Link>
+            </div>
+
+            {/* Additional Info */}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="flex items-center justify-between text-sm text-gray-600">
+                <span>Free cancellation</span>
+                <span className="text-green-600 font-medium">
+                  Available now
+                </span>
+              </div>
             </div>
           </div>
         </div>

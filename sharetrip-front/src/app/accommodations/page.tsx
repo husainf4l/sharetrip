@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from "react";
 import AccommodationHeroSection from "@/components/ui/AccommodationHeroSection";
 import AccommodationCard from "@/components/ui/AccommodationCard";
+import AccommodationSearchBar from "@/components/ui/AccommodationSearchBar";
 import { Apartment } from "@/types/common";
 import { accommodationService } from "@/services/accommodation.service";
 
@@ -59,6 +60,12 @@ export default function Accommodations({
     fetchCategoryContent();
   }, [type]);
 
+  const handleSearch = (searchData: any) => {
+    console.log("Search data:", searchData);
+    // TODO: Implement search functionality
+    // Filter apartments based on destination, dates, and guests
+  };
+
   return (
     <div>
       {categoryContent ? (
@@ -76,7 +83,14 @@ export default function Accommodations({
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      {/* Search Bar Section */}
+      <div className="relative -mt-24 z-10">
+        <div className="max-w-6xl mx-auto px-6">
+          <AccommodationSearchBar onSearch={handleSearch} />
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-12 pt-20">
         <div className="text-center mb-8">
           {categoryContent ? (
             <>

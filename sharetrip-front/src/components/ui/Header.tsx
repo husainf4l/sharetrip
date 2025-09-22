@@ -13,6 +13,7 @@ import { useAuth } from "@/providers/AuthContext";
 import { useCart } from "@/providers/CartContext";
 import { getDashboardUrl } from "@/utils/roleUtils";
 import { accommodationService } from "@/services/accommodation.service";
+import { tourService } from "@/services/tour.service";
 
 // Type definitions for navigation items
 
@@ -149,19 +150,21 @@ export default function Header() {
     },
   ]);
 
-  // Load preferences from localStorage on component mount
+  // Load accommodation types from service
   useEffect(() => {
     const fetchAccommodationTypes = async () => {
       try {
         const categories = await accommodationService.getCategories();
         if (categories.length > 0) {
           setAccommodationTypes(categories);
-        } else {
-          setAccommodationTypes([]);
         }
+        // If no categories returned, keep the existing default categories
       } catch (error) {
-        console.error("Failed to fetch accommodation types:", error);
-        setAccommodationTypes([]);
+        console.warn(
+          "Failed to fetch accommodation types, using default categories:",
+          error
+        );
+        // Keep the default accommodation types that were set in useState
       }
     };
 
@@ -176,13 +179,28 @@ export default function Header() {
   // Navigation data
   const experienceCategories = [
     {
-      title: "By Activity",
+      title: "By Tour Type",
       items: [
         {
-          name: "Tours & Sightseeing",
-          href: "/tours?category=sightseeing",
-          description: "Discover iconic landmarks",
+          name: "Share Trip Tours",
+          href: "/tours/share-trip",
+          description: "Join fellow travelers and share experiences",
         },
+        {
+          name: "Private Tours",
+          href: "/tours/private",
+          description: "Exclusive personalized experiences",
+        },
+        {
+          name: "Group Tours",
+          href: "/tours/group",
+          description: "Organized group adventures",
+        },
+      ],
+    },
+    {
+      title: "By Activity",
+      items: [
         {
           name: "Cultural Experiences",
           href: "/tours?category=culture",
@@ -202,21 +220,6 @@ export default function Header() {
           name: "Walking Tours",
           href: "/tours?category=walking",
           description: "Explore on foot",
-        },
-      ],
-    },
-    {
-      title: "Featured",
-      items: [
-        {
-          name: "Share Tours",
-          href: "/share-tours",
-          description: "Join group experiences",
-        },
-        {
-          name: "Private Tours",
-          href: "/tours?type=private",
-          description: "Exclusive experiences",
         },
       ],
     },
@@ -280,7 +283,7 @@ export default function Header() {
 
   if (loading) {
     return (
-      <header className="w-full bg-white shadow-sm sticky top-0 z-50">
+      <header className="w-full bg-white shadow-sm sticky top-0 z-[100]">
         <div className="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between">
           <Link href="/">
             <Logo size="md" />
@@ -292,7 +295,7 @@ export default function Header() {
   }
 
   return (
-    <header className="w-full bg-white sticky top-0 z-50 border-b border-gray-200">
+    <header className="w-full bg-white sticky top-0 z-[100] border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6 py-1 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="hover-scale animate-fade-up">
@@ -322,7 +325,7 @@ export default function Header() {
             </button>
 
             {isExperiencesOpen && (
-              <div className="absolute top-full left-0 mt-3 w-[600px] bg-white shadow-2xl shadow-gray-200/50 border border-white/20 rounded-2xl p-8 z-50 animate-fade-up">
+              <div className="absolute top-full left-0 mt-3 w-[600px] bg-white shadow-2xl shadow-gray-200/50 border border-white/20 rounded-2xl p-8 z-[9999] animate-fade-up">
                 <div className="grid grid-cols-2 gap-8">
                   {experienceCategories.map((category, categoryIndex) => (
                     <div key={category.title}>
@@ -397,7 +400,7 @@ export default function Header() {
             </button>
 
             {isAccommodationsOpen && (
-              <div className="absolute top-full left-0 mt-3 w-[700px] bg-white shadow-2xl shadow-gray-200/50 border border-white/20 rounded-2xl p-8 z-50 animate-fade-up">
+              <div className="absolute top-full left-0 mt-3 w-[700px] bg-white shadow-2xl shadow-gray-200/50 border border-white/20 rounded-2xl p-8 z-[9999] animate-fade-up">
                 <h3 className="text-sm font-semibold text-gray-900 mb-6 text-gradient">
                   Accommodation Types
                 </h3>
@@ -457,7 +460,7 @@ export default function Header() {
             </button>
 
             {isDestinationsOpen && (
-              <div className="absolute top-full left-0 mt-3 w-[500px] bg-white shadow-2xl shadow-gray-200/50 border border-white/20 rounded-2xl p-8 z-50 animate-fade-up">
+              <div className="absolute top-full left-0 mt-3 w-[500px] bg-white shadow-2xl shadow-gray-200/50 border border-white/20 rounded-2xl p-8 z-[9999] animate-fade-up">
                 <h3 className="text-sm font-semibold text-gray-900 mb-6 text-gradient">
                   Popular Destinations
                 </h3>
@@ -499,6 +502,33 @@ export default function Header() {
 
         {/* Right side actions */}
         <div className="flex items-center gap-4">
+          {/* Become a Host */}
+          <Link
+            href="/hostregister"
+            className="hidden sm:flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-green-600 font-medium transition-all duration-200 hover:bg-green-50 rounded-xl hover:shadow-sm hover:shadow-green-200/50"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 7V3a4 4 0 118 0v4m-4 8l2-2m0 0l2 2m-2-2v4"
+              />
+            </svg>
+            Become a Host
+          </Link>
+
           {/* Wishlist */}
           <Link
             href="/wishlist"
@@ -548,9 +578,11 @@ export default function Header() {
               </button>
 
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl py-2 z-50 border border-gray-200">
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl py-2 z-[9999] border border-gray-200">
                   <Link
-                    href={user ? getDashboardUrl(user.role) : "/dashboard"}
+                    href={
+                      user?.role ? getDashboardUrl(user.role) : "/dashboard"
+                    }
                     className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-lg transition-all duration-200 hover:shadow-sm hover:shadow-gray-100/50 hover:-translate-y-0.5"
                     onClick={() => setIsDropdownOpen(false)}
                   >
@@ -611,7 +643,7 @@ export default function Header() {
         </button>
 
         {/* Mobile Navigation Menu */}
-        {user && !loading && (
+        {false && user && !loading && (
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 safe-area-inset-bottom">
             <div className="flex justify-around items-center max-w-md mx-auto">
               <Link
@@ -653,11 +685,11 @@ export default function Header() {
                 )}
               </Link>
               <Link
-                href={user ? getDashboardUrl(user.role) : "/dashboard"}
+                href={"/dashboard"}
                 className="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-gray-50"
               >
                 <div className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                  {user.name?.charAt(0).toUpperCase() || "U"}
+                  {user?.name?.charAt(0).toUpperCase() || "U"}
                 </div>
                 <span className="text-xs mt-1">Profile</span>
               </Link>

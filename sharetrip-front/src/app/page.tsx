@@ -1,19 +1,47 @@
 "use client";
 
-import { useEffect } from "react";
+import HeroSection from "@/components/ui/HeroSection";
+import DestinationStrip from "@/components/ui/DestinationStrip";
+import DealsCarousel from "@/components/ui/DealsCarousel";
+import TopAttractionsGrid from "@/components/ui/TopAttractionsGrid";
+import TravelersChoiceBar from "@/components/ui/TravelersChoiceBar";
+import FoodExperiencesGrid from "@/components/ui/FoodExperiencesGrid";
+import AdventureToursGrid from "@/components/ui/AdventureToursGrid";
+import WellnessRetreatGrid from "@/components/ui/WellnessRetreatGrid";
+import HotelsDemo from "@/components/ui/HotelsDemo";
 
 export default function Home() {
-  useEffect(() => {
-    // Redirect to accommodations page
-    window.location.href = "http://localhost:3001/accommodations";
-  }, []);
-
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Redirecting to accommodations...</p>
-      </div>
+    <div>
+      {/* Hero Section */}
+      <HeroSection />
+
+      {/* Under-Hero Sections */}
+      <main>
+        {/* Popular Destinations */}
+        <DestinationStrip />
+
+        {/* Limited Time Deals */}
+        <DealsCarousel />
+
+        {/* Featured Hotels & Accommodations */}
+        <HotelsDemo />
+
+        {/* Top Attractions & Experiences */}
+        <TopAttractionsGrid />
+
+        {/* Award-Winning Excellence & Reviews */}
+        <TravelersChoiceBar />
+
+        {/* Culinary Experiences */}
+        <FoodExperiencesGrid />
+
+        {/* Adventure Tours */}
+        <AdventureToursGrid />
+
+        {/* Wellness & Spa Retreats */}
+        <WellnessRetreatGrid />
+      </main>
     </div>
   );
 }

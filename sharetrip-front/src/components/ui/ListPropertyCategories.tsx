@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { accommodationService } from "@/services/accommodation.service";
 
 // Types from the header component
@@ -29,8 +29,12 @@ interface ListPropertyCategoriesProps {
 export default function ListPropertyCategories({
   onCategorySelect,
 }: ListPropertyCategoriesProps) {
-  const [selectedMainCategory, setSelectedMainCategory] = useState<string | null>(null);
-  const [accommodationTypes, setAccommodationTypes] = useState<AccommodationType[]>([]);
+  const [selectedMainCategory, setSelectedMainCategory] = useState<
+    string | null
+  >(null);
+  const [accommodationTypes, setAccommodationTypes] = useState<
+    AccommodationType[]
+  >([]);
   const [loading, setLoading] = useState(false);
 
   // Tour categories from the header
@@ -80,118 +84,121 @@ export default function ListPropertyCategories({
   ];
 
   // Default accommodation types (fallback)
-  const defaultAccommodationTypes: AccommodationType[] = [
-    {
-      id: "hotel",
-      name: "Hotels",
-      type: "hotel",
-      title: "Find Your Perfect Hotel",
-      subtitle: "Luxury and budget hotels worldwide",
-      image: "/hero/hotel.webp",
-      sectionTitle: "Hotels",
-      message: "Showing hotels...",
-    },
-    {
-      id: "apartment",
-      name: "Apartments",
-      type: "apartment",
-      title: "Find Your Perfect Apartment",
-      subtitle: "Self-catering apartments and studios",
-      image: "/hero/apartment.webp",
-      sectionTitle: "Apartments",
-      message: "Showing apartments...",
-    },
-    {
-      id: "resorts",
-      name: "Resorts",
-      type: "resorts",
-      title: "Luxury Resorts & Spas",
-      subtitle: "All-inclusive resorts and spas",
-      image: "/hero/resort.webp",
-      sectionTitle: "Resorts",
-      message: "Showing resorts...",
-    },
-    {
-      id: "hostels",
-      name: "Hostels",
-      type: "hostels",
-      title: "Budget-Friendly Hostels",
-      subtitle: "Budget-friendly shared accommodations",
-      image: "/hero/hostels.webp",
-      sectionTitle: "Hostels",
-      message: "Showing hostels...",
-    },
-    {
-      id: "motel",
-      name: "Motels",
-      type: "motel",
-      title: "Convenient Motels for Your Stay",
-      subtitle: "Convenient roadside accommodations",
-      image: "/hero/motels.webp",
-      sectionTitle: "Motels",
-      message: "Showing motels...",
-    },
-    {
-      id: "villas",
-      name: "Villas",
-      type: "villas",
-      title: "Private Villas & Vacation Homes",
-      subtitle: "Private villas and vacation homes",
-      image: "/hero/villa.webp",
-      sectionTitle: "Villas",
-      message: "Showing villas...",
-    },
-    {
-      id: "chalets",
-      name: "Chalets",
-      type: "chalets",
-      title: "Mountain Chalets & Cabins",
-      subtitle: "Mountain chalets and cabins",
-      image: "/hero/chalets.webp",
-      sectionTitle: "Chalets",
-      message: "Showing chalets...",
-    },
-    {
-      id: "treehouses",
-      name: "Treehouses",
-      type: "treehouses",
-      title: "Unique Treehouse Accommodations",
-      subtitle: "Unique treehouse accommodations",
-      image: "/hero/treehouses.webp",
-      sectionTitle: "Treehouses",
-      message: "Showing treehouses...",
-    },
-    {
-      id: "guest-houses",
-      name: "Guest Houses",
-      type: "guest-houses",
-      title: "Homely Guest Houses & B&Bs",
-      subtitle: "Homely guest houses and B&Bs",
-      image: "",
-      sectionTitle: "Guest Houses",
-      message: "Showing guest houses...",
-    },
-    {
-      id: "vacation-homes",
-      name: "Vacation Homes",
-      type: "vacation-homes",
-      title: "Entire Vacation Homes",
-      subtitle: "Entire homes for your vacation",
-      image: "",
-      sectionTitle: "Vacation Homes",
-      message: "Showing vacation homes...",
-    },
-    {
-      id: "caravans",
-      name: "Caravans",
-      type: "caravans",
-      title: "Mobile Caravans & RVs",
-      subtitle: "Mobile caravans and RVs",
-      image: "/hero/caravan.webp",
-      sectionTitle: "Caravans",
-      message: "Showing caravans...",
-    },
-  ];
+  const defaultAccommodationTypes = useMemo<AccommodationType[]>(
+    () => [
+      {
+        id: "hotel",
+        name: "Hotels",
+        type: "hotel",
+        title: "Find Your Perfect Hotel",
+        subtitle: "Luxury and budget hotels worldwide",
+        image: "/hero/hotel.webp",
+        sectionTitle: "Hotels",
+        message: "Showing hotels...",
+      },
+      {
+        id: "apartment",
+        name: "Apartments",
+        type: "apartment",
+        title: "Find Your Perfect Apartment",
+        subtitle: "Self-catering apartments and studios",
+        image: "/hero/apartment.webp",
+        sectionTitle: "Apartments",
+        message: "Showing apartments...",
+      },
+      {
+        id: "resorts",
+        name: "Resorts",
+        type: "resorts",
+        title: "Luxury Resorts & Spas",
+        subtitle: "All-inclusive resorts and spas",
+        image: "/hero/resort.webp",
+        sectionTitle: "Resorts",
+        message: "Showing resorts...",
+      },
+      {
+        id: "hostels",
+        name: "Hostels",
+        type: "hostels",
+        title: "Budget-Friendly Hostels",
+        subtitle: "Budget-friendly shared accommodations",
+        image: "/hero/hostels.webp",
+        sectionTitle: "Hostels",
+        message: "Showing hostels...",
+      },
+      {
+        id: "motel",
+        name: "Motels",
+        type: "motel",
+        title: "Convenient Motels for Your Stay",
+        subtitle: "Convenient roadside accommodations",
+        image: "/hero/motels.webp",
+        sectionTitle: "Motels",
+        message: "Showing motels...",
+      },
+      {
+        id: "villas",
+        name: "Villas",
+        type: "villas",
+        title: "Private Villas & Vacation Homes",
+        subtitle: "Private villas and vacation homes",
+        image: "/hero/villa.webp",
+        sectionTitle: "Villas",
+        message: "Showing villas...",
+      },
+      {
+        id: "chalets",
+        name: "Chalets",
+        type: "chalets",
+        title: "Mountain Chalets & Cabins",
+        subtitle: "Mountain chalets and cabins",
+        image: "/hero/chalets.webp",
+        sectionTitle: "Chalets",
+        message: "Showing chalets...",
+      },
+      {
+        id: "treehouses",
+        name: "Treehouses",
+        type: "treehouses",
+        title: "Unique Treehouse Accommodations",
+        subtitle: "Unique treehouse accommodations",
+        image: "/hero/treehouses.webp",
+        sectionTitle: "Treehouses",
+        message: "Showing treehouses...",
+      },
+      {
+        id: "guest-houses",
+        name: "Guest Houses",
+        type: "guest-houses",
+        title: "Homely Guest Houses & B&Bs",
+        subtitle: "Homely guest houses and B&Bs",
+        image: "",
+        sectionTitle: "Guest Houses",
+        message: "Showing guest houses...",
+      },
+      {
+        id: "vacation-homes",
+        name: "Vacation Homes",
+        type: "vacation-homes",
+        title: "Entire Vacation Homes",
+        subtitle: "Entire homes for your vacation",
+        image: "",
+        sectionTitle: "Vacation Homes",
+        message: "Showing vacation homes...",
+      },
+      {
+        id: "caravans",
+        name: "Caravans",
+        type: "caravans",
+        title: "Mobile Caravans & RVs",
+        subtitle: "Mobile caravans and RVs",
+        image: "/hero/caravan.webp",
+        sectionTitle: "Caravans",
+        message: "Showing caravans...",
+      },
+    ],
+    []
+  );
 
   const fetchAccommodationTypes = useCallback(async () => {
     setLoading(true);
@@ -269,7 +276,8 @@ export default function ListPropertyCategories({
                 Tours & Experiences
               </h3>
               <p className="text-gray-600">
-                Share your knowledge and create memorable experiences for travelers
+                Share your knowledge and create memorable experiences for
+                travelers
               </p>
             </div>
           </div>
@@ -332,7 +340,9 @@ export default function ListPropertyCategories({
             </svg>
           </button>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Tour Categories</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Tour Categories
+            </h2>
             <p className="text-gray-600">
               Select the type of tour or experience you want to offer
             </p>

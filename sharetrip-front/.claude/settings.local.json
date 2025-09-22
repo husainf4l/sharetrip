@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "WebFetch(domain:www.getyourguide.com)",
+      "Bash(npx eslint:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(npm run clean:*)",
+      "Bash(powershell:*)",
+      "Bash(npm install:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

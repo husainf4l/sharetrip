@@ -19,8 +19,15 @@ export default function LoginPage() {
     setError("");
 
     try {
-      await login(email, password);
-      router.push("/dashboard");
+      const userData = await login(email, password);
+
+      // Redirect based on user role
+      if (userData.role === "HOST") {
+        router.push("/hostdashboard");
+      } else {
+        // Redirect travelers to home page instead of dashboard
+        router.push("/");
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {

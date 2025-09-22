@@ -61,7 +61,9 @@ export default function HostRegister() {
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               Become a Host
             </h2>
-            <p className="text-gray-600">Share your passion and create unforgettable experiences</p>
+            <p className="text-gray-600">
+              Share your passion and create unforgettable experiences
+            </p>
           </div>
 
           {error && (

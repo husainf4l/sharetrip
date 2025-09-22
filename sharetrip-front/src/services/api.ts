@@ -60,11 +60,19 @@ class ApiService {
         } else if (response.status === 403) {
           errorMessage = data.message || "Forbidden - You don't have permission";
         } else if (response.status === 404) {
-          errorMessage = data.message || "Not found - The requested resource doesn't exist";
+          // For tour-related endpoints, don't throw errors as they have demo fallbacks
+          if (url.includes('/tours')) {
+            console.warn(`API 404 for tour endpoint ${url}, will use demo data`);
+            return null; // Return null instead of throwing
+          }
+          errorMessage = data.message || "Resource not found - The requested endpoint may not be available";
         } else if (response.status >= 500) {
           errorMessage = data.message || "Server error - Please try again later";
         }
 
+        // Log the error details for debugging but don't expose internal details to users
+        console.warn(`API Error ${response.status} for ${url}:`, data);
+        
         throw new Error(errorMessage);
       }
 
@@ -74,6 +82,7 @@ class ApiService {
       if (error instanceof TypeError && error.message.includes('fetch')) {
         // Network error - backend might be down
         console.warn('Network error - backend server may be unavailable:', url);
+        // Don't throw for API services that have fallbacks - let them handle it
         throw new Error('Unable to connect to server. Please check your internet connection and try again.');
       }
 

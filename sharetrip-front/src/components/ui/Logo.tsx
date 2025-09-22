@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface LogoProps {
   size?: "sm" | "md" | "lg" | "xl";
@@ -12,63 +13,34 @@ const Logo: React.FC<LogoProps> = ({
   className = "",
 }) => {
   const sizes = {
-    sm: "w-24 h-8",
-    md: "w-32 h-10",
-    lg: "w-40 h-12",
-    xl: "w-48 h-14",
+    sm: { width: 80, height: 24 },
+    md: { width: 100, height: 30 },
+    lg: { width: 120, height: 36 },
+    xl: { width: 140, height: 42 },
   };
 
-  const textSizes = {
-    sm: "text-lg",
-    md: "text-xl",
-    lg: "text-2xl",
-    xl: "text-3xl",
+  const containerClasses = {
+    sm: "w-[80px] h-6",
+    md: "w-[100px] h-[30px]",
+    lg: "w-[120px] h-9",
+    xl: "w-[140px] h-[42px]",
   };
 
   return (
     <div
-      className={`${sizes[size]} ${className} flex items-center justify-center`}
+      className={`${containerClasses[size]} ${className} flex items-center justify-center relative`}
     >
-      <svg
-        viewBox="0 0 180 50"
-        className="w-full h-full"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* Modern gradient definition */}
-        <defs>
-          <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            {variant === "white" ? (
-              <>
-                <stop offset="0%" stopColor="#FFFFFF" />
-                <stop offset="50%" stopColor="#F8FAFC" />
-                <stop offset="100%" stopColor="#E2E8F0" />
-              </>
-            ) : (
-              <>
-                <stop offset="0%" stopColor="#3B82F6" />
-                <stop offset="50%" stopColor="#6366F1" />
-                <stop offset="100%" stopColor="#8B5CF6" />
-              </>
-            )}
-          </linearGradient>
-        </defs>
-
-        {/* Clean, modern typography with gradient */}
-        <text
-          x="0"
-          y="32"
-          className={`${textSizes[size]} font-medium tracking-tight`}
-          style={{
-            fontFamily:
-              'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            fontWeight: "500",
-            letterSpacing: "-0.02em",
-            fill: "url(#logoGradient)",
-          }}
-        >
-          raheva
-        </text>
-      </svg>
+      <Image
+        src="/logo/raheva-logo.png"
+        alt="Raheva Logo"
+        width={sizes[size].width}
+        height={sizes[size].height}
+        className={`object-contain transition-opacity duration-200 hover:opacity-90 ${
+          variant === "white" ? "brightness-0 invert" : ""
+        }`}
+        priority
+        sizes={`${sizes[size].width}px`}
+      />
     </div>
   );
 };

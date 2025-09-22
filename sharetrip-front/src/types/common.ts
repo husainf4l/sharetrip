@@ -45,6 +45,8 @@ export interface Apartment {
   status: string;
   createdAt: string;
   updatedAt: string;
+  rating?: number;
+  reviewCount?: number;
   host: {
     id: string;
     name: string;

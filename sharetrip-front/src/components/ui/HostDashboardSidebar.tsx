@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Logo from "./Logo";
 import { useAuth } from "@/providers/AuthContext";
@@ -32,7 +33,7 @@ const hostSidebarItems = [
     ),
   },
   {
-    name: "Tours",
+    name: "Tours and Experiences",
     href: "/hostdashboard/tours",
     icon: (
       <svg
@@ -309,10 +310,12 @@ export default function HostDashboardSidebar({
               <div className="flex items-center min-w-0 flex-1">
                 <div className="flex-shrink-0">
                   {user.image ? (
-                    <img
+                    <Image
                       className="w-8 h-8 rounded-full"
                       src={user.image}
                       alt={user.name}
+                      width={32}
+                      height={32}
                     />
                   ) : (
                     <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">

@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Logo from "./Logo";
 import { useAuth } from "@/providers/AuthContext";
@@ -11,7 +12,14 @@ interface DashboardSidebarProps {
   setSidebarOpen: (open: boolean) => void;
 }
 
-const sidebarItems = [
+interface SidebarItem {
+  name: string;
+  href: string;
+  icon: React.ReactNode;
+  isAction?: boolean;
+}
+
+const sidebarItems: SidebarItem[] = [
   {
     name: "Dashboard",
     href: "/dashboard",
@@ -46,6 +54,25 @@ const sidebarItems = [
           strokeLinejoin="round"
           strokeWidth={2}
           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+        />
+      </svg>
+    ),
+  },
+  {
+    name: "Genius Loyalty",
+    href: "/dashboard/genius",
+    icon: (
+      <svg
+        className="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
         />
       </svg>
     ),
@@ -145,6 +172,26 @@ const sidebarItems = [
       </svg>
     ),
   },
+  {
+    name: "Logout",
+    href: "#",
+    isAction: true,
+    icon: (
+      <svg
+        className="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+        />
+      </svg>
+    ),
+  },
 ];
 
 export default function DashboardSidebar({
@@ -206,6 +253,20 @@ export default function DashboardSidebar({
           <div className="px-3">
             {sidebarItems.map((item) => {
               const isActive = pathname === item.href;
+
+              if (item.isAction && item.name === "Logout") {
+                return (
+                  <button
+                    key={item.name}
+                    onClick={handleLogout}
+                    className="flex items-center w-full px-3 py-3 text-sm font-medium rounded-lg mb-1 transition-colors duration-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                  >
+                    <span className="mr-3">{item.icon}</span>
+                    {item.name}
+                  </button>
+                );
+              }
+
               return (
                 <Link
                   key={item.name}
@@ -241,10 +302,12 @@ export default function DashboardSidebar({
               <div className="flex items-center min-w-0 flex-1">
                 <div className="flex-shrink-0">
                   {user.image ? (
-                    <img
+                    <Image
                       className="w-8 h-8 rounded-full"
                       src={user.image}
                       alt={user.name}
+                      width={32}
+                      height={32}
                     />
                   ) : (
                     <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">

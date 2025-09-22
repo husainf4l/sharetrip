@@ -15,8 +15,8 @@ import { User, RegisterDto } from "@/types/auth";
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  signup: (signupData: RegisterDto) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
+  signup: (signupData: RegisterDto) => Promise<User>;
   logout: () => void;
   checkAuth: () => Promise<void>;
 }
@@ -36,54 +36,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const userData = await apiService.getCurrentUser() as User;
-      setUser(userData);
-    } catch (err: unknown) {
-      // Only clear tokens if it's a 401 Unauthorized error or token expiration
-      // and we couldn't refresh the token
-      // Don't log out on network errors or other temporary issues
-      if (
-        err instanceof Error &&
-        (err.message?.includes("Unable to connect to server") ||
-          err.message?.includes("Network error") ||
-          err.message?.includes("fetch"))
-      ) {
-        // Backend is unavailable - silently continue without auth
-        console.warn(
-          "Backend server unavailable - continuing without authentication"
-        );
-      } else {
-        console.error("Auth check failed:", err);
-      }
+      // Add a timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-      if (
-        err instanceof Error &&
-        (err.message?.includes("401") ||
-          err.message?.includes("Unauthorized") ||
-          err.message?.includes("Token has expired") ||
-          err.message?.includes("token") ||
-          err.message?.includes("expired") ||
-          err.message?.includes("No refresh token"))
-      ) {
+      const response = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3003/api"
+        }/auth/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          signal: controller.signal,
+        }
+      );
+
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+      } else if (response.status === 401) {
+        // Token is invalid, clear it
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         setUser(null);
-
-        // Clear cookies as well
-        document.cookie =
-          "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        document.cookie =
-          "refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       }
-      // For other errors (network, server errors), don't change user state
-      // Keep the existing user data to avoid unnecessary logouts
+    } catch (err: unknown) {
+      // Handle network errors, timeouts, etc.
+      if (err instanceof Error && err.name === "AbortError") {
+        console.warn("Auth check timed out - backend may be unavailable");
+      } else {
+        console.warn("Auth check failed - backend may be unavailable:", err);
+      }
+      // Don't clear user data on network errors to avoid unnecessary logouts
     } finally {
       setLoading(false);
     }
   }, []);
 
   const login = async (email: string, password: string) => {
-    const data = await apiService.login({ email, password }) as { accessToken: string; refreshToken: string; user: User };
+    const data = (await apiService.login({ email, password })) as {
+      accessToken: string;
+      refreshToken: string;
+      user: User;
+    };
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("refreshToken", data.refreshToken);
 
@@ -93,10 +92,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Set user data immediately from login response
     setUser(data.user);
+
+    // Return the user data for immediate use
+    return data.user;
   };
 
   const signup = async (signupData: RegisterDto) => {
-    const data = await apiService.signup(signupData) as { accessToken: string; refreshToken: string; user: User };
+    const data = (await apiService.signup(signupData)) as {
+      accessToken: string;
+      refreshToken: string;
+      user: User;
+    };
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("refreshToken", data.refreshToken);
 
@@ -106,6 +112,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Set user data immediately from signup response
     setUser(data.user);
+
+    // Return the user data for immediate use
+    return data.user;
   };
 
   const logout = () => {
@@ -137,7 +146,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     initializeCookies();
     checkAuth();
-  }, [checkAuth]);
+
+    // Fallback: ensure loading is set to false after 10 seconds max
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 10000);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   const value = {
     user,
