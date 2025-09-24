@@ -11,6 +11,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateAccommodationDto {
+  // Updated to allow additional fields
   @ApiProperty({ description: 'Title of the accommodation' })
   @IsString()
   title: string;
@@ -80,13 +81,69 @@ export class CreateAccommodationDto {
 
   @ApiPropertyOptional({ description: 'Amenities available' })
   @IsOptional()
-  @IsObject()
   amenities?: any;
 
   @ApiPropertyOptional({ description: 'Images of the accommodation' })
   @IsOptional()
   @IsArray()
   images?: string[];
+
+  @ApiPropertyOptional({ description: 'Room types available' })
+  @IsOptional()
+  @IsArray()
+  roomTypes?: any[]; // Complex RoomType objects
+
+  @ApiPropertyOptional({ description: 'Languages spoken by host' })
+  @IsOptional()
+  @IsArray()
+  languagesSpoken?: string[];
+
+  @ApiPropertyOptional({ description: 'Neighborhood highlights' })
+  @IsOptional()
+  @IsArray()
+  neighborhoodHighlights?: string[];
+
+  @ApiPropertyOptional({ description: 'Room size in square meters' })
+  @IsOptional()
+  roomSize?: any; // JSON field - can be number or complex object
+
+  @ApiPropertyOptional({ description: 'Check-in and check-out times' })
+  @IsOptional()
+  @IsObject()
+  checkInOutTimes?: {
+    checkInTime?: string;
+    checkOutTime?: string;
+    earlyCheckIn?: boolean;
+    lateCheckOut?: boolean;
+    earlyCheckInFee?: number;
+    lateCheckOutFee?: number;
+  };
+
+  @ApiPropertyOptional({ description: 'Cancellation policy' })
+  @IsOptional()
+  @IsString()
+  cancellationPolicy?: string;
+
+  @ApiPropertyOptional({ description: 'Safety compliance information' })
+  @IsOptional()
+  @IsObject()
+  safetyCompliance?: {
+    smokeDetectors?: boolean;
+    carbonMonoxideDetectors?: boolean;
+    firstAidKit?: boolean;
+    fireExtinguishers?: boolean;
+    securityCameras?: boolean;
+    emergencyContact?: string;
+  };
+
+  @ApiPropertyOptional({ description: 'Star rating (1-5)' })
+  @IsOptional()
+  starRating?: any; // JSON field - can be number or complex object
+
+  @ApiPropertyOptional({ description: 'Host ID (set automatically)' })
+  @IsOptional()
+  @IsString()
+  hostId?: string;
 
   @ApiPropertyOptional({ description: 'Whether the accommodation is available', default: true })
   @IsOptional()

@@ -20,7 +20,11 @@
       "Bash(npm run:*)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c taskkill:*)",
+      "Bash(test-upload-curl.bat)",
+      "Bash(./test-upload-curl.bat)"
     ],
     "deny": [],
     "ask": []

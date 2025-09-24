@@ -52,7 +52,7 @@ async function bootstrap() {
           },
           'JWT-auth',
         )
-        .addServer('http://localhost:3003', 'Development server')
+        .addServer('http://localhost:3333', 'Development server')
         .addTag('auth', 'Authentication endpoints')
         .addTag('tours', 'Tour management')
         .addTag('bookings', 'Booking management')

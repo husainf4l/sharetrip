@@ -12,6 +12,7 @@ async function checkTours() {
         select: {
           id: true,
           title: true,
+          isPublished: true,
           status: true,
           createdAt: true,
         },
@@ -23,10 +24,11 @@ async function checkTours() {
 
       // Also check for draft tours
       const draftTours = await prisma.tour.findMany({
-        where: { status: 'draft' },
+        where: { isPublished: false },
         select: {
           id: true,
           title: true,
+          isPublished: true,
           status: true,
           createdAt: true,
         }

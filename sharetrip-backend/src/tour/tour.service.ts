@@ -33,6 +33,7 @@ export class TourService {
         data: {
           ...createTourDto,
           guideId: user.guideProfile.id,
+          isPublished: true,
           startTimes: createTourDto.startTimes.map(time => new Date(time)),
         },
         include: {
@@ -103,7 +104,7 @@ export class TourService {
 
     // Build where clause
     const where: Prisma.TourWhereInput = {
-      status,
+      isPublished: true,
     };
 
     // Search functionality
@@ -128,6 +129,9 @@ export class TourService {
     if (category) {
       where.category = category;
     }
+
+    // Published filter
+    where.isPublished = true;
 
     // Price range
     if (minPrice !== undefined || maxPrice !== undefined) {
@@ -270,7 +274,7 @@ export class TourService {
 
   async findOne(id: string) {
     const tour = await this.prisma.tour.findUnique({
-      where: { id },
+      where: { id, isPublished: true },
       include: {
         guide: {
           include: {

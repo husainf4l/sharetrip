@@ -134,4 +134,57 @@ export class UploadService {
   getConfig(): UploadConfig {
     return { ...this.config };
   }
+
+  async uploadFileDirect(file: Express.Multer.File): Promise<{ url: string; key: string }> {
+    // Validate file size
+    this.validateFileSize(file.size);
+
+    // Validate MIME type
+    if (!this.isValidMimeType(file.mimetype)) {
+      throw new Error(`Invalid content type: ${file.mimetype}. Only images are allowed.`);
+    }
+
+    const fileExtension = this.getFileExtension(file.originalname);
+    const key = this.generateStorageKey(fileExtension);
+
+    if (this.storageType === 's3') {
+      return this.uploadToS3Direct(file, key);
+    } else {
+      return this.uploadToLocalDirect(file, key);
+    }
+  }
+
+  private async uploadToS3Direct(file: Express.Multer.File, key: string): Promise<{ url: string; key: string }> {
+    try {
+      // Extract folder from key (everything before the last /)
+      const lastSlashIndex = key.lastIndexOf('/');
+      const folder = lastSlashIndex > -1 ? key.substring(0, lastSlashIndex) : 'uploads';
+
+      // Create a new file object with the correct filename
+      const modifiedFile = {
+        ...file,
+        originalname: key.substring(lastSlashIndex + 1), // Use the key as filename
+      };
+
+      const uploadResult = await this.s3Service.uploadFile(modifiedFile, folder);
+
+      return {
+        url: uploadResult,
+        key,
+      };
+    } catch (error) {
+      throw new Error(`Failed to upload to S3: ${error.message}`);
+    }
+  }
+
+  private uploadToLocalDirect(file: Express.Multer.File, key: string): { url: string; key: string } {
+    // For local storage, we'll need to save the file to the filesystem
+    // For now, return a placeholder URL
+    const baseUrl = this.configService.get<string>('BASE_URL', 'http://localhost:3003');
+
+    return {
+      url: `${baseUrl}/uploads/${key}`,
+      key,
+    };
+  }
 }

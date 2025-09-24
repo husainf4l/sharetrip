@@ -48,7 +48,7 @@ export class S3Service {
       Key: fileName,
       Body: file.buffer,
       ContentType: file.mimetype,
-      ACL: 'public-read' as const, // Makes the file publicly accessible
+      // ACL removed - use bucket policy for public access instead
     };
 
     try {
@@ -121,7 +121,7 @@ export class S3Service {
       Bucket: this.bucketName,
       Key: key,
       ContentType: contentType,
-      ACL: 'public-read',
+      // ACL removed - use bucket policy for public access instead
     });
 
     return getSignedUrl(this.s3Client, command, { expiresIn });

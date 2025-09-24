@@ -2,10 +2,14 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { PrismaService } from '../prisma/prisma.service';
 import { Category, Accommodation } from '@prisma/client';
 import { CreateAccommodationDto, UpdateAccommodationDto } from './dto';
+import { S3Service } from '../common/s3/s3.service';
 
 @Injectable()
 export class AccommodationsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private s3Service: S3Service,
+  ) {}
 
   async getCategories(): Promise<Category[]> {
     return this.prisma.category.findMany({
@@ -39,8 +43,8 @@ export class AccommodationsService {
     return this.prisma.accommodation.findMany({
       where: {
         categoryId: category.id,
+        isPublished: true,
         isAvailable: true,
-        status: 'active',
       },
       include: {
         host: {
@@ -84,7 +88,7 @@ export class AccommodationsService {
 
   async getAccommodationById(id: string): Promise<Accommodation> {
     const accommodation = await this.prisma.accommodation.findUnique({
-      where: { id },
+      where: { id, isPublished: true },
       include: {
         host: {
           select: {
@@ -114,14 +118,36 @@ export class AccommodationsService {
     return accommodation;
   }
 
-  async createAccommodation(createAccommodationDto: CreateAccommodationDto, hostId: string): Promise<Accommodation> {
+  async createAccommodation(createAccommodationDto: CreateAccommodationDto, hostId: string, photos?: Express.Multer.File[]): Promise<Accommodation> {
+    // Handle images: prioritize uploaded photos, fall back to images from DTO
+    let imageUrls: string[] = [];
+
+    if (photos && photos.length > 0) {
+      // Upload photos from files
+      try {
+        const uploadPromises = photos.map(photo => this.s3Service.uploadFile(photo, 'accommodations'));
+        imageUrls = await Promise.all(uploadPromises);
+      } catch (error) {
+        console.error('Failed to upload accommodation photos:', error);
+        // Continue without photos if upload fails
+      }
+    } else if (createAccommodationDto.images && createAccommodationDto.images.length > 0) {
+      // Use images from DTO if no files were uploaded
+      imageUrls = createAccommodationDto.images;
+    }
+
+    // Remove images from DTO data before creating accommodation
+    const { images, ...accommodationData } = createAccommodationDto;
+
     const accommodation = await this.prisma.accommodation.create({
       data: {
-        ...createAccommodationDto,
+        ...accommodationData,
         hostId,
+        isPublished: true,
         currency: createAccommodationDto.currency || 'USD',
         isAvailable: createAccommodationDto.isAvailable ?? true,
         status: createAccommodationDto.status || 'active',
+        images: imageUrls.length > 0 ? imageUrls : undefined,
       },
       include: {
         host: {

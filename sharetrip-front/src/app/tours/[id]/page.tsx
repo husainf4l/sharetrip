@@ -354,7 +354,7 @@ export default function TourDetail() {
               onClick={() => openLightbox(tourImages, 0)}
             >
               <img
-                src={tourImages[0] || "/api/placeholder/800/600"}
+                src={tourImages[0] || "/hero/travelhero.webp"}
                 alt={tour.title}
                 className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-105"
               />
@@ -375,7 +375,7 @@ export default function TourDetail() {
                   onClick={() => openLightbox(tourImages, index)}
                 >
                   <img
-                    src={tourImages[index] || "/api/placeholder/400/300"}
+                    src={tourImages[index] || "/hero/travelhero.webp"}
                     alt={`${tour.title} photo ${index + 1}`}
                     className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-105"
                   />

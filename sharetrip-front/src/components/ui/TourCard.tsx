@@ -72,7 +72,7 @@ export default function TourCard({ tours }: TourCardProps) {
           {/* Tour Image */}
           <div className="relative h-48">
             <Image
-              src={tour.media?.[0]?.url || "/api/placeholder/400/300"}
+              src={tour.media?.[0]?.url || "/hero/travelhero.webp"}
               alt={tour.title}
               fill
               className="object-cover"

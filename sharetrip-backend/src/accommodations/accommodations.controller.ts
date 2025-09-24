@@ -11,7 +11,10 @@ import {
   Request,
   HttpStatus,
   HttpCode,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AccommodationsService } from './accommodations.service';
 import { Category, Accommodation } from '@prisma/client';
@@ -99,6 +102,7 @@ export class AccommodationsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FilesInterceptor('photos', 10))
   @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new accommodation' })
@@ -113,10 +117,11 @@ export class AccommodationsController {
   })
   async createAccommodation(
     @Body() createAccommodationDto: CreateAccommodationDto,
+    @UploadedFiles() photos: Express.Multer.File[],
     @Request() req,
   ): Promise<Accommodation> {
     const hostId = req.user.id;
-    return this.accommodationsService.createAccommodation(createAccommodationDto, hostId);
+    return this.accommodationsService.createAccommodation(createAccommodationDto, hostId, photos);
   }
 
   @Put(':id')

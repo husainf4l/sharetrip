@@ -12,9 +12,10 @@ import {
   BadRequestException,
   Headers,
   Req,
+  UploadedFiles,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { UploadService } from '../common/upload/upload.service';
 import {
   CreatePresignedUploadDto,
@@ -59,7 +60,69 @@ export class UploadController {
     }
   }
 
-  @Put('local/*')
+  @Post()
+  @UseInterceptors(FilesInterceptor('files', 10))
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Upload files directly' })
+  @ApiResponse({
+    status: 200,
+    description: 'Files uploaded successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        success: { type: 'boolean' },
+        files: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              originalName: { type: 'string' },
+              publicUrl: { type: 'string' },
+              key: { type: 'string' }
+            }
+          }
+        }
+      }
+    }
+  })
+  @ApiResponse({ status: 400, description: 'No files provided or invalid files' })
+  async uploadFiles(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body('folder') folder?: string,
+  ): Promise<{ success: boolean; files: Array<{ originalName: string; publicUrl: string; key: string }> }> {
+    if (!files || files.length === 0) {
+      throw new BadRequestException('No files provided');
+    }
+
+    try {
+      const uploadPromises = files.map(async (file) => {
+        // Validate file type
+        if (!file.mimetype.startsWith('image/')) {
+          throw new BadRequestException(`File ${file.originalname} is not an image`);
+        }
+
+        // Upload file using UploadService
+        const result = await this.uploadService.uploadFileDirect(file);
+
+        return {
+          originalName: file.originalname,
+          publicUrl: result.url,
+          key: result.key
+        };
+      });
+
+      const uploadedFiles = await Promise.all(uploadPromises);
+
+      return {
+        success: true,
+        files: uploadedFiles
+      };
+    } catch (error) {
+      throw new BadRequestException(`Upload failed: ${error.message}`);
+    }
+  }
+
+  @Put('local/*path')
   @UseInterceptors(FileInterceptor('file'))
   @HttpCode(HttpStatus.OK)
   async uploadFileLocally(
@@ -98,6 +161,53 @@ export class UploadController {
       success: true,
       publicUrl,
     };
+  }
+
+  @Post()
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Direct file upload' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'File uploaded successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+        key: { type: 'string' },
+      },
+    },
+  })
+  @HttpCode(HttpStatus.OK)
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<{ url: string; key: string }> {
+    if (!file) {
+      throw new BadRequestException('No file provided');
+    }
+
+    // Validate content type
+    if (!file.mimetype.startsWith('image/')) {
+      throw new BadRequestException('Only image files are allowed');
+    }
+
+    try {
+      const result = await this.uploadService.uploadFileDirect(file);
+      return result;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Post('config')

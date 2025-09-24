@@ -68,6 +68,7 @@ model Tour {
   language         String
   languages        Json? // Multi-language support
   isPayWhatYouWant Boolean      @default(false)
+  isPublished      Boolean      @default(false)
   status           String       @default("draft")
   createdAt        DateTime     @default(now())
 
@@ -334,8 +335,19 @@ model Accommodation {
   amenities Json? // WiFi, parking, pool, etc.
   images    Json? // Array of image URLs
 
+  // Additional details
+  roomTypes              Json?
+  languagesSpoken        Json?
+  neighborhoodHighlights Json?
+  roomSize               Json?
+  checkInOutTimes        Json?
+  cancellationPolicy     String?
+  safetyCompliance       Json?
+  starRating             Json?
+
   // Availability
   isAvailable Boolean @default(true)
+  isPublished Boolean @default(false)
   status      String  @default("active") // active, inactive, maintenance
 
   // Metadata
