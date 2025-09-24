@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/providers/AuthContext";
 import ListPropertyCategories from "@/components/ui/ListPropertyCategories";
 import AccommodationRegistrationForm from "@/components/ui/AccommodationRegistrationForm";
 import TourRegistrationForm from "@/components/ui/TourRegistrationForm";
@@ -8,9 +10,23 @@ import TourRegistrationForm from "@/components/ui/TourRegistrationForm";
 type ViewState = "categories" | "accommodation-form" | "tour-form";
 
 export default function HostDashboard() {
+  const router = useRouter();
+  const { user } = useAuth();
   const [currentView, setCurrentView] = useState<ViewState>("categories");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("");
+
+  // Debug: Check authentication status
+  useEffect(() => {
+    console.log("HostDashboard - User:", user);
+    console.log("HostDashboard - Token:", localStorage.getItem("accessToken"));
+
+    // Redirect to login if not authenticated
+    if (!user && !localStorage.getItem("accessToken")) {
+      console.log("No user or token found, redirecting to login");
+      router.push("/login");
+    }
+  }, [user, router]);
 
   const handleCategorySelect = (category: string, subcategory?: string) => {
     console.log("Selected category:", category, "subcategory:", subcategory);
@@ -19,36 +35,28 @@ export default function HostDashboard() {
     setSelectedSubcategory(subcategory || "");
 
     // Navigate to appropriate form based on category
-    if (category === "accommodations" && subcategory) {
+    if (category === "accommodations") {
       setCurrentView("accommodation-form");
     } else if (category === "tours" && subcategory) {
       setCurrentView("tour-form");
     }
   };
 
-  const handleFormSubmit = (data: {
-    title: string;
-    description: string;
-    categoryId: string;
-    city: string;
-    country: string;
-    address: string;
-    latitude?: number;
-    longitude?: number;
-    basePrice: number;
-    currency: string;
-    maxGuests: number;
-    bedrooms: number;
-    bathrooms: number;
-    amenities: string[];
-    images: string[];
-    isAvailable: boolean;
-  }) => {
-    console.log("Form submitted with data:", data);
-    // Handle successful form submission
-    // You can show a success message and redirect back to categories or dashboard
-    setCurrentView("categories");
-    // Optionally show success notification
+  const handleFormSubmit = (response: any) => {
+    console.log("Form submitted with response:", response);
+
+    // If response has an ID, navigate to the accommodations list in host dashboard
+    if (response && (response.id || response.data?.id)) {
+      const accommodationId = response.id || response.data?.id;
+      console.log("Accommodation created successfully:", accommodationId);
+      // Navigate to host dashboard accommodations list instead of individual accommodation
+      router.push(`/hostdashboard/accommodations`);
+    } else {
+      console.warn("No valid ID in response:", response);
+      // Fallback: navigate back to dashboard
+      console.log("No ID in response, navigating to dashboard");
+      setCurrentView("categories");
+    }
   };
 
   const handleFormCancel = () => {
@@ -65,6 +73,7 @@ export default function HostDashboard() {
             selectedCategory={selectedSubcategory}
             onSubmit={handleFormSubmit}
             onCancel={handleFormCancel}
+            currentUser={user}
           />
         );
 
@@ -72,11 +81,9 @@ export default function HostDashboard() {
         return (
           <TourRegistrationForm
             selectedCategory={selectedSubcategory}
-            onSubmit={(data) => {
-              console.log("Tour form submitted:", data);
-              setCurrentView("categories");
-            }}
+            onSubmit={handleFormSubmit}
             onCancel={handleFormCancel}
+            currentUser={user}
           />
         );
 

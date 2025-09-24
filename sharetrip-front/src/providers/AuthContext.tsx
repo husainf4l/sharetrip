@@ -29,6 +29,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   const checkAuth = useCallback(async () => {
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      setLoading(false);
+      return;
+    }
+
     const token = localStorage.getItem("accessToken");
     if (!token) {
       setLoading(false);
@@ -83,12 +89,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       refreshToken: string;
       user: User;
     };
-    localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("refreshToken", data.refreshToken);
 
-    // Also set cookies for middleware
-    document.cookie = `accessToken=${data.accessToken}; path=/; max-age=86400; samesite=strict`;
-    document.cookie = `refreshToken=${data.refreshToken}; path=/; max-age=604800; samesite=strict`;
+    // Only access localStorage on client-side
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+
+      // Also set cookies for middleware
+      document.cookie = `accessToken=${data.accessToken}; path=/; max-age=86400; samesite=strict`;
+      document.cookie = `refreshToken=${data.refreshToken}; path=/; max-age=604800; samesite=strict`;
+    }
 
     // Set user data immediately from login response
     setUser(data.user);
@@ -103,12 +113,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       refreshToken: string;
       user: User;
     };
-    localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("refreshToken", data.refreshToken);
 
-    // Also set cookies for middleware
-    document.cookie = `accessToken=${data.accessToken}; path=/; max-age=86400; samesite=strict`;
-    document.cookie = `refreshToken=${data.refreshToken}; path=/; max-age=604800; samesite=strict`;
+    // Only access localStorage on client-side
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+
+      // Also set cookies for middleware
+      document.cookie = `accessToken=${data.accessToken}; path=/; max-age=86400; samesite=strict`;
+      document.cookie = `refreshToken=${data.refreshToken}; path=/; max-age=604800; samesite=strict`;
+    }
 
     // Set user data immediately from signup response
     setUser(data.user);
@@ -118,20 +132,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    // Only access localStorage on client-side
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+
+      // Clear cookies
+      document.cookie =
+        "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      document.cookie =
+        "refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+
     setUser(null);
-
-    // Clear cookies
-    document.cookie =
-      "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    document.cookie =
-      "refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-
     router.push("/login");
   };
 
   const initializeCookies = () => {
+    // Only run on client-side
+    if (typeof window === 'undefined') return;
+
     const accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
 

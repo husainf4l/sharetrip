@@ -58,13 +58,28 @@ interface UserProfile {
 }
 
 const travelStyles = [
-  "Adventure", "Cultural", "Relaxation", "Food & Wine",
-  "Nature", "City Break", "Beach", "Mountain", "Luxury"
+  "Adventure",
+  "Cultural",
+  "Relaxation",
+  "Food & Wine",
+  "Nature",
+  "City Break",
+  "Beach",
+  "Mountain",
+  "Luxury",
 ];
 
 const languages = [
-  "English", "Spanish", "French", "German", "Italian",
-  "Portuguese", "Chinese", "Japanese", "Korean", "Arabic"
+  "English",
+  "Spanish",
+  "French",
+  "German",
+  "Italian",
+  "Portuguese",
+  "Chinese",
+  "Japanese",
+  "Korean",
+  "Arabic",
 ];
 
 const currencies = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD"];
@@ -92,7 +107,7 @@ export default function ProfilePage() {
     emergencyContact: {
       name: "Jane Doe",
       phone: "+1 (555) 987-6543",
-      relationship: "Sister"
+      relationship: "Sister",
     },
     preferences: {
       currency: "USD",
@@ -100,15 +115,15 @@ export default function ProfilePage() {
       notifications: {
         email: true,
         sms: false,
-        push: true
-      }
+        push: true,
+      },
     },
     stats: {
       tripsCompleted: 24,
       reviewsWritten: 18,
       wishlistItems: 12,
-      totalSpent: 15420
-    }
+      totalSpent: 15420,
+    },
   };
 
   useEffect(() => {
@@ -134,19 +149,23 @@ export default function ProfilePage() {
   };
 
   const updateFormData = (field: string, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
-  const updateNestedFormData = (parent: keyof UserProfile, field: string, value: any) => {
-    setFormData(prev => ({
+  const updateNestedFormData = (
+    parent: keyof UserProfile,
+    field: string,
+    value: any
+  ) => {
+    setFormData((prev) => ({
       ...prev,
       [parent]: {
         ...(prev[parent] as any),
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   };
 
@@ -174,8 +193,12 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
-          <p className="text-gray-600 mb-6">Please log in to view your profile.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Access Denied
+          </h1>
+          <p className="text-gray-600 mb-6">
+            Please log in to view your profile.
+          </p>
           <button
             onClick={() => router.push("/login")}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -252,20 +275,30 @@ export default function ProfilePage() {
                     </button>
                   )}
                 </div>
-                <h2 className="text-xl font-bold text-gray-900">{profile.name}</h2>
+                <h2 className="text-xl font-bold text-gray-900">
+                  {profile.name}
+                </h2>
                 <p className="text-gray-600">{profile.email}</p>
                 <p className="text-sm text-gray-500 mt-1">
-                  Member since {new Date(profile.joinDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  Member since{" "}
+                  {new Date(profile.joinDate).toLocaleDateString("en-US", {
+                    month: "long",
+                    year: "numeric",
+                  })}
                 </p>
 
                 {/* Quick Stats */}
                 <div className="mt-6 grid grid-cols-2 gap-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">{profile.stats.tripsCompleted}</div>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {profile.stats.tripsCompleted}
+                    </div>
                     <div className="text-xs text-gray-600">Trips</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">{profile.stats.reviewsWritten}</div>
+                    <div className="text-2xl font-bold text-green-600">
+                      {profile.stats.reviewsWritten}
+                    </div>
                     <div className="text-xs text-gray-600">Reviews</div>
                   </div>
                 </div>
@@ -281,9 +314,21 @@ export default function ProfilePage() {
                 <nav className="flex">
                   {[
                     { id: "personal", label: "Personal Info", icon: UserIcon },
-                    { id: "preferences", label: "Preferences", icon: HeartIcon },
-                    { id: "security", label: "Security", icon: ShieldCheckIcon },
-                    { id: "notifications", label: "Notifications", icon: BellIcon },
+                    {
+                      id: "preferences",
+                      label: "Preferences",
+                      icon: HeartIcon,
+                    },
+                    {
+                      id: "security",
+                      label: "Security",
+                      icon: ShieldCheckIcon,
+                    },
+                    {
+                      id: "notifications",
+                      label: "Notifications",
+                      icon: BellIcon,
+                    },
                   ].map((tab) => (
                     <button
                       key={tab.id}
@@ -306,15 +351,21 @@ export default function ProfilePage() {
                 {activeTab === "personal" && (
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
+                      <h3 className="text-lg font-medium text-gray-900 mb-4">
+                        Personal Information
+                      </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Full Name
+                          </label>
                           {isEditing ? (
                             <input
                               type="text"
                               value={formData.name || ""}
-                              onChange={(e) => updateFormData("name", e.target.value)}
+                              onChange={(e) =>
+                                updateFormData("name", e.target.value)
+                              }
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                           ) : (
@@ -322,12 +373,16 @@ export default function ProfilePage() {
                           )}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Email
+                          </label>
                           {isEditing ? (
                             <input
                               type="email"
                               value={formData.email || ""}
-                              onChange={(e) => updateFormData("email", e.target.value)}
+                              onChange={(e) =>
+                                updateFormData("email", e.target.value)
+                              }
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                           ) : (
@@ -335,60 +390,81 @@ export default function ProfilePage() {
                           )}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Phone
+                          </label>
                           {isEditing ? (
                             <input
                               type="tel"
                               value={formData.phone || ""}
-                              onChange={(e) => updateFormData("phone", e.target.value)}
+                              onChange={(e) =>
+                                updateFormData("phone", e.target.value)
+                              }
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                           ) : (
-                            <p className="text-gray-900">{profile.phone || "Not provided"}</p>
+                            <p className="text-gray-900">
+                              {profile.phone || "Not provided"}
+                            </p>
                           )}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Location
+                          </label>
                           {isEditing ? (
                             <input
                               type="text"
                               value={formData.location || ""}
-                              onChange={(e) => updateFormData("location", e.target.value)}
+                              onChange={(e) =>
+                                updateFormData("location", e.target.value)
+                              }
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                           ) : (
-                            <p className="text-gray-900">{profile.location || "Not provided"}</p>
+                            <p className="text-gray-900">
+                              {profile.location || "Not provided"}
+                            </p>
                           )}
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Bio
+                      </label>
                       {isEditing ? (
                         <textarea
                           value={formData.bio || ""}
-                          onChange={(e) => updateFormData("bio", e.target.value)}
+                          onChange={(e) =>
+                            updateFormData("bio", e.target.value)
+                          }
                           rows={4}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="Tell us about yourself..."
                         />
                       ) : (
-                        <p className="text-gray-900">{profile.bio || "No bio provided"}</p>
+                        <p className="text-gray-900">
+                          {profile.bio || "No bio provided"}
+                        </p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Travel Styles</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Travel Styles
+                      </label>
                       {isEditing ? (
                         <div className="flex flex-wrap gap-2">
                           {travelStyles.map((style) => (
                             <button
                               key={style}
                               onClick={() => {
-                                const currentStyles = formData.travelStyle || [];
+                                const currentStyles =
+                                  formData.travelStyle || [];
                                 const newStyles = currentStyles.includes(style)
-                                  ? currentStyles.filter(s => s !== style)
+                                  ? currentStyles.filter((s) => s !== style)
                                   : [...currentStyles, style];
                                 updateFormData("travelStyle", newStyles);
                               }}
@@ -405,7 +481,10 @@ export default function ProfilePage() {
                       ) : (
                         <div className="flex flex-wrap gap-2">
                           {(profile.travelStyle || []).map((style) => (
-                            <span key={style} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                            <span
+                              key={style}
+                              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                            >
                               {style}
                             </span>
                           ))}
@@ -414,7 +493,9 @@ export default function ProfilePage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Languages</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Languages
+                      </label>
                       {isEditing ? (
                         <div className="flex flex-wrap gap-2">
                           {languages.map((lang) => (
@@ -423,7 +504,7 @@ export default function ProfilePage() {
                               onClick={() => {
                                 const currentLangs = formData.languages || [];
                                 const newLangs = currentLangs.includes(lang)
-                                  ? currentLangs.filter(l => l !== lang)
+                                  ? currentLangs.filter((l) => l !== lang)
                                   : [...currentLangs, lang];
                                 updateFormData("languages", newLangs);
                               }}
@@ -440,7 +521,10 @@ export default function ProfilePage() {
                       ) : (
                         <div className="flex flex-wrap gap-2">
                           {(profile.languages || []).map((lang) => (
-                            <span key={lang} className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                            <span
+                              key={lang}
+                              className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm"
+                            >
                               {lang}
                             </span>
                           ))}
@@ -453,40 +537,66 @@ export default function ProfilePage() {
                 {/* Preferences Tab */}
                 {activeTab === "preferences" && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Travel Preferences</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                      Travel Preferences
+                    </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Currency</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Preferred Currency
+                        </label>
                         {isEditing ? (
                           <select
                             value={formData.preferences?.currency || "USD"}
-                            onChange={(e) => updateNestedFormData("preferences", "currency", e.target.value)}
+                            onChange={(e) =>
+                              updateNestedFormData(
+                                "preferences",
+                                "currency",
+                                e.target.value
+                              )
+                            }
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           >
                             {currencies.map((currency) => (
-                              <option key={currency} value={currency}>{currency}</option>
+                              <option key={currency} value={currency}>
+                                {currency}
+                              </option>
                             ))}
                           </select>
                         ) : (
-                          <p className="text-gray-900">{profile.preferences.currency}</p>
+                          <p className="text-gray-900">
+                            {profile.preferences.currency}
+                          </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Language</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Preferred Language
+                        </label>
                         {isEditing ? (
                           <select
                             value={formData.preferences?.language || "English"}
-                            onChange={(e) => updateNestedFormData("preferences", "language", e.target.value)}
+                            onChange={(e) =>
+                              updateNestedFormData(
+                                "preferences",
+                                "language",
+                                e.target.value
+                              )
+                            }
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           >
                             {languages.map((lang) => (
-                              <option key={lang} value={lang}>{lang}</option>
+                              <option key={lang} value={lang}>
+                                {lang}
+                              </option>
                             ))}
                           </select>
                         ) : (
-                          <p className="text-gray-900">{profile.preferences.language}</p>
+                          <p className="text-gray-900">
+                            {profile.preferences.language}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -496,13 +606,19 @@ export default function ProfilePage() {
                 {/* Security Tab */}
                 {activeTab === "security" && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Account Security</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                      Account Security
+                    </h3>
 
                     <div className="space-y-4">
                       <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900">Password</h4>
-                          <p className="text-sm text-gray-600">Last changed 3 months ago</p>
+                          <h4 className="text-sm font-medium text-gray-900">
+                            Password
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            Last changed 3 months ago
+                          </p>
                         </div>
                         <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                           Change Password
@@ -511,8 +627,12 @@ export default function ProfilePage() {
 
                       <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900">Two-Factor Authentication</h4>
-                          <p className="text-sm text-gray-600">Add an extra layer of security</p>
+                          <h4 className="text-sm font-medium text-gray-900">
+                            Two-Factor Authentication
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            Add an extra layer of security
+                          </p>
                         </div>
                         <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
                           Enable 2FA
@@ -525,25 +645,54 @@ export default function ProfilePage() {
                 {/* Notifications Tab */}
                 {activeTab === "notifications" && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Notification Preferences</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                      Notification Preferences
+                    </h3>
 
                     <div className="space-y-4">
                       {[
-                        { key: "email", label: "Email Notifications", description: "Receive updates via email" },
-                        { key: "sms", label: "SMS Notifications", description: "Receive updates via text message" },
-                        { key: "push", label: "Push Notifications", description: "Receive push notifications in browser" },
+                        {
+                          key: "email",
+                          label: "Email Notifications",
+                          description: "Receive updates via email",
+                        },
+                        {
+                          key: "sms",
+                          label: "SMS Notifications",
+                          description: "Receive updates via text message",
+                        },
+                        {
+                          key: "push",
+                          label: "Push Notifications",
+                          description: "Receive push notifications in browser",
+                        },
                       ].map((notification) => (
-                        <div key={notification.key} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                        <div
+                          key={notification.key}
+                          className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                        >
                           <div>
-                            <h4 className="text-sm font-medium text-gray-900">{notification.label}</h4>
-                            <p className="text-sm text-gray-600">{notification.description}</p>
+                            <h4 className="text-sm font-medium text-gray-900">
+                              {notification.label}
+                            </h4>
+                            <p className="text-sm text-gray-600">
+                              {notification.description}
+                            </p>
                           </div>
                           {isEditing ? (
                             <div className="flex space-x-2">
                               <button
-                                onClick={() => updateNestedFormData("preferences", `notifications.${notification.key}`, true)}
+                                onClick={() =>
+                                  updateNestedFormData(
+                                    "preferences",
+                                    `notifications.${notification.key}`,
+                                    true
+                                  )
+                                }
                                 className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                                  formData.preferences?.notifications?.[notification.key as keyof typeof formData.preferences.notifications]
+                                  formData.preferences?.notifications?.[
+                                    notification.key as keyof typeof formData.preferences.notifications
+                                  ]
                                     ? "bg-green-600 text-white"
                                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                                 }`}
@@ -551,9 +700,17 @@ export default function ProfilePage() {
                                 Enable
                               </button>
                               <button
-                                onClick={() => updateNestedFormData("preferences", `notifications.${notification.key}`, false)}
+                                onClick={() =>
+                                  updateNestedFormData(
+                                    "preferences",
+                                    `notifications.${notification.key}`,
+                                    false
+                                  )
+                                }
                                 className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                                  !formData.preferences?.notifications?.[notification.key as keyof typeof formData.preferences.notifications]
+                                  !formData.preferences?.notifications?.[
+                                    notification.key as keyof typeof formData.preferences.notifications
+                                  ]
                                     ? "bg-red-600 text-white"
                                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                                 }`}
@@ -562,12 +719,20 @@ export default function ProfilePage() {
                               </button>
                             </div>
                           ) : (
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              profile.preferences.notifications[notification.key as keyof typeof profile.preferences.notifications]
-                                ? "bg-green-100 text-green-800"
-                                : "bg-gray-100 text-gray-800"
-                            }`}>
-                              {profile.preferences.notifications[notification.key as keyof typeof profile.preferences.notifications] ? "Enabled" : "Disabled"}
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                profile.preferences.notifications[
+                                  notification.key as keyof typeof profile.preferences.notifications
+                                ]
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {profile.preferences.notifications[
+                                notification.key as keyof typeof profile.preferences.notifications
+                              ]
+                                ? "Enabled"
+                                : "Disabled"}
                             </span>
                           )}
                         </div>

@@ -330,82 +330,203 @@ const demoApartments: Apartment[] = [
   },
   {
     id: "hotel-5",
-    title: "Historic Palace Hotel",
-    description: "Stay in a beautifully restored historic palace with ornate architecture, antique furnishings, and royal gardens. A unique blend of history and luxury.",
-    categoryId: "historic",
+    title: "Desert Oasis Resort",
+    description: "Tranquil desert resort with palm-fringed pools, traditional architecture, and authentic local experiences. The perfect escape from city life.",
+    categoryId: "resort",
     hostId: "host-5",
-    city: "Istanbul",
-    country: "Turkey",
-    address: "Sultanahmet Square, Istanbul, Turkey",
-    latitude: 41.0082,
-    longitude: 28.9784,
-    basePrice: 32000,
+    city: "Dubai",
+    country: "UAE",
+    address: "321 Desert Road, Dubai, UAE",
+    latitude: 25.2048,
+    longitude: 55.2708,
+    basePrice: 28000,
     currency: "USD",
-    maxGuests: 3,
+    maxGuests: 4,
     bedrooms: 2,
     bathrooms: 2,
-    amenities: ["WiFi", "Historic Tours", "Royal Gardens", "Antique Furnishings", "Concierge", "City Views"],
-    images: ["/hero/hotel.webp"],
+    amenities: ["WiFi", "Pool", "Desert Tours", "Traditional Cuisine", "Spa", "Camel Riding", "Bedouin Experience", "Star Gazing", "Desert Safari"],
+    images: ["/hero/apartment.webp", "/hero/villa.webp", "/hero/resort.webp"],
     isAvailable: true,
     status: "active",
     createdAt: "2024-01-01T00:00:00Z",
     updatedAt: "2024-01-01T00:00:00Z",
     host: {
       id: "host-5",
-      name: "Fatima Yilmaz",
-      email: "fatima@palacehotels.com",
+      name: "Ahmed Al-Saudi",
+      email: "ahmed@desertoasis.com",
       image: null,
     },
     category: {
-      id: "historic",
-      type: "historic",
-      title: "Historic Hotels",
-      subtitle: "Stay in history",
-      image: "/hero/hotel.webp",
-      sectionTitle: "Historic Hotels",
-      message: "Experience historical luxury",
+      id: "resort",
+      type: "resort",
+      title: "Desert Resorts",
+      subtitle: "Experience desert luxury",
+      image: "/hero/resort.webp",
+      sectionTitle: "Desert Resorts",
+      message: "Discover desert paradise",
       createdAt: "2024-01-01T00:00:00Z",
       updatedAt: "2024-01-01T00:00:00Z",
     },
   },
   {
     id: "hotel-6",
-    title: "Tropical Island Bungalow",
-    description: "Private overwater bungalow on crystal-clear turquoise waters. Wake up to the sound of waves and enjoy ultimate privacy with direct ocean access.",
-    categoryId: "bungalow",
+    title: "Lakeview Cabin Resort",
+    description: "Rustic cabin resort overlooking a pristine mountain lake. Enjoy fishing, boating, and stargazing in this peaceful natural setting.",
+    categoryId: "cabin",
     hostId: "host-6",
-    city: "Bora Bora",
-    country: "French Polynesia",
-    address: "Lagoon Road, Bora Bora, French Polynesia",
-    latitude: -16.5004,
-    longitude: -151.7415,
-    basePrice: 55000,
+    city: "Lake Tahoe",
+    country: "USA",
+    address: "654 Lake Road, Lake Tahoe, CA",
+    latitude: 39.0968,
+    longitude: -120.0324,
+    basePrice: 20000,
     currency: "USD",
-    maxGuests: 2,
-    bedrooms: 1,
-    bathrooms: 1,
-    amenities: ["WiFi", "Overwater", "Private Deck", "Ocean Access", "Sunset Views", "Snorkeling"],
-    images: ["/hero/resort.webp"],
+    maxGuests: 8,
+    bedrooms: 4,
+    bathrooms: 3,
+    amenities: ["WiFi", "Lake Access", "Boating", "Fishing", "Fire Pit", "Kitchen", "Game Room", "Kayaks", "Hiking Trails", "BBQ Grill"],
+    images: ["/hero/chalets.webp", "/hero/treehouses.webp", "/hero/apartment.webp"],
     isAvailable: true,
     status: "active",
     createdAt: "2024-01-01T00:00:00Z",
     updatedAt: "2024-01-01T00:00:00Z",
     host: {
       id: "host-6",
-      name: "Pierre Dubois",
-      email: "pierre@tropicalbungalows.com",
+      name: "David Thompson",
+      email: "david@lakeviewcabins.com",
       image: null,
     },
     category: {
-      id: "bungalow",
-      type: "bungalow",
-      title: "Tropical Bungalows",
-      subtitle: "Paradise over water",
-      image: "/hero/resort.webp",
-      sectionTitle: "Tropical Bungalows",
-      message: "Experience island paradise",
+      id: "cabin",
+      type: "cabin",
+      title: "Lake Cabins",
+      subtitle: "Rustic lakeside retreats",
+      image: "/hero/chalets.webp",
+      sectionTitle: "Lake Cabins",
+      message: "Enjoy lakeside living",
       createdAt: "2024-01-01T00:00:00Z",
       updatedAt: "2024-01-01T00:00:00Z",
+    },
+  },
+  // Host dashboard demo accommodations
+  {
+    id: "demo-1",
+    title: "Luxury Downtown Hotel Suite",
+    description: "Experience the pinnacle of luxury in our stunning downtown hotel suite with breathtaking city views.",
+    categoryId: "hotel",
+    hostId: "host-demo-1",
+    city: "New York",
+    country: "USA",
+    address: "Downtown New York, NY, USA",
+    latitude: 40.7128,
+    longitude: -74.0060,
+    basePrice: 12000, // $120 per night
+    currency: "USD",
+    maxGuests: 2,
+    bedrooms: 1,
+    bathrooms: 1,
+    amenities: ["WiFi", "Parking", "TV", "Kitchen", "Air Conditioning", "Room Service"],
+    images: ["/hero/hotel.webp"],
+    isAvailable: true,
+    status: "active",
+    createdAt: "2025-09-18T00:00:00Z",
+    updatedAt: "2025-09-18T00:00:00Z",
+    host: {
+      id: "host-demo-1",
+      name: "Luxury Hotels Inc",
+      email: "info@luxuryhotels.com",
+      image: null,
+    },
+    category: {
+      id: "hotel",
+      type: "hotel",
+      title: "Find Your Perfect Hotel",
+      subtitle: "Luxury and budget hotels worldwide",
+      image: "/hero/hotel.webp",
+      sectionTitle: "Hotels",
+      message: "Showing hotels...",
+      createdAt: "2025-09-18T00:00:00Z",
+      updatedAt: "2025-09-18T00:00:00Z",
+    },
+  },
+  {
+    id: "demo-2",
+    title: "Mountain View Chalet",
+    description: "Rustic mountain chalet with stunning alpine views and modern amenities.",
+    categoryId: "chalets",
+    hostId: "host-demo-2",
+    city: "Zermatt",
+    country: "Switzerland",
+    address: "Alpine Road, Zermatt, Switzerland",
+    latitude: 45.9767,
+    longitude: 7.6586,
+    basePrice: 35000, // $350 per night
+    currency: "USD",
+    maxGuests: 6,
+    bedrooms: 3,
+    bathrooms: 2,
+    amenities: ["WiFi", "Parking", "Fireplace", "Kitchen", "Mountain Views", "Ski Access"],
+    images: ["/hero/chalets.webp"],
+    isAvailable: true,
+    status: "active",
+    createdAt: "2025-09-15T00:00:00Z",
+    updatedAt: "2025-09-15T00:00:00Z",
+    host: {
+      id: "host-demo-2",
+      name: "Alpine Retreats",
+      email: "info@alpineretreats.com",
+      image: null,
+    },
+    category: {
+      id: "chalets",
+      type: "chalets",
+      title: "Cozy Mountain Chalets",
+      subtitle: "Rustic alpine accommodations",
+      image: "/hero/chalets.webp",
+      sectionTitle: "Chalets",
+      message: "Showing chalets...",
+      createdAt: "2025-09-15T00:00:00Z",
+      updatedAt: "2025-09-15T00:00:00Z",
+    },
+  },
+  {
+    id: "demo-3",
+    title: "Beachfront Villa",
+    description: "Luxurious beachfront villa with private pool and ocean views.",
+    categoryId: "villa",
+    hostId: "host-demo-3",
+    city: "Malibu",
+    country: "USA",
+    address: "Pacific Coast Highway, Malibu, CA, USA",
+    latitude: 34.0259,
+    longitude: -118.7798,
+    basePrice: 50000, // $500 per night
+    currency: "USD",
+    maxGuests: 8,
+    bedrooms: 4,
+    bathrooms: 3,
+    amenities: ["WiFi", "Private Pool", "Ocean Views", "Kitchen", "BBQ", "Beach Access"],
+    images: ["/hero/villa.webp"],
+    isAvailable: true,
+    status: "draft",
+    createdAt: "2025-09-20T00:00:00Z",
+    updatedAt: "2025-09-20T00:00:00Z",
+    host: {
+      id: "host-demo-3",
+      name: "Coastal Properties",
+      email: "info@coastalproperties.com",
+      image: null,
+    },
+    category: {
+      id: "villa",
+      type: "villa",
+      title: "Luxury Villas",
+      subtitle: "Private villas worldwide",
+      image: "/hero/villa.webp",
+      sectionTitle: "Villas",
+      message: "Showing villas...",
+      createdAt: "2025-09-20T00:00:00Z",
+      updatedAt: "2025-09-20T00:00:00Z",
     },
   },
 ];
@@ -596,10 +717,12 @@ class AccommodationService {
 
   async getAccommodationById(id: string): Promise<Apartment | null> {
     try {
-      const response = await apiService.get(`/accommodations/${id}`) as Apartment | null;
-      // The API returns the object directly, not wrapped in a data property
-      return response || null;
+      const response = await apiService.get(`/accommodations/${id}`) as Apartment | { data: Apartment } | null;
+      // Handle both direct object response and wrapped response
+      const accommodation = response && typeof response === 'object' && 'data' in response ? response.data : response;
+      return accommodation || null;
     } catch (error) {
+      console.warn(`Failed to fetch accommodation ${id} from API, falling back to demo data:`, error);
       // Fallback to finding in demo data
       const accommodations = this.getDemoApartments();
       return accommodations.find(apt => apt.id === id) || null;
@@ -623,12 +746,44 @@ class AccommodationService {
     amenities: string[];
     images: string[];
     isAvailable: boolean;
+    hostId?: string;
   }) {
     try {
+      console.log('Creating accommodation with data:', accommodationData);
       const response = await apiService.post('/accommodations', accommodationData);
-      return response;
+      console.log('Accommodation created successfully:', response);
+      // Handle both direct object response and wrapped response
+      return response && typeof response === 'object' && 'data' in response ? response.data : response;
     } catch (error) {
       console.error('Failed to create accommodation:', error);
+      throw error;
+    }
+  }
+
+  async updateAccommodation(id: string, accommodationData: {
+    title: string;
+    description: string;
+    categoryId: string;
+    city: string;
+    country: string;
+    address: string;
+    latitude?: number;
+    longitude?: number;
+    basePrice: number;
+    currency: string;
+    maxGuests: number;
+    bedrooms: number;
+    bathrooms: number;
+    amenities: string[];
+    images: string[];
+    isAvailable: boolean;
+    hostId?: string;
+  }) {
+    try {
+      const response = await apiService.put(`/accommodations/${id}`, accommodationData);
+      return response;
+    } catch (error) {
+      console.error('Failed to update accommodation:', error);
       throw error;
     }
   }

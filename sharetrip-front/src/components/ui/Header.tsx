@@ -230,19 +230,85 @@ export default function Header() {
       name: "Petra",
       country: "Jordan",
       tours: "450+ tours",
-      href: "/tours?destination=petra",
+      href: "/countries/jordan",
     },
     {
-      name: "Pyramids of Giza",
+      name: "Dubai",
+      country: "UAE",
+      tours: "800+ tours",
+      href: "/countries/uae",
+    },
+    {
+      name: "Cairo",
       country: "Egypt",
       tours: "600+ tours",
-      href: "/tours?destination=giza",
+      href: "/countries/egypt",
     },
     {
       name: "Beirut",
       country: "Lebanon",
       tours: "350+ tours",
-      href: "/tours?destination=beirut",
+      href: "/countries/lebanon",
+    },
+    {
+      name: "Doha",
+      country: "Qatar",
+      tours: "280+ tours",
+      href: "/countries/qatar",
+    },
+    {
+      name: "Riyadh",
+      country: "Saudi Arabia",
+      tours: "420+ tours",
+      href: "/countries/saudi-arabia",
+    },
+    {
+      name: "Kuwait City",
+      country: "Kuwait",
+      tours: "190+ tours",
+      href: "/countries/kuwait",
+    },
+    {
+      name: "Manama",
+      country: "Bahrain",
+      tours: "150+ tours",
+      href: "/countries/bahrain",
+    },
+    {
+      name: "Muscat",
+      country: "Oman",
+      tours: "220+ tours",
+      href: "/countries/oman",
+    },
+    {
+      name: "Istanbul",
+      country: "Turkey",
+      tours: "950+ tours",
+      href: "/countries/turkey",
+    },
+    {
+      name: "Damascus",
+      country: "Syria",
+      tours: "120+ tours",
+      href: "/countries/syria",
+    },
+    {
+      name: "Baghdad",
+      country: "Iraq",
+      tours: "140+ tours",
+      href: "/countries/iraq",
+    },
+    {
+      name: "Sana'a",
+      country: "Yemen",
+      tours: "80+ tours",
+      href: "/countries/yemen",
+    },
+    {
+      name: "Ramallah",
+      country: "Palestine",
+      tours: "90+ tours",
+      href: "/countries/palestine",
     },
   ];
 
@@ -325,8 +391,8 @@ export default function Header() {
             </button>
 
             {isExperiencesOpen && (
-              <div className="absolute top-full left-0 mt-3 w-[600px] bg-white shadow-2xl shadow-gray-200/50 border border-white/20 rounded-2xl p-8 z-[9999] animate-fade-up">
-                <div className="grid grid-cols-2 gap-8">
+              <div className="absolute top-full left-0 mt-3 w-[550px] bg-white shadow-2xl shadow-gray-200/50 border border-white/20 rounded-2xl p-6 z-[9999] animate-fade-up">
+                <div className="grid grid-cols-2 gap-3">
                   {experienceCategories.map((category, categoryIndex) => (
                     <div key={category.title}>
                       <h3 className="text-sm font-semibold text-gray-900 mb-4 text-gradient">
@@ -338,7 +404,7 @@ export default function Header() {
                             <Link
                               key={item.name}
                               href={item.href}
-                              className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-all duration-200 group hover:shadow-sm hover:shadow-gray-100/50 hover:-translate-y-0.5"
+                              className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 group hover:shadow-sm hover:shadow-gray-100/50 hover:-translate-y-0.5"
                               style={{
                                 animationDelay: `${
                                   (categoryIndex * category.items.length +
@@ -348,12 +414,12 @@ export default function Header() {
                               }}
                               onClick={() => setIsExperiencesOpen(false)}
                             >
-                              <div className="w-3 h-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full mt-2 group-hover:scale-110 transition-all duration-200 shadow-sm"></div>
+                              <div className="w-2 h-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full mt-2 group-hover:scale-110 transition-all duration-200 shadow-sm"></div>
                               <div className="flex-1">
-                                <div className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+                                <div className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200 text-sm">
                                   {item.name}
                                 </div>
-                                <div className="text-sm text-gray-500 mt-1 group-hover:text-gray-600 transition-colors duration-200">
+                                <div className="text-xs text-gray-500 mt-0.5 group-hover:text-gray-600 transition-colors duration-200">
                                   {item.description}
                                 </div>
                               </div>
@@ -364,14 +430,26 @@ export default function Header() {
                     </div>
                   ))}
                 </div>
-                <div className="border-t border-gray-100/80 mt-8 pt-6">
+                <div className="border-t border-gray-100/80 mt-6 pt-4">
                   <Link
                     href="/tours"
-                    className="w-full py-3 px-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-blue-200/50 hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                    className="w-full py-2.5 px-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-blue-200/50 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm"
                     onClick={() => setIsExperiencesOpen(false)}
                   >
-                    <span>View All Experiences</span>
-                    <span className="text-sm">→</span>
+                    <span>Explore All Experiences</span>
+                    <svg
+                      className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
                   </Link>
                 </div>
               </div>
@@ -400,39 +478,51 @@ export default function Header() {
             </button>
 
             {isAccommodationsOpen && (
-              <div className="absolute top-full left-0 mt-3 w-[700px] bg-white shadow-2xl shadow-gray-200/50 border border-white/20 rounded-2xl p-8 z-[9999] animate-fade-up">
-                <h3 className="text-sm font-semibold text-gray-900 mb-6 text-gradient">
+              <div className="absolute top-full left-0 mt-3 w-[550px] bg-white shadow-2xl shadow-gray-200/50 border border-white/20 rounded-2xl p-6 z-[9999] animate-fade-up">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4 text-gradient">
                   Accommodation Types
                 </h3>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   {accommodationTypes.map((accommodation, index) => (
                     <Link
                       key={accommodation.id}
                       href={`/accommodations?type=${accommodation.type}`}
-                      className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-all duration-200 group hover:shadow-sm hover:shadow-gray-100/50 hover:-translate-y-0.5"
+                      className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 group hover:shadow-sm hover:shadow-gray-100/50 hover:-translate-y-0.5"
                       style={{ animationDelay: `${index * 0.05}s` }}
                       onClick={() => setIsAccommodationsOpen(false)}
                     >
-                      <div className="w-3 h-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full mt-2 group-hover:scale-110 transition-all duration-200 shadow-sm"></div>
+                      <div className="w-2 h-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full mt-2 group-hover:scale-110 transition-all duration-200 shadow-sm"></div>
                       <div className="flex-1">
-                        <div className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+                        <div className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200 text-sm">
                           {accommodation.sectionTitle}
                         </div>
-                        <div className="text-sm text-gray-500 mt-1 group-hover:text-gray-600 transition-colors duration-200">
+                        <div className="text-xs text-gray-500 mt-0.5 group-hover:text-gray-600 transition-colors duration-200">
                           {accommodation.subtitle}
                         </div>
                       </div>
                     </Link>
                   ))}
                 </div>
-                <div className="border-t border-gray-100/80 mt-8 pt-6">
+                <div className="border-t border-gray-100/80 mt-6 pt-4">
                   <Link
                     href="/accommodations"
-                    className="w-full py-3 px-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-blue-200/50 hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                    className="w-full py-2.5 px-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-blue-200/50 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm"
                     onClick={() => setIsAccommodationsOpen(false)}
                   >
                     <span>Browse All Accommodations</span>
-                    <span className="text-sm">→</span>
+                    <svg
+                      className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
                   </Link>
                 </div>
               </div>
@@ -445,6 +535,7 @@ export default function Header() {
               onClick={() => {
                 setIsDestinationsOpen(!isDestinationsOpen);
                 setIsExperiencesOpen(false);
+                setIsAccommodationsOpen(false);
                 setIsDropdownOpen(false);
               }}
               className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-all duration-200 hover:bg-gray-50 rounded-xl hover:shadow-sm hover:shadow-gray-200/50 backdrop-blur-sm"
@@ -460,38 +551,38 @@ export default function Header() {
             </button>
 
             {isDestinationsOpen && (
-              <div className="absolute top-full left-0 mt-3 w-[500px] bg-white shadow-2xl shadow-gray-200/50 border border-white/20 rounded-2xl p-8 z-[9999] animate-fade-up">
-                <h3 className="text-sm font-semibold text-gray-900 mb-6 text-gradient">
+              <div className="absolute top-full left-0 mt-3 w-[550px] bg-white shadow-2xl shadow-gray-200/50 border border-white/20 rounded-2xl p-6 z-[9999] animate-fade-up">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4 text-gradient">
                   Popular Destinations
                 </h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   {popularDestinations.map((destination, index) => (
                     <Link
                       key={destination.name}
                       href={destination.href}
-                      className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-all duration-200 group hover:shadow-sm hover:shadow-gray-100/50 hover:-translate-y-0.5"
+                      className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 group hover:shadow-sm hover:shadow-gray-100/50 hover:-translate-y-0.5"
                       style={{ animationDelay: `${index * 0.05}s` }}
                       onClick={() => setIsDestinationsOpen(false)}
                     >
-                      <div className="w-3 h-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full mt-2 group-hover:scale-110 transition-all duration-200 shadow-sm"></div>
+                      <div className="w-2 h-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full mt-2 group-hover:scale-110 transition-all duration-200 shadow-sm"></div>
                       <div className="flex-1">
-                        <div className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+                        <div className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200 text-sm">
                           {destination.name}
                         </div>
-                        <div className="text-sm text-gray-500 group-hover:text-gray-600 transition-colors duration-200">
+                        <div className="text-xs text-gray-500 mt-0.5 group-hover:text-gray-600 transition-colors duration-200">
                           {destination.country} • {destination.tours}
                         </div>
                       </div>
                     </Link>
                   ))}
                 </div>
-                <div className="border-t border-gray-100/50 mt-6 pt-4">
+                <div className="border-t border-gray-100/80 mt-6 pt-4">
                   <Link
                     href="/destinations"
-                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-blue-200/50 hover:-translate-y-0.5 flex items-center justify-center gap-2 group"
+                    className="w-full py-2.5 px-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-blue-200/50 hover:-translate-y-0.5 flex items-center justify-center gap-2 group text-sm"
                     onClick={() => setIsDestinationsOpen(false)}
                   >
-                    <GlobeAltIcon className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" />
+                    <GlobeAltIcon className="w-4 h-4 group-hover:rotate-12 transition-transform duration-200" />
                     Explore All Destinations
                   </Link>
                 </div>
@@ -500,7 +591,7 @@ export default function Header() {
           </div>
         </nav>
 
-        {/* Right side actions */}
+        {/* Right Side Actions */}
         <div className="flex items-center gap-4">
           {/* Become a Host */}
           <Link
@@ -608,94 +699,30 @@ export default function Header() {
                       logout();
                       setIsDropdownOpen(false);
                     }}
-                    className="block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200 hover:shadow-sm hover:shadow-red-100/50 hover:-translate-y-0.5"
+                    className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 hover:shadow-sm hover:shadow-red-100/50 hover:-translate-y-0.5"
                   >
-                    Logout
+                    Sign Out
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                className="text-gray-700 hover:text-blue-600 font-medium"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
               >
-                Log In
+                Sign In
               </Link>
               <Link
                 href="/signup"
-                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-blue-200/50 hover:-translate-y-0.5"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
                 Sign Up
               </Link>
             </div>
           )}
         </div>
-
-        {/* Mobile menu button */}
-        <button className="md:hidden p-2 hover:bg-gray-100 rounded-lg">
-          <div className="w-6 h-6 flex flex-col justify-center items-center">
-            <span className="w-4 h-0.5 bg-gray-600 mb-1"></span>
-            <span className="w-4 h-0.5 bg-gray-600 mb-1"></span>
-            <span className="w-4 h-0.5 bg-gray-600"></span>
-          </div>
-        </button>
-
-        {/* Mobile Navigation Menu */}
-        {false && user && !loading && (
-          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 safe-area-inset-bottom">
-            <div className="flex justify-around items-center max-w-md mx-auto">
-              <Link
-                href="/tours"
-                className="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-gray-50"
-              >
-                <span className="text-lg">🗺️</span>
-                <span className="text-xs mt-1">Explore</span>
-              </Link>
-              <Link
-                href="/bookings"
-                className="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-gray-50"
-              >
-                <span className="text-lg">🎫</span>
-                <span className="text-xs mt-1">Bookings</span>
-              </Link>
-              <Link
-                href="/wishlist"
-                className="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-gray-50 relative"
-              >
-                <HeartIcon className="h-6 w-6" />
-                <span className="text-xs mt-1">Wishlist</span>
-                {wishlistItemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
-                    {wishlistItemCount}
-                  </span>
-                )}
-              </Link>
-              <Link
-                href="/cart"
-                className="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-gray-50 relative"
-              >
-                <ShoppingBagIcon className="h-6 w-6" />
-                <span className="text-xs mt-1">Cart</span>
-                {cartItemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
-                    {cartItemCount}
-                  </span>
-                )}
-              </Link>
-              <Link
-                href={"/dashboard"}
-                className="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-gray-50"
-              >
-                <div className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                  {user?.name?.charAt(0).toUpperCase() || "U"}
-                </div>
-                <span className="text-xs mt-1">Profile</span>
-              </Link>
-            </div>
-          </div>
-        )}
       </div>
     </header>
   );

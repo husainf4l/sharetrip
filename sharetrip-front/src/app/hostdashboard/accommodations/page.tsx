@@ -2,30 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
-interface Accommodation {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  location: string;
-  price: number;
-  currency: string;
-  bedrooms: number;
-  bathrooms: number;
-  maxGuests: number;
-  images: string[];
-  status: "active" | "draft" | "paused";
-  createdAt: string;
-  bookings: number;
-}
+import { useAuth } from "@/providers/AuthContext";
+import { Accommodation } from "@/types/accommodation";
 
 // Demo data for development when backend is not available
 const demoHostAccommodations: Accommodation[] = [
   {
     id: "demo-1",
     title: "Luxury Downtown Hotel Suite",
-    description: "Experience the pinnacle of luxury in our stunning downtown hotel suite with breathtaking city views.",
+    description:
+      "Experience the pinnacle of luxury in our stunning downtown hotel suite with breathtaking city views.",
     category: "HOTEL",
     location: "New York, NY, USA",
     price: 120,
@@ -41,7 +27,8 @@ const demoHostAccommodations: Accommodation[] = [
   {
     id: "demo-2",
     title: "Mountain View Chalet",
-    description: "Rustic mountain chalet with stunning alpine views and modern amenities.",
+    description:
+      "Rustic mountain chalet with stunning alpine views and modern amenities.",
     category: "CHALET",
     location: "Zermatt, Switzerland",
     price: 350,
@@ -57,7 +44,8 @@ const demoHostAccommodations: Accommodation[] = [
   {
     id: "demo-3",
     title: "Beachfront Villa",
-    description: "Luxurious beachfront villa with private pool and ocean views.",
+    description:
+      "Luxurious beachfront villa with private pool and ocean views.",
     category: "VILLA",
     location: "Malibu, CA, USA",
     price: 500,
@@ -74,6 +62,7 @@ const demoHostAccommodations: Accommodation[] = [
 
 export default function AccommodationsPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
@@ -104,24 +93,26 @@ export default function AccommodationsPage() {
     const fetchAccommodations = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem("accessToken");
 
         if (!token) {
-          console.error('No auth token found');
+          console.error("No auth token found");
           setLoading(false);
           return;
         }
 
         let response;
         try {
-          response = await fetch('http://localhost:4009/accommodations/my-accommodations', {
+          response = await fetch("/api/accommodations", {
+            method: "GET",
             headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
           });
         } catch (fetchError) {
-          console.log('Backend unavailable, falling back to demo host accommodations data');
+          console.log(
+            "API unavailable, falling back to demo host accommodations data"
+          );
           setAccommodations(demoHostAccommodations);
           setLoading(false);
           return;
@@ -129,37 +120,51 @@ export default function AccommodationsPage() {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Fetched accommodations:', data);
+          console.log("Fetched accommodations:", data);
 
           // Transform backend data to match frontend interface
-          const transformedData: Accommodation[] = data.map((acc: any) => ({
+          let transformedData: Accommodation[] = data.data.map((acc: any) => ({
             id: acc.id,
             title: acc.title,
-            description: acc.description || '',
-            category: acc.category?.type || acc.category || 'unknown',
+            description: acc.description || "",
+            category: acc.category?.type || acc.category || "unknown",
             location: `${acc.city}, ${acc.country}`,
-            price: Math.round(acc.basePrice / 100), // Convert from cents
+            price: acc.basePrice,
             currency: acc.currency,
             bedrooms: acc.bedrooms || 0,
             bathrooms: acc.bathrooms || 0,
             maxGuests: acc.maxGuests,
             images: acc.images || [],
             status: acc.status as "active" | "draft" | "paused",
-            createdAt: new Date(acc.createdAt).toISOString().split('T')[0],
-            bookings: acc.bookings?.length || 0,
+            createdAt: new Date(acc.createdAt).toISOString().split("T")[0],
+            bookings: 0, // We'll add booking count later
           }));
+
+          // Filter accommodations by current user's hostId if user is logged in
+          if (user && user.id) {
+            transformedData = transformedData.filter((acc) => {
+              // For demo purposes, we'll check if the accommodation's hostId matches the user ID
+              // In a real app, this filtering should happen on the backend
+              const accommodationData = data.data.find(
+                (apiAcc: any) => apiAcc.id === acc.id
+              );
+              return accommodationData && accommodationData.hostId === user.id;
+            });
+          }
 
           setAccommodations(transformedData);
         } else {
-          console.error('Failed to fetch accommodations:', response.statusText);
+          console.error("Failed to fetch accommodations:", response.statusText);
           // Fallback to demo data for development
-          console.log('Falling back to demo host accommodations data');
+          console.log("Falling back to demo host accommodations data");
           setAccommodations(demoHostAccommodations);
         }
       } catch (error) {
-        console.error('Error fetching accommodations:', error);
+        console.error("Error fetching accommodations:", error);
         // Fallback to demo data for development when backend is unavailable
-        console.log('Backend unavailable, falling back to demo host accommodations data');
+        console.log(
+          "Backend unavailable, falling back to demo host accommodations data"
+        );
         setAccommodations(demoHostAccommodations);
       } finally {
         setLoading(false);
@@ -696,10 +701,20 @@ export default function AccommodationsPage() {
                   </div>
 
                   <div className="flex gap-2 mt-4">
-                    <button className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+                    <button
+                      onClick={() =>
+                        router.push(`/accommodations/${accommodation.id}/edit`)
+                      }
+                      className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                    >
                       Edit
                     </button>
-                    <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                    <button
+                      onClick={() =>
+                        router.push(`/accommodations/${accommodation.id}`)
+                      }
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                    >
                       View
                     </button>
                   </div>

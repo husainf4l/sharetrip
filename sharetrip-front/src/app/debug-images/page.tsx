@@ -54,7 +54,9 @@ export default function DebugImages() {
               src="/hero/apartment.webp"
               alt="Apartment"
               className="w-full h-32 object-cover rounded border-2 border-blue-500"
-              onLoad={() => console.log("✅ apartment.webp loaded successfully!")}
+              onLoad={() =>
+                console.log("✅ apartment.webp loaded successfully!")
+              }
               onError={() => console.error("❌ apartment.webp failed to load")}
             />
           </div>
@@ -110,8 +112,8 @@ export default function DebugImages() {
             <strong>3.</strong> Reload this page
           </p>
           <p>
-            <strong>4.</strong> Filter by "Images" to see if hero/*.webp files
-            are loading
+            <strong>4.</strong> Filter by &quot;Images&quot; to see if
+            hero/*.webp files are loading
           </p>
           <p>
             <strong>5.</strong> Check Console tab for any error messages

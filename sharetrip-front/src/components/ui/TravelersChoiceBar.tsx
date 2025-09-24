@@ -229,7 +229,7 @@ export default function TravelersChoiceBar() {
 
                 {/* Comment */}
                 <p className="text-gray-700 mb-4 italic leading-relaxed">
-                  "{review.comment}"
+                  &ldquo;{review.comment}&rdquo;
                 </p>
 
                 {/* Reviewer */}

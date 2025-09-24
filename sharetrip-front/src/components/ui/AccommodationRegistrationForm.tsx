@@ -3,177 +3,117 @@
 import { useState, useEffect } from "react";
 import { accommodationService } from "@/services/accommodation.service";
 import PhotoUpload from "@/components/ui/PhotoUpload";
-
-interface RoomType {
-  id: string;
-  name: string;
-  description: string;
-  maxGuests: number;
-  basePrice: number;
-  bedSetup?: string;
-  view?: string;
-  boardType?: string;
-  ratePlans: RatePlan[];
-  availability: AvailabilitySlot[];
-  monthlyAvailability?: Record<string, MonthlyAvailability>;
-  dailyAvailability?: Record<string, DailyAvailability>;
-}
-
-interface RatePlan {
-  id: string;
-  name: string;
-  description: string;
-  priceAdjustment: number; // Percentage or fixed amount
-  adjustmentType: "percentage" | "fixed";
-  conditions: string[];
-  minStay?: number;
-  maxStay?: number;
-  advanceBooking?: number;
-  cancellationPolicy?: string;
-}
-
-interface AvailabilitySlot {
-  id: string;
-  dateFrom: string;
-  dateTo: string;
-  isAvailable: boolean;
-  price?: number;
-  minStay?: number;
-  maxStay?: number;
-}
-
-interface MonthlyAvailability {
-  month: number;
-  year: number;
-  isAvailable: boolean;
-  price?: number;
-  minStay?: number;
-  maxStay?: number;
-}
-
-interface DailyAvailability {
-  date: string;
-  isAvailable: boolean;
-  price?: number;
-  minStay?: number;
-  maxStay?: number;
-}
-
-interface AccommodationFormData {
-  title: string;
-  description: string;
-  categoryId: string;
-  city: string;
-  country: string;
-  address: string;
-  latitude?: number;
-  longitude?: number;
-  basePrice: number;
-  currency: string;
-  maxGuests: number;
-  bedrooms: number;
-  bathrooms: number;
-  amenities: string[];
-  images: string[];
-  isAvailable: boolean;
-  roomTypes: RoomType[];
-  // New fields
-  starRating?: number;
-  languagesSpoken?: string[];
-  neighborhoodHighlights?: string[];
-  roomSize?: number; // in m²
-  checkInOutTimes?: {
-    checkInTime?: string;
-    checkOutTime?: string;
-    earlyCheckIn?: boolean;
-    lateCheckOut?: boolean;
-    earlyCheckInFee?: number;
-    lateCheckOutFee?: number;
-  };
-  cancellationPolicy?: string;
-  safetyCompliance?: {
-    smokeDetectors?: boolean;
-    carbonMonoxideDetectors?: boolean;
-    firstAidKit?: boolean;
-    fireExtinguishers?: boolean;
-    securityCameras?: boolean;
-    emergencyContact?: string;
-  };
-}
-
-interface AccommodationCategory {
-  id: string;
-  name: string;
-  type: string;
-  title: string;
-  subtitle: string;
-  sectionTitle: string;
-}
-
-interface AccommodationRegistrationFormProps {
-  selectedCategory?: string;
-  onSubmit?: (data: AccommodationFormData) => void;
-  onCancel?: () => void;
-}
+import {
+  RoomType,
+  RatePlan,
+  AvailabilitySlot,
+  MonthlyAvailability,
+  DailyAvailability,
+  AccommodationFormData,
+  AccommodationCategory,
+  AccommodationRegistrationFormProps,
+} from "@/types/accommodation";
 
 export default function AccommodationRegistrationForm({
   selectedCategory,
   onSubmit,
   onCancel,
+  initialData,
+  isEditMode = false,
+  currentUser,
 }: AccommodationRegistrationFormProps) {
-  const [formData, setFormData] = useState<AccommodationFormData>({
-    title: "",
-    description: "",
-    categoryId: "",
-    city: "",
-    country: "",
-    address: "",
-    basePrice: 0,
-    currency: "USD",
-    maxGuests: 1,
-    bedrooms: 1,
-    bathrooms: 1,
-    amenities: [],
-    images: [],
-    isAvailable: true,
-    roomTypes: [
-      {
-        id: "1",
-        name: "Standard Room",
-        description: "",
-        maxGuests: 1,
-        basePrice: 0,
-        ratePlans: [],
-        availability: [],
+  const [formData, setFormData] = useState<AccommodationFormData>(() => {
+    if (initialData && isEditMode) {
+      return {
+        title: initialData.title || "",
+        description: initialData.description || "",
+        categoryId: initialData.categoryId || "default",
+        city: initialData.city || "",
+        country: initialData.country || "",
+        address: initialData.address || "",
+        latitude: initialData.latitude,
+        longitude: initialData.longitude,
+        basePrice: initialData.basePrice || 100,
+        currency: initialData.currency || "USD",
+        maxGuests: initialData.maxGuests || 2,
+        bedrooms: initialData.bedrooms || 1,
+        bathrooms: initialData.bathrooms || 1,
+        amenities: initialData.amenities || [],
+        images: initialData.images || [],
+        isAvailable: initialData.isAvailable !== false,
+        roomTypes: initialData.roomTypes || [],
+        starRating: initialData.starRating,
+        languagesSpoken: initialData.languagesSpoken || [],
+        neighborhoodHighlights: initialData.neighborhoodHighlights || [],
+        roomSize: initialData.roomSize,
+        checkInOutTimes: initialData.checkInOutTimes || {
+          checkInTime: "15:00",
+          checkOutTime: "11:00",
+          earlyCheckIn: false,
+          lateCheckOut: false,
+          earlyCheckInFee: 0,
+          lateCheckOutFee: 0,
+        },
+        cancellationPolicy: initialData.cancellationPolicy,
+        safetyCompliance: initialData.safetyCompliance || {},
+      };
+    }
+
+    return {
+      title: "",
+      description: "",
+      categoryId: selectedCategory || "default",
+      city: "",
+      country: "",
+      address: "",
+      basePrice: 100,
+      currency: "USD",
+      maxGuests: 2,
+      bedrooms: 1,
+      bathrooms: 1,
+      amenities: [],
+      images: [],
+      isAvailable: true,
+      roomTypes: [
+        {
+          id: "1",
+          name: "Standard Room",
+          description: "",
+          maxGuests: 1,
+          basePrice: 0,
+          ratePlans: [],
+          availability: [],
+        },
+      ],
+      // Initialize new fields
+      starRating: undefined,
+      languagesSpoken: [],
+      neighborhoodHighlights: [],
+      roomSize: undefined,
+      checkInOutTimes: {
+        checkInTime: "15:00",
+        checkOutTime: "11:00",
+        earlyCheckIn: false,
+        lateCheckOut: false,
+        earlyCheckInFee: 0,
+        lateCheckOutFee: 0,
       },
-    ],
-    // Initialize new fields
-    starRating: undefined,
-    languagesSpoken: [],
-    neighborhoodHighlights: [],
-    roomSize: undefined,
-    checkInOutTimes: {
-      checkInTime: "15:00",
-      checkOutTime: "11:00",
-      earlyCheckIn: false,
-      lateCheckOut: false,
-      earlyCheckInFee: 0,
-      lateCheckOutFee: 0,
-    },
-    cancellationPolicy: "Standard",
-    safetyCompliance: {
-      smokeDetectors: false,
-      carbonMonoxideDetectors: false,
-      firstAidKit: false,
-      fireExtinguishers: false,
-      securityCameras: false,
-      emergencyContact: "",
-    },
+      cancellationPolicy: "Standard",
+      safetyCompliance: {
+        smokeDetectors: false,
+        carbonMonoxideDetectors: false,
+        firstAidKit: false,
+        fireExtinguishers: false,
+        securityCameras: false,
+        emergencyContact: "",
+      },
+    };
   });
 
   const [categories, setCategories] = useState<AccommodationCategory[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [step, setStep] = useState(1);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -550,14 +490,12 @@ export default function AccommodationRegistrationForm({
     fetchCategories();
   }, []);
 
+  // Set default categoryId if not set
   useEffect(() => {
-    if (selectedCategory && categories.length > 0) {
-      const category = categories.find((cat) => cat.type === selectedCategory);
-      if (category) {
-        setFormData((prev) => ({ ...prev, categoryId: category.id }));
-      }
+    if (!formData.categoryId) {
+      setFormData((prev) => ({ ...prev, categoryId: "default" }));
     }
-  }, [selectedCategory, categories]);
+  }, []);
 
   const fetchCategories = async () => {
     try {
@@ -751,13 +689,33 @@ export default function AccommodationRegistrationForm({
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    console.log("Form submit triggered", {
+      step,
+      formData,
+      eventType: e.type,
+      target: e.target,
+    });
+
+    // Only allow submission on the final step
+    if (step !== 6) {
+      console.log("Form submission blocked - not on final step");
+      return;
+    }
+
+    // Prevent double submission
+    if (loading) {
+      console.log("Form submission blocked - already loading");
+      return;
+    }
+
+    console.log("Form submission allowed - proceeding with submission");
     setLoading(true);
     setError("");
+    setSuccess("");
 
     try {
       // Validate required fields
-      if (!formData.title || !formData.description || !formData.categoryId) {
+      if (!formData.title || !formData.description) {
         throw new Error("Please fill in all required fields");
       }
 
@@ -765,11 +723,28 @@ export default function AccommodationRegistrationForm({
         throw new Error("Base price must be greater than 0");
       }
 
+      // Ensure categoryId has a default value and include hostId
+      const submissionData = {
+        ...formData,
+        categoryId: formData.categoryId || "default",
+        hostId: currentUser?.id || "default-host", // Include current user's ID as hostId
+      };
+
       // Submit to API
-      const response = await accommodationService.createAccommodation(formData);
+      const response = await accommodationService.createAccommodation(
+        submissionData
+      );
 
       console.log("Accommodation created successfully:", response);
-      onSubmit?.(formData);
+
+      // Show success message
+      setSuccess("Accommodation created successfully! Redirecting...");
+
+      // Clear success message after 2 seconds and call onSubmit with response (includes ID)
+      setTimeout(() => {
+        setSuccess("");
+        onSubmit?.(response); // Pass the response which includes the ID
+      }, 2000);
     } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : "Failed to create accommodation"
@@ -779,8 +754,14 @@ export default function AccommodationRegistrationForm({
     }
   };
 
-  const nextStep = () => setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
+  const nextStep = () => {
+    console.log("nextStep called, current step:", step);
+    setStep(step + 1);
+  };
+  const prevStep = () => {
+    console.log("prevStep called, current step:", step);
+    setStep(step - 1);
+  };
 
   // Step 1: Basic Information
   const renderBasicInfo = () => (
@@ -1051,6 +1032,51 @@ export default function AccommodationRegistrationForm({
             "Arabic",
             "Russian",
             "Hindi",
+            "Dutch",
+            "Swedish",
+            "Turkish",
+            "Greek",
+            "Hebrew",
+            "Thai",
+            "Vietnamese",
+            "Indonesian",
+            "Malay",
+            "Swahili",
+            "Afrikaans",
+            "Danish",
+            "Norwegian",
+            "Finnish",
+            "Polish",
+            "Czech",
+            "Hungarian",
+            "Romanian",
+            "Bulgarian",
+            "Croatian",
+            "Serbian",
+            "Slovenian",
+            "Slovak",
+            "Ukrainian",
+            "Persian",
+            "Urdu",
+            "Bengali",
+            "Tamil",
+            "Telugu",
+            "Marathi",
+            "Gujarati",
+            "Punjabi",
+            "Filipino",
+            "Burmese",
+            "Khmer",
+            "Lao",
+            "Mongolian",
+            "Nepali",
+            "Sinhala",
+            "Amharic",
+            "Zulu",
+            "Xhosa",
+            "Hausa",
+            "Yoruba",
+            "Igbo",
           ].map((language) => (
             <label
               key={language}
@@ -1210,12 +1236,12 @@ export default function AccommodationRegistrationForm({
                 </label>
                 <input
                   type="number"
-                  value={roomType.maxGuests}
+                  value={roomType.maxGuests || 1}
                   onChange={(e) =>
                     updateRoomType(
                       roomType.id,
                       "maxGuests",
-                      parseInt(e.target.value)
+                      parseInt(e.target.value) || 1
                     )
                   }
                   min="1"
@@ -1267,7 +1293,7 @@ export default function AccommodationRegistrationForm({
                 <div className="relative">
                   <input
                     type="number"
-                    value={roomType.basePrice / 100}
+                    value={(roomType.basePrice || 0) / 100}
                     onChange={(e) =>
                       updateRoomType(
                         roomType.id,
@@ -1473,7 +1499,7 @@ export default function AccommodationRegistrationForm({
                             roomType.id,
                             ratePlan.id,
                             "minStay",
-                            parseInt(e.target.value)
+                            parseInt(e.target.value) || 1
                           )
                         }
                         min="1"
@@ -2132,7 +2158,7 @@ export default function AccommodationRegistrationForm({
                       </label>
                       <input
                         type="number"
-                        value={roomType.maxGuests}
+                        value={roomType.maxGuests || 1}
                         onChange={(e) =>
                           updateRoomType(
                             roomType.id,
@@ -2501,15 +2527,26 @@ export default function AccommodationRegistrationForm({
 
   // Step 6: Images
   const renderImages = () => (
-    <PhotoUpload
-      images={formData.images}
-      onImagesChange={handleImagesChange}
-      maxImages={15}
-      maxSizeInMB={5}
-      title="Upload Property Photos"
-      subtitle="Add high-quality photos of your property. The first photo will be used as the cover image."
-      acceptedFormats={[".jpg", ".jpeg", ".png", ".webp"]}
-    />
+    <div>
+      {/* Temporarily disabled PhotoUpload to test */}
+      {/* <PhotoUpload
+        images={formData.images}
+        onImagesChange={handleImagesChange}
+        maxImages={15}
+        maxSizeInMB={5}
+        title="Upload Property Photos"
+        subtitle="Add high-quality photos of your property. The first photo will be used as the cover image."
+        acceptedFormats={[".jpg", ".jpeg", ".png", ".webp"]}
+      /> */}
+      <div className="text-center p-8 border-2 border-dashed border-gray-300 rounded-lg">
+        <p className="text-gray-500">
+          Photo upload temporarily disabled for testing
+        </p>
+        <p className="text-sm text-gray-400 mt-2">
+          If form stops submitting, the issue is in PhotoUpload component
+        </p>
+      </div>
+    </div>
   );
 
   return (
@@ -2553,13 +2590,45 @@ export default function AccommodationRegistrationForm({
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
+      {success && (
+        <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+          {success}
+        </div>
+      )}
+
+      <form
+        method="post"
+        action="javascript:void(0)"
+        onSubmit={(e) => {
+          e.preventDefault();
+          console.log("Form onSubmit called", {
+            step,
+            loading,
+            event: e,
+            eventType: e.type,
+            target: e.target,
+            currentTarget: e.currentTarget,
+            isTrusted: e.isTrusted,
+            timeStamp: e.timeStamp,
+          });
+          handleSubmit(e);
+        }}
+        onKeyDown={(e) => {
+          // Prevent form submission on Enter key
+          if (e.key === "Enter" && step !== 6) {
+            e.preventDefault();
+            console.log("Enter key prevented on step", step);
+          }
+        }}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => e.preventDefault()}
+      >
         {step === 1 && renderBasicInfo()}
         {step === 2 && renderLocation()}
         {step === 3 && renderPropertyDetails()}
         {step === 4 && renderRoomTypes()}
         {step === 5 && renderRatesAvailability()}
-        {step === 6 && renderImages()}
+        {/* Step 6 PhotoUpload moved outside form */}
 
         {/* Navigation buttons */}
         <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
@@ -2572,25 +2641,46 @@ export default function AccommodationRegistrationForm({
             Previous
           </button>
 
-          {step < 6 ? (
-            <button
-              type="button"
-              onClick={nextStep}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-            >
-              Next
-            </button>
-          ) : (
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Creating..." : "Create Accommodation"}
-            </button>
-          )}
+          <div className="flex gap-4">
+            {step < 6 ? (
+              <button
+                type="button"
+                onClick={nextStep}
+                className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                type="button" // Changed to button to prevent form submission
+                disabled={false} // Enabled for production
+                className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => {
+                  console.log("Create button clicked");
+                  handleSubmit({ preventDefault: () => {} } as any);
+                }}
+              >
+                Create Accommodation (Test)
+              </button>
+            )}
+          </div>
         </div>
       </form>
+
+      {/* PhotoUpload outside the form to prevent any interference */}
+      {step === 6 && (
+        <div className="mt-8">
+          <PhotoUpload
+            images={formData.images}
+            onImagesChange={handleImagesChange}
+            maxImages={15}
+            maxSizeInMB={5}
+            title="Upload Property Photos"
+            subtitle="Add high-quality photos of your property. The first photo will be used as the cover image."
+            acceptedFormats={[".jpg", ".jpeg", ".png", ".webp"]}
+          />
+        </div>
+      )}
     </div>
   );
 }

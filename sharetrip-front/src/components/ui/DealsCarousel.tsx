@@ -197,8 +197,8 @@ export default function DealsCarousel() {
             </h2>
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Don't miss out on these incredible savings! Book now and save up to
-            40% on popular experiences.
+            Don&apos;t miss out on these incredible savings! Book now and save
+            up to 40% on popular experiences.
           </p>
         </div>
 

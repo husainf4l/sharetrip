@@ -6,6 +6,7 @@ import {
   TourCategory as TourCategoryEnum,
   CancellationPolicy,
 } from "@/types/tour";
+import { tourService } from "@/services/tour.service";
 import PhotoUpload from "@/components/ui/PhotoUpload";
 
 interface TourSchedule {
@@ -109,14 +110,16 @@ interface TourFormData extends CreateTourDto {
 
 interface TourRegistrationFormProps {
   selectedCategory?: string;
-  onSubmit?: (data: TourFormData) => void;
+  onSubmit?: (data: TourFormData | any) => void;
   onCancel?: () => void;
+  currentUser?: any;
 }
 
 export default function TourRegistrationForm({
   selectedCategory,
   onSubmit,
   onCancel,
+  currentUser,
 }: TourRegistrationFormProps) {
   const [formData, setFormData] = useState<TourFormData>({
     title: "",
@@ -243,6 +246,7 @@ export default function TourRegistrationForm({
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [step, setStep] = useState(1);
 
   // Tour categories
@@ -586,6 +590,7 @@ export default function TourRegistrationForm({
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
     try {
       // Validate required fields
@@ -615,8 +620,41 @@ export default function TourRegistrationForm({
         searchKeywords: (formData.searchKeywords || []).filter((k) => k.trim()),
       };
 
-      console.log("Tour created successfully:", submitData);
-      onSubmit?.(submitData);
+      // Submit to API
+      const tourData = {
+        title: submitData.title,
+        description: submitData.description,
+        city: submitData.city,
+        country: submitData.country,
+        category: submitData.category || "general",
+        basePrice: submitData.basePrice,
+        currency: submitData.currency,
+        maxParticipants: submitData.maxGroup || 10,
+        duration: submitData.durationMins || 60,
+        difficulty: submitData.difficulty,
+        highlights: submitData.highlights,
+        whatsIncluded: submitData.whatsIncluded,
+        whatsExcluded: submitData.whatsExcluded,
+        requirements: submitData.requirements,
+        itinerary: submitData.itinerary,
+        images: submitData.images,
+        latitude: submitData.latitude,
+        longitude: submitData.longitude,
+        guideId: currentUser?.id || "default-guide", // Include current user's ID as guideId
+      };
+
+      const response = await tourService.createTour(tourData);
+
+      console.log("Tour created successfully:", response);
+
+      // Show success message
+      setSuccess("Tour created successfully! Redirecting...");
+
+      // Clear success message after 2 seconds and call onSubmit
+      setTimeout(() => {
+        setSuccess("");
+        onSubmit?.(submitData);
+      }, 2000);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to create tour");
     } finally {
@@ -2792,6 +2830,12 @@ export default function TourRegistrationForm({
       {error && (
         <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
           {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+          {success}
         </div>
       )}
 

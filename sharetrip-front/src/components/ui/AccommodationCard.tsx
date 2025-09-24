@@ -103,7 +103,11 @@ export default function AccommodationCard({
           {/* Apartment Image */}
           <div className="relative h-48">
             <Image
-              src={apartment.images[0]}
+              src={
+                apartment.images && apartment.images.length > 0
+                  ? apartment.images[0]
+                  : "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjRjNGNEY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OTk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlIEF2YWlsYWJsZTwvdGV4dD48L3N2Zz4="
+              }
               alt={apartment.title}
               fill
               className="object-cover"
@@ -124,7 +128,7 @@ export default function AccommodationCard({
             </button>
 
             {/* Image Gallery Indicator */}
-            {apartment.images.length > 1 && (
+            {apartment.images && apartment.images.length > 1 && (
               <button
                 onClick={(e) => {
                   e.preventDefault();

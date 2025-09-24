@@ -29,7 +29,7 @@ export interface HeroMenuProps {
 // Hook for managing hover intent with delay
 function useHoverIntent(delay = 150) {
   const [isHovered, setIsHovered] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const onMouseEnter = () => {
     if (timeoutRef.current) {
@@ -69,7 +69,15 @@ const CategoryPill: React.FC<{
   onKeyDown: (e: React.KeyboardEvent) => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
-}> = ({ category, isActive, isOpen, onClick, onKeyDown, onMouseEnter, onMouseLeave }) => {
+}> = ({
+  category,
+  isActive,
+  isOpen,
+  onClick,
+  onKeyDown,
+  onMouseEnter,
+  onMouseLeave,
+}) => {
   return (
     <button
       role="menuitem"
@@ -125,7 +133,9 @@ const MegaMenuPanel: React.FC<{
   // Focus management
   useEffect(() => {
     if (isOpen && panelRef.current) {
-      const firstItem = panelRef.current.querySelector('[role="menuitem"]') as HTMLElement;
+      const firstItem = panelRef.current.querySelector(
+        '[role="menuitem"]'
+      ) as HTMLElement;
       if (firstItem) {
         firstItem.focus();
       }
@@ -200,8 +210,18 @@ const MegaMenuPanel: React.FC<{
 
               {/* Arrow indicator */}
               <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </div>
             </Link>
@@ -215,8 +235,18 @@ const MegaMenuPanel: React.FC<{
             className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors"
           >
             View all {category.label.toLowerCase()} experiences
-            <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="ml-1 w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </Link>
         </div>
@@ -232,7 +262,9 @@ const MobileDrawer: React.FC<{
   isOpen: boolean;
   onClose: () => void;
 }> = ({ categories, activeId, isOpen, onClose }) => {
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(activeId || null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(
+    activeId || null
+  );
 
   useEffect(() => {
     if (isOpen) {
@@ -267,37 +299,63 @@ const MobileDrawer: React.FC<{
         >
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">Categories</h2>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Categories
+              </h2>
               <button
                 onClick={onClose}
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                 aria-label="Close menu"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
 
             <div className="space-y-4">
               {categories.map((category) => (
-                <div key={category.id} className="border-b border-gray-100 pb-4 last:border-b-0">
+                <div
+                  key={category.id}
+                  className="border-b border-gray-100 pb-4 last:border-b-0"
+                >
                   <button
                     className="flex items-center justify-between w-full py-2 text-left"
-                    onClick={() => setExpandedCategory(
-                      expandedCategory === category.id ? null : category.id
-                    )}
+                    onClick={() =>
+                      setExpandedCategory(
+                        expandedCategory === category.id ? null : category.id
+                      )
+                    }
                   >
-                    <span className="font-medium text-gray-900">{category.label}</span>
+                    <span className="font-medium text-gray-900">
+                      {category.label}
+                    </span>
                     <motion.svg
                       className="w-5 h-5 text-gray-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
-                      animate={{ rotate: expandedCategory === category.id ? 180 : 0 }}
+                      animate={{
+                        rotate: expandedCategory === category.id ? 180 : 0,
+                      }}
                       transition={{ duration: 0.2 }}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
                     </motion.svg>
                   </button>
 
@@ -330,7 +388,9 @@ const MobileDrawer: React.FC<{
                                   loading="lazy"
                                 />
                               </div>
-                              <span className="text-sm text-gray-700">{item.title}</span>
+                              <span className="text-sm text-gray-700">
+                                {item.title}
+                              </span>
                             </Link>
                           ))}
                         </div>
@@ -351,7 +411,7 @@ const MobileDrawer: React.FC<{
 export const HeroMegaMenu: React.FC<HeroMenuProps> = ({
   categories,
   activeId,
-  className
+  className,
 }) => {
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -359,12 +419,19 @@ export const HeroMegaMenu: React.FC<HeroMenuProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Hover intent for desktop
-  const { isHovered: isMenuHovered, onMouseEnter: onMenuEnter, onMouseLeave: onMenuLeave } = useHoverIntent(100);
+  const {
+    isHovered: isMenuHovered,
+    onMouseEnter: onMenuEnter,
+    onMouseLeave: onMenuLeave,
+  } = useHoverIntent(100);
 
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setOpenCategory(null);
       }
     };
@@ -398,18 +465,20 @@ export const HeroMegaMenu: React.FC<HeroMenuProps> = ({
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent, categoryId: string) => {
-    const currentIndex = categories.findIndex(cat => cat.id === categoryId);
+    const currentIndex = categories.findIndex((cat) => cat.id === categoryId);
 
     switch (e.key) {
       case "ArrowLeft":
         e.preventDefault();
-        const prevIndex = currentIndex > 0 ? currentIndex - 1 : categories.length - 1;
+        const prevIndex =
+          currentIndex > 0 ? currentIndex - 1 : categories.length - 1;
         setFocusedIndex(prevIndex);
         setOpenCategory(categories[prevIndex].id);
         break;
       case "ArrowRight":
         e.preventDefault();
-        const nextIndex = currentIndex < categories.length - 1 ? currentIndex + 1 : 0;
+        const nextIndex =
+          currentIndex < categories.length - 1 ? currentIndex + 1 : 0;
         setFocusedIndex(nextIndex);
         setOpenCategory(categories[nextIndex].id);
         break;
@@ -484,7 +553,7 @@ export const HeroMegaMenu: React.FC<HeroMenuProps> = ({
         {/* Desktop Mega Menu Panel */}
         {openCategory && (
           <MegaMenuPanel
-            category={categories.find(cat => cat.id === openCategory)!}
+            category={categories.find((cat) => cat.id === openCategory)!}
             isOpen={openCategory !== null}
             onClose={() => setOpenCategory(null)}
             onMouseEnter={onMenuEnter}

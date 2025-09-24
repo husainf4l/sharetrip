@@ -8,15 +8,8 @@ import {
   CalendarIcon,
   MapPinIcon,
   UsersIcon,
-  ClockIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  ExclamationTriangleIcon,
   CurrencyDollarIcon,
   StarIcon,
-  EyeIcon,
-  PencilIcon,
-  XMarkIcon,
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@heroicons/react/24/outline";
@@ -58,26 +51,26 @@ const statusConfig = {
     label: "Confirmed",
     color: "bg-green-100 text-green-800",
     icon: CheckCircleSolidIcon,
-    description: "Your booking is confirmed"
+    description: "Your booking is confirmed",
   },
   pending: {
     label: "Pending",
     color: "bg-yellow-100 text-yellow-800",
     icon: ExclamationTriangleSolidIcon,
-    description: "Awaiting confirmation"
+    description: "Awaiting confirmation",
   },
   cancelled: {
     label: "Cancelled",
     color: "bg-red-100 text-red-800",
     icon: XCircleSolidIcon,
-    description: "Booking has been cancelled"
+    description: "Booking has been cancelled",
   },
   completed: {
     label: "Completed",
     color: "bg-blue-100 text-blue-800",
     icon: CheckCircleSolidIcon,
-    description: "Trip completed successfully"
-  }
+    description: "Trip completed successfully",
+  },
 };
 
 const mockBookings: Booking[] = [
@@ -98,14 +91,14 @@ const mockBookings: Booking[] = [
     provider: {
       name: "Cyprus Cultural Tours",
       rating: 4.8,
-      reviews: 1247
+      reviews: 1247,
     },
     cancellationPolicy: "Free cancellation up to 24 hours before",
     specialRequests: "Vegetarian meals preferred",
     contactInfo: {
       phone: "+357 22 123456",
-      email: "info@cyprus-tours.com"
-    }
+      email: "info@cyprus-tours.com",
+    },
   },
   {
     id: "BK-2025-002",
@@ -124,14 +117,14 @@ const mockBookings: Booking[] = [
     provider: {
       name: "Grand Hotel Manhattan",
       rating: 4.6,
-      reviews: 2156
+      reviews: 2156,
     },
     cancellationPolicy: "Free cancellation up to 48 hours before",
     specialRequests: "Late check-out requested",
     contactInfo: {
       phone: "+1 (555) 123-4567",
-      email: "reservations@grandhotel.com"
-    }
+      email: "reservations@grandhotel.com",
+    },
   },
   {
     id: "BK-2025-003",
@@ -150,14 +143,14 @@ const mockBookings: Booking[] = [
     provider: {
       name: "Desert Adventures Co.",
       rating: 4.9,
-      reviews: 892
+      reviews: 892,
     },
     cancellationPolicy: "Free cancellation up to 72 hours before",
     specialRequests: "All participants are experienced hikers",
     contactInfo: {
       phone: "+962 3 123456",
-      email: "bookings@desert-adventures.com"
-    }
+      email: "bookings@desert-adventures.com",
+    },
   },
   {
     id: "BK-2025-004",
@@ -176,15 +169,15 @@ const mockBookings: Booking[] = [
     provider: {
       name: "Alpine Chalets",
       rating: 4.7,
-      reviews: 634
+      reviews: 634,
     },
     cancellationPolicy: "Free cancellation up to 7 days before",
     specialRequests: "Ski equipment rental needed",
     contactInfo: {
       phone: "+41 27 123 4567",
-      email: "info@alpine-chalets.ch"
-    }
-  }
+      email: "info@alpine-chalets.ch",
+    },
+  },
 ];
 
 export default function BookingsPage() {
@@ -207,14 +200,22 @@ export default function BookingsPage() {
   }, [user, loading, router]);
 
   const filteredBookings = bookings
-    .filter(booking => filterStatus === "all" || booking.status === filterStatus)
-    .filter(booking => filterType === "all" || booking.type === filterType)
+    .filter(
+      (booking) => filterStatus === "all" || booking.status === filterStatus
+    )
+    .filter((booking) => filterType === "all" || booking.type === filterType)
     .sort((a, b) => {
       switch (sortBy) {
         case "date-desc":
-          return new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime();
+          return (
+            new Date(b.bookingDate).getTime() -
+            new Date(a.bookingDate).getTime()
+          );
         case "date-asc":
-          return new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime();
+          return (
+            new Date(a.bookingDate).getTime() -
+            new Date(b.bookingDate).getTime()
+          );
         case "price-desc":
           return b.totalPrice - a.totalPrice;
         case "price-asc":
@@ -229,26 +230,28 @@ export default function BookingsPage() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
       currency: currency,
     }).format(price / 100); // Assuming price is in cents
   };
 
-  const getStatusBadge = (status: Booking['status']) => {
+  const getStatusBadge = (status: Booking["status"]) => {
     const config = statusConfig[status];
     const Icon = config.icon;
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}>
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}
+      >
         <Icon className="w-3 h-3 mr-1" />
         {config.label}
       </span>
@@ -270,8 +273,12 @@ export default function BookingsPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
-          <p className="text-gray-600 mb-6">Please log in to view your bookings.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Access Denied
+          </h1>
+          <p className="text-gray-600 mb-6">
+            Please log in to view your bookings.
+          </p>
           <button
             onClick={() => router.push("/login")}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -291,11 +298,14 @@ export default function BookingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">My Bookings</h1>
-              <p className="text-gray-600 mt-1">Manage your trip reservations and bookings</p>
+              <p className="text-gray-600 mt-1">
+                Manage your trip reservations and bookings
+              </p>
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-500">
-                {filteredBookings.length} booking{filteredBookings.length !== 1 ? 's' : ''}
+                {filteredBookings.length} booking
+                {filteredBookings.length !== 1 ? "s" : ""}
               </span>
             </div>
           </div>
@@ -307,7 +317,9 @@ export default function BookingsPage() {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex flex-wrap gap-4 items-center">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
@@ -322,7 +334,9 @@ export default function BookingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Type
+              </label>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
@@ -335,7 +349,9 @@ export default function BookingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Sort By
+              </label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -355,7 +371,9 @@ export default function BookingsPage() {
           {filteredBookings.length === 0 ? (
             <div className="bg-white rounded-lg shadow-sm p-12 text-center">
               <CalendarIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No bookings found</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No bookings found
+              </h3>
               <p className="text-gray-600 mb-6">
                 {filterStatus !== "all" || filterType !== "all"
                   ? "Try adjusting your filters to see more bookings."
@@ -375,7 +393,10 @@ export default function BookingsPage() {
             </div>
           ) : (
             filteredBookings.map((booking) => (
-              <div key={booking.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div
+                key={booking.id}
+                className="bg-white rounded-lg shadow-sm overflow-hidden"
+              >
                 {/* Booking Header */}
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex items-start justify-between">
@@ -391,7 +412,9 @@ export default function BookingsPage() {
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-2">
                           <div>
-                            <h3 className="text-lg font-semibold text-gray-900">{booking.title}</h3>
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              {booking.title}
+                            </h3>
                             <div className="flex items-center text-gray-600 mt-1">
                               <MapPinIcon className="w-4 h-4 mr-1" />
                               {booking.location}
@@ -404,11 +427,13 @@ export default function BookingsPage() {
                           <div className="flex items-center">
                             <CalendarIcon className="w-4 h-4 mr-1" />
                             {formatDate(booking.startDate)}
-                            {booking.startDate !== booking.endDate && ` - ${formatDate(booking.endDate)}`}
+                            {booking.startDate !== booking.endDate &&
+                              ` - ${formatDate(booking.endDate)}`}
                           </div>
                           <div className="flex items-center">
                             <UsersIcon className="w-4 h-4 mr-1" />
-                            {booking.guests} guest{booking.guests !== 1 ? 's' : ''}
+                            {booking.guests} guest
+                            {booking.guests !== 1 ? "s" : ""}
                           </div>
                           <div className="flex items-center">
                             <CurrencyDollarIcon className="w-4 h-4 mr-1" />
@@ -417,9 +442,13 @@ export default function BookingsPage() {
                         </div>
 
                         <div className="flex items-center mt-2">
-                          <span className="text-sm text-gray-500">Booked on {formatDate(booking.bookingDate)}</span>
+                          <span className="text-sm text-gray-500">
+                            Booked on {formatDate(booking.bookingDate)}
+                          </span>
                           <span className="mx-2 text-gray-300">•</span>
-                          <span className="text-sm text-gray-500">Ref: {booking.bookingReference}</span>
+                          <span className="text-sm text-gray-500">
+                            Ref: {booking.bookingReference}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -440,12 +469,17 @@ export default function BookingsPage() {
                 {/* Expanded Details */}
                 {expandedBooking === booking.id && (
                   <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                       {/* Provider Info */}
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-3">Provider Information</h4>
+                        <h4 className="font-medium text-gray-900 mb-3">
+                          Provider Information
+                        </h4>
                         <div className="space-y-2">
-                          <p className="text-sm text-gray-600">{booking.provider.name}</p>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Name:</span>{" "}
+                            {booking.provider.name}
+                          </p>
                           <div className="flex items-center">
                             <div className="flex items-center mr-2">
                               {[...Array(5)].map((_, i) => (
@@ -460,7 +494,8 @@ export default function BookingsPage() {
                               ))}
                             </div>
                             <span className="text-sm text-gray-600">
-                              {booking.provider.rating} ({booking.provider.reviews} reviews)
+                              {booking.provider.rating} (
+                              {booking.provider.reviews} reviews)
                             </span>
                           </div>
                         </div>
@@ -468,53 +503,142 @@ export default function BookingsPage() {
 
                       {/* Contact Info */}
                       <div>
-                        <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
+                        <h4 className="font-medium text-gray-900 mb-3">
+                          Contact Information
+                        </h4>
                         <div className="space-y-2">
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium">Phone:</span> {booking.contactInfo.phone}
+                            <span className="font-medium">Phone:</span>{" "}
+                            <a
+                              href={`tel:${booking.contactInfo.phone}`}
+                              className="text-blue-600 hover:underline"
+                            >
+                              {booking.contactInfo.phone}
+                            </a>
                           </p>
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium">Email:</span> {booking.contactInfo.email}
+                            <span className="font-medium">Email:</span>{" "}
+                            <a
+                              href={`mailto:${booking.contactInfo.email}`}
+                              className="text-blue-600 hover:underline"
+                            >
+                              {booking.contactInfo.email}
+                            </a>
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Booking Details */}
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-3">
+                          Booking Details
+                        </h4>
+                        <div className="space-y-2">
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Reference:</span>{" "}
+                            {booking.bookingReference}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Booked on:</span>{" "}
+                            {formatDate(booking.bookingDate)}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Type:</span>{" "}
+                            {booking.type === "tour"
+                              ? "Tour Experience"
+                              : "Accommodation"}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Status:</span>{" "}
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                statusConfig[booking.status].color
+                              }`}
+                            >
+                              {statusConfig[booking.status].label}
+                            </span>
                           </p>
                         </div>
                       </div>
 
                       {/* Cancellation Policy */}
                       {booking.cancellationPolicy && (
-                        <div className="md:col-span-2">
-                          <h4 className="font-medium text-gray-900 mb-2">Cancellation Policy</h4>
-                          <p className="text-sm text-gray-600">{booking.cancellationPolicy}</p>
+                        <div className="lg:col-span-2">
+                          <h4 className="font-medium text-gray-900 mb-2">
+                            Cancellation Policy
+                          </h4>
+                          <p className="text-sm text-gray-600 bg-white p-3 rounded-lg border">
+                            {booking.cancellationPolicy}
+                          </p>
                         </div>
                       )}
 
                       {/* Special Requests */}
                       {booking.specialRequests && (
-                        <div className="md:col-span-2">
-                          <h4 className="font-medium text-gray-900 mb-2">Special Requests</h4>
-                          <p className="text-sm text-gray-600">{booking.specialRequests}</p>
+                        <div className="lg:col-span-1">
+                          <h4 className="font-medium text-gray-900 mb-2">
+                            Special Requests
+                          </h4>
+                          <p className="text-sm text-gray-600 bg-white p-3 rounded-lg border">
+                            {booking.specialRequests}
+                          </p>
                         </div>
                       )}
+
+                      {/* Payment Information */}
+                      <div className="lg:col-span-3">
+                        <h4 className="font-medium text-gray-900 mb-3">
+                          Payment Information
+                        </h4>
+                        <div className="bg-white p-4 rounded-lg border">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                              <p className="text-sm text-gray-500">
+                                Total Amount
+                              </p>
+                              <p className="text-lg font-semibold text-gray-900">
+                                {formatPrice(
+                                  booking.totalPrice,
+                                  booking.currency
+                                )}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">
+                                Payment Status
+                              </p>
+                              <p className="text-sm font-medium text-green-600">
+                                Paid in Full
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">
+                                Payment Method
+                              </p>
+                              <p className="text-sm font-medium text-gray-900">
+                                Credit Card
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Action Buttons */}
                     <div className="flex flex-wrap gap-3 mt-6 pt-4 border-t border-gray-200">
-                      <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
-                        <EyeIcon className="w-4 h-4 mr-2" />
-                        View Details
+                      <button
+                        onClick={() =>
+                          setExpandedBooking(
+                            expandedBooking === booking.id ? null : booking.id
+                          )
+                        }
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                      >
+                        <ChevronUpIcon className="w-4 h-4 mr-2" />
+                        {expandedBooking === booking.id
+                          ? "Hide Details"
+                          : "View Details"}
                       </button>
-
-                      {booking.status === "confirmed" && (
-                        <>
-                          <button className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center">
-                            <PencilIcon className="w-4 h-4 mr-2" />
-                            Modify
-                          </button>
-                          <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center">
-                            <XMarkIcon className="w-4 h-4 mr-2" />
-                            Cancel
-                          </button>
-                        </>
-                      )}
 
                       {booking.status === "completed" && (
                         <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center">

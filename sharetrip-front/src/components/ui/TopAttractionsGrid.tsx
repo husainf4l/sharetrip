@@ -151,6 +151,195 @@ const attractions: Attraction[] = [
     ],
     bookingCount: 7890,
   },
+  {
+    id: "7",
+    title: "Jerusalem: Old City Walking Tour & Holy Sites",
+    location: "Jerusalem, Israel",
+    category: "Religious & Cultural",
+    imageUrl: "/hero/motels.webp",
+    rating: 4.9,
+    reviewCount: 3241,
+    duration: "6 hours",
+    price: 85,
+    originalPrice: 105,
+    groupSize: "Small group (max 15)",
+    highlights: [
+      "Western Wall visit",
+      "Church of the Holy Sepulchre",
+      "Dome of the Rock",
+      "Jewish Quarter exploration",
+      "Local guide insights",
+    ],
+    isPopular: true,
+    isBestseller: true,
+    bookingCount: 18750,
+  },
+  {
+    id: "8",
+    title: "Amman: Roman Theater & Citadel Private Tour",
+    location: "Amman, Jordan",
+    category: "Historical Tours",
+    imageUrl: "/hero/hostels.webp",
+    rating: 4.7,
+    reviewCount: 1234,
+    duration: "4 hours",
+    price: 55,
+    groupSize: "Private tour",
+    highlights: [
+      "Roman Theater exploration",
+      "Amman Citadel visit",
+      "Archaeological museum",
+      "City views",
+      "Historical context",
+    ],
+    bookingCount: 5420,
+  },
+  {
+    id: "9",
+    title: "Tel Aviv: Street Food Tour & Nightlife Experience",
+    location: "Tel Aviv, Israel",
+    category: "Food & Culture",
+    imageUrl: "/hero/caravan.webp",
+    rating: 4.8,
+    reviewCount: 2156,
+    duration: "5 hours",
+    price: 75,
+    groupSize: "Small group (max 12)",
+    highlights: [
+      "Authentic Israeli street food",
+      "Local market visits",
+      "Nightlife district tour",
+      "Cultural insights",
+      "Chef-led tastings",
+    ],
+    isPopular: true,
+    bookingCount: 9870,
+  },
+  {
+    id: "10",
+    title: "Mount Nebo: Moses Memorial & Biblical Sites",
+    location: "Mount Nebo, Jordan",
+    category: "Religious Tours",
+    imageUrl: "/hero/travelhero.webp",
+    rating: 4.5,
+    reviewCount: 876,
+    duration: "3 hours",
+    price: 45,
+    groupSize: "Any size",
+    highlights: [
+      "Biblical significance",
+      "Moses Memorial Church",
+      "Dead Sea views",
+      "Historical artifacts",
+      "Peaceful atmosphere",
+    ],
+    bookingCount: 3210,
+  },
+  {
+    id: "11",
+    title: "Haifa: Bahá'í Gardens & Druze Village Tour",
+    location: "Haifa, Israel",
+    category: "Cultural Tours",
+    imageUrl: "/hero/hero1.webp",
+    rating: 4.8,
+    reviewCount: 1876,
+    duration: "7 hours",
+    price: 95,
+    originalPrice: 115,
+    groupSize: "Small group (max 10)",
+    highlights: [
+      "Bahá'í World Centre gardens",
+      "Druze village visit",
+      "Traditional lunch",
+      "Cultural exchange",
+      "Scenic coastal drive",
+    ],
+    isBestseller: true,
+    bookingCount: 6540,
+  },
+  {
+    id: "12",
+    title: "Aqaba: Red Sea Diving & Marine Life Experience",
+    location: "Aqaba, Jordan",
+    category: "Adventure & Water Sports",
+    imageUrl: "/hero/apartment.webp",
+    rating: 4.9,
+    reviewCount: 2987,
+    duration: "6 hours",
+    price: 110,
+    groupSize: "Small group (max 8)",
+    highlights: [
+      "Professional diving instruction",
+      "Coral reef exploration",
+      "Marine life observation",
+      "Equipment provided",
+      "Underwater photography",
+    ],
+    isPopular: true,
+    bookingCount: 11230,
+  },
+  {
+    id: "13",
+    title: "Nazareth: Biblical Sites & Christian Heritage Tour",
+    location: "Nazareth, Israel",
+    category: "Religious Tours",
+    imageUrl: "/hero/villa.webp",
+    rating: 4.7,
+    reviewCount: 1456,
+    duration: "5 hours",
+    price: 70,
+    originalPrice: 85,
+    groupSize: "Small group (max 12)",
+    highlights: [
+      "Church of the Annunciation",
+      "Mary's Well",
+      "Ancient synagogue",
+      "Local Christian community",
+      "Biblical storytelling",
+    ],
+    bookingCount: 6780,
+  },
+  {
+    id: "14",
+    title: "Eilat: Desert Jeep Safari & Bedouin Camp",
+    location: "Eilat, Israel",
+    category: "Adventure Tours",
+    imageUrl: "/hero/chalets.webp",
+    rating: 4.8,
+    reviewCount: 2134,
+    duration: "10 hours",
+    price: 135,
+    groupSize: "Small group (max 6)",
+    highlights: [
+      "4x4 desert safari",
+      "Bedouin camp experience",
+      "Traditional dinner",
+      "Star gazing",
+      "Desert landscapes",
+    ],
+    isBestseller: true,
+    bookingCount: 8920,
+  },
+  {
+    id: "15",
+    title: "Ramallah: Palestinian Culture & Art Tour",
+    location: "Ramallah, Palestine",
+    category: "Cultural Experiences",
+    imageUrl: "/hero/resort.webp",
+    rating: 4.6,
+    reviewCount: 987,
+    duration: "4 hours",
+    price: 50,
+    groupSize: "Small group (max 10)",
+    highlights: [
+      "Local art galleries",
+      "Traditional crafts",
+      "Cultural center visits",
+      "Community interactions",
+      "Contemporary Palestinian art",
+    ],
+    bookingCount: 3450,
+  },
 ];
 
 export default function TopAttractionsGrid() {
@@ -194,7 +383,9 @@ export default function TopAttractionsGrid() {
               Top Attractions & Experiences
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl">
-              Discover the most popular experiences loved by travelers worldwide
+              Discover the most popular experiences loved by travelers
+              worldwide, from ancient wonders to modern adventures across the
+              Middle East
             </p>
           </div>
           <Link
@@ -380,11 +571,12 @@ export default function TopAttractionsGrid() {
         <div className="text-center mt-12">
           <div className="bg-white rounded-2xl p-8 shadow-lg">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Can't Find What You're Looking For?
+              Can&apos;t Find What You&apos;re Looking For?
             </h3>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Browse our complete collection of over 10,000+ experiences or
-              contact our local experts for personalized recommendations.
+              Browse our complete collection of over 20,000+ experiences across
+              the Middle East or contact our local experts for personalized
+              recommendations.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

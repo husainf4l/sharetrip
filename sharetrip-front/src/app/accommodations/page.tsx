@@ -7,6 +7,17 @@ import AccommodationSearchBar from "@/components/ui/AccommodationSearchBar";
 import { Apartment } from "@/types/common";
 import { accommodationService } from "@/services/accommodation.service";
 
+interface SearchData {
+  destination: string;
+  checkIn: string;
+  checkOut: string;
+  guests: {
+    adults: number;
+    children: number;
+    rooms: number;
+  };
+}
+
 export default function Accommodations({
   searchParams,
 }: {
@@ -60,7 +71,7 @@ export default function Accommodations({
     fetchCategoryContent();
   }, [type]);
 
-  const handleSearch = (searchData: any) => {
+  const handleSearch = (searchData: SearchData) => {
     console.log("Search data:", searchData);
     // TODO: Implement search functionality
     // Filter apartments based on destination, dates, and guests

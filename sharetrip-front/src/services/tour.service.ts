@@ -587,20 +587,22 @@ class TourService {
   async getTourById(id: string): Promise<Tour | null> {
     try {
       const response = await apiService.get(`/tours/${id}`) as Tour | null;
-      return response || null;
+      if (response) {
+        return response;
+      }
+      // If API returns null (404), fall back to demo data
+      const tours = this.getDemoTours();
+      const demoTour = tours.find(tour => tour.id === id);
+      return demoTour || null;
     } catch (error: any) {
-      // Check if it's a 404 error, then try fallback to demo data
-      if (error?.message?.includes("Resource not found") || error?.message?.includes("404")) {
-        // Fallback to finding in demo data
-        const tours = this.getDemoTours();
-        const demoTour = tours.find(tour => tour.id === id);
-        if (!demoTour) {
-          // If not found in demo data either, re-throw the original error
-          throw error;
-        }
+      // For other errors, also try demo data as fallback
+      console.error('Error fetching tour from API:', error);
+      const tours = this.getDemoTours();
+      const demoTour = tours.find(tour => tour.id === id);
+      if (demoTour) {
         return demoTour;
       }
-      // For other errors, re-throw
+      // If not found in demo data either, re-throw the original error
       throw error;
     }
   }
@@ -643,6 +645,52 @@ class TourService {
         }
         return true;
       });
+    }
+  }
+
+  async createTour(tourData: {
+    title: string;
+    description?: string;
+    city: string;
+    country: string;
+    category: string;
+    basePrice: number;
+    currency?: string;
+    maxParticipants: number;
+    duration?: number;
+    difficulty?: string;
+    highlights?: string[];
+    whatsIncluded?: string[];
+    whatsExcluded?: string[];
+    requirements?: string[];
+    itinerary?: any[];
+    images?: string[];
+    latitude?: number;
+    longitude?: number;
+    guideId?: string;
+    guideName?: string;
+    guideEmail?: string;
+    guideImage?: string;
+    guideBio?: string;
+  }): Promise<Tour> {
+    try {
+      // Use local API route instead of external backend
+      const response = await fetch('/api/tours', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tourData)
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create tour');
+      }
+
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error('Failed to create tour:', error);
+      throw error;
     }
   }
 }

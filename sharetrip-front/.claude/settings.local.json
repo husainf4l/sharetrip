@@ -7,7 +7,13 @@
       "mcp__ide__getDiagnostics",
       "Bash(npm run clean:*)",
       "Bash(powershell:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(rm:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:*)",
+      "Bash(PORT=3005 npm run dev)",
+      "Bash(NODE_OPTIONS=\"--inspect\" npm run dev)",
+      "Bash(PORT=3011 npm run dev)"
     ],
     "deny": [],
     "ask": []

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import AccommodationCard from "@/components/ui/AccommodationCard";
 import { Apartment } from "@/types/common";
 
@@ -236,7 +237,7 @@ const sampleHotels: Apartment[] = [
     address: "321 Desert Road, Dubai, UAE",
     latitude: 25.2048,
     longitude: 55.2708,
-    basePrice: 30000, // $300 per night
+    basePrice: 28000, // $280 per night
     currency: "USD",
     maxGuests: 4,
     bedrooms: 2,
@@ -261,7 +262,7 @@ const sampleHotels: Apartment[] = [
     updatedAt: "2024-01-01T00:00:00Z",
     host: {
       id: "host-5",
-      name: "Ahmed Al-Rashid",
+      name: "Ahmed Al-Saudi",
       email: "ahmed@desertoasis.com",
       image: null,
     },
@@ -355,7 +356,7 @@ export default function HotelsDemo() {
         <AccommodationCard apartments={sampleHotels} />
 
         <div className="text-center mt-12">
-          <a
+          <Link
             href="/accommodations"
             className="inline-flex items-center px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
           >
@@ -373,7 +374,7 @@ export default function HotelsDemo() {
                 d="M9 5l7 7-7 7"
               />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

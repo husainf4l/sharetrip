@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
   HeartIcon,
@@ -18,6 +19,7 @@ import {
   StarIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
+import { accommodationService } from "@/services/accommodation.service";
 
 // Enhanced interfaces
 interface Accommodation {
@@ -375,6 +377,192 @@ function getAccommodationById(id: string): Accommodation | null {
       latitude: 39.0968,
       longitude: -120.0324,
     },
+    "1": {
+      id: "1",
+      title: "Modern Studio Apartment",
+      location: "Limassol, Cyprus",
+      city: "Limassol",
+      country: "Cyprus",
+      address: "Central Limassol",
+      description:
+        "A beautifully designed modern studio apartment with all amenities. Perfect for couples or solo travelers looking for comfort and style.",
+      pricePerNight: 85,
+      basePrice: 8500,
+      images: [
+        "/hero/apartment.webp",
+        "/hero/hotel.webp",
+        "/hero/villa.webp",
+        "/hero/resort.webp",
+        "/hero/chalets.webp",
+        "/hero/hero1.webp",
+        "/hero/travelhero.webp",
+      ],
+      amenities: [
+        "WiFi",
+        "Parking",
+        "TV",
+        "Kitchen",
+        "Air Conditioning",
+        "Balcony",
+      ],
+      rating: 4.8,
+      reviews: 124,
+      bedrooms: 1,
+      bathrooms: 1,
+      maxGuests: 2,
+      category: {
+        sectionTitle: "Apartments",
+      },
+      host: {
+        name: "Ahmed Al-Jordan",
+        email: "ahmed.jordan@example.com",
+      },
+      latitude: 34.7071,
+      longitude: 33.0226,
+    },
+    "2": {
+      id: "2",
+      title: "Luxury Beachfront Apartment",
+      location: "Paphos, Cyprus",
+      city: "Paphos",
+      country: "Cyprus",
+      address: "Beachfront Paphos",
+      description:
+        "Stunning beachfront apartment with panoramic sea views. Features modern furnishings and direct beach access.",
+      pricePerNight: 150,
+      basePrice: 15000,
+      images: [
+        "/hero/villa.webp",
+        "/hero/resort.webp",
+        "/hero/apartment.webp",
+        "/hero/hotel.webp",
+        "/hero/treehouses.webp",
+        "/hero/chalets.webp",
+        "/hero/motels.webp",
+        "/hero/hostels.webp",
+        "/hero/caravan.webp",
+      ],
+      amenities: ["WiFi", "Parking", "TV", "Kitchen", "Pool", "Beach Access"],
+      rating: 4.9,
+      reviews: 89,
+      bedrooms: 2,
+      bathrooms: 2,
+      maxGuests: 4,
+      category: {
+        sectionTitle: "Apartments",
+      },
+      host: {
+        name: "Ahmed Al-Jordan",
+        email: "ahmed.jordan@example.com",
+      },
+      latitude: 34.7768,
+      longitude: 32.4245,
+    },
+    "demo-1": {
+      id: "demo-1",
+      title: "Luxury Downtown Hotel Suite",
+      location: "New York, USA",
+      city: "New York",
+      country: "USA",
+      address: "Downtown New York, NY, USA",
+      description:
+        "Experience the pinnacle of luxury in our stunning downtown hotel suite.",
+      pricePerNight: 120,
+      basePrice: 12000,
+      images: ["/hero/hotel.webp"],
+      amenities: [
+        "WiFi",
+        "Parking",
+        "TV",
+        "Kitchen",
+        "Air Conditioning",
+        "Room Service",
+      ],
+      rating: 4.8,
+      reviews: 156,
+      bedrooms: 1,
+      bathrooms: 1,
+      maxGuests: 2,
+      category: {
+        sectionTitle: "Hotels",
+      },
+      host: {
+        name: "Luxury Hotels Inc",
+        email: "info@luxuryhotels.com",
+      },
+      latitude: 40.7128,
+      longitude: -74.006,
+    },
+    "demo-2": {
+      id: "demo-2",
+      title: "Mountain View Chalet",
+      location: "Zermatt, Switzerland",
+      city: "Zermatt",
+      country: "Switzerland",
+      address: "Alpine Road, Zermatt, Switzerland",
+      description:
+        "Rustic mountain chalet with stunning alpine views and modern amenities.",
+      pricePerNight: 350,
+      basePrice: 35000,
+      images: ["/hero/chalets.webp"],
+      amenities: [
+        "WiFi",
+        "Parking",
+        "Fireplace",
+        "Kitchen",
+        "Mountain Views",
+        "Ski Access",
+      ],
+      rating: 4.7,
+      reviews: 203,
+      bedrooms: 3,
+      bathrooms: 2,
+      maxGuests: 6,
+      category: {
+        sectionTitle: "Chalets",
+      },
+      host: {
+        name: "Alpine Retreats",
+        email: "info@alpineretreats.com",
+      },
+      latitude: 45.9767,
+      longitude: 7.6586,
+    },
+    "demo-3": {
+      id: "demo-3",
+      title: "Beachfront Villa",
+      location: "Malibu, USA",
+      city: "Malibu",
+      country: "USA",
+      address: "Pacific Coast Highway, Malibu, CA, USA",
+      description:
+        "Luxurious beachfront villa with private pool and ocean views.",
+      pricePerNight: 500,
+      basePrice: 50000,
+      images: ["/hero/villa.webp"],
+      amenities: [
+        "WiFi",
+        "Private Pool",
+        "Ocean Views",
+        "Kitchen",
+        "BBQ",
+        "Beach Access",
+      ],
+      rating: 4.9,
+      reviews: 78,
+      bedrooms: 4,
+      bathrooms: 3,
+      maxGuests: 8,
+      category: {
+        sectionTitle: "Villas",
+      },
+      host: {
+        name: "Coastal Properties",
+        email: "info@coastalproperties.com",
+      },
+      latitude: 34.0259,
+      longitude: -118.7798,
+    },
   };
 
   return demoAccommodations[id] || null;
@@ -557,14 +745,74 @@ export default function AccommodationDetail() {
   useEffect(() => {
     if (id) {
       setLoading(true);
-      const acc = getAccommodationById(id);
-      if (acc) {
-        setAccommodation(acc);
-        setError(null);
-      } else {
-        setError("Accommodation not found");
-      }
-      setLoading(false);
+      console.log("Fetching accommodation with ID:", id);
+      accommodationService
+        .getAccommodationById(id)
+        .then((acc) => {
+          console.log("Accommodation fetch result:", acc);
+          if (acc) {
+            // Transform the API response to match the component's expected format
+            const transformedAcc: Accommodation = {
+              id: acc.id,
+              title: acc.title,
+              location: `${acc.city}, ${acc.country}`,
+              city: acc.city,
+              country: acc.country,
+              address: acc.address,
+              description: acc.description,
+              pricePerNight: acc.basePrice / 100, // Convert from cents to dollars
+              basePrice: acc.basePrice,
+              images: acc.images || [],
+              amenities: acc.amenities || [],
+              rating: 4.5, // Default rating since it's not in the API response
+              reviews: 0, // Default reviews count
+              bedrooms: acc.bedrooms,
+              bathrooms: acc.bathrooms,
+              maxGuests: acc.maxGuests,
+              category: {
+                sectionTitle:
+                  acc.category?.sectionTitle ||
+                  acc.category?.title ||
+                  "Accommodation",
+              },
+              host: {
+                name: acc.host?.name || "Host",
+                email: acc.host?.email || "",
+              },
+              latitude: acc.latitude || 0,
+              longitude: acc.longitude || 0,
+            };
+            setAccommodation(transformedAcc);
+            setError(null);
+          } else {
+            // Try local demo data as fallback
+            console.log("Service returned null, trying local demo data");
+            const localAcc = getAccommodationById(id);
+            if (localAcc) {
+              console.log("Found accommodation in local demo data:", localAcc);
+              setAccommodation(localAcc);
+              setError(null);
+            } else {
+              console.log("Accommodation not found in any demo data");
+              setError("Accommodation not found");
+            }
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching accommodation:", error);
+          // Try local demo data as final fallback
+          console.log("Service failed, trying local demo data as fallback");
+          const localAcc = getAccommodationById(id);
+          if (localAcc) {
+            console.log("Found accommodation in local demo data:", localAcc);
+            setAccommodation(localAcc);
+            setError(null);
+          } else {
+            setError("Failed to load accommodation");
+          }
+          setLoading(false);
+        });
     }
   }, [id]);
 
@@ -614,7 +862,6 @@ export default function AccommodationDetail() {
     return Math.round(finalPrice);
   };
 
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -630,9 +877,28 @@ export default function AccommodationDetail() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             {error || "Accommodation not found"}
           </h1>
+          <p className="text-gray-600 mb-6">
+            The accommodation you&apos;re looking for doesn&apos;t exist or may
+            have been removed.
+          </p>
+          <div className="space-x-4">
+            <button
+              onClick={() => window.history.back()}
+              className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Go Back
+            </button>
+            <Link
+              href="/accommodations"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-block"
+            >
+              Browse Accommodations
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -679,7 +945,6 @@ export default function AccommodationDetail() {
           </div>
         </div>
       </div>
-
 
       {/* Photo Gallery */}
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -896,7 +1161,7 @@ export default function AccommodationDetail() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <h4 className="font-semibold text-gray-900 mb-3">
-                          What's Included
+                          What&apos;s Included
                         </h4>
                         <div className="space-y-2">
                           {plan.perks.map((perk) => (
@@ -983,8 +1248,17 @@ export default function AccommodationDetail() {
                       {accommodation.city}, {accommodation.country}
                     </div>
                     <div className="text-sm text-gray-500 mt-2">
-                      Coordinates: {accommodation.latitude.toFixed(4)},{" "}
-                      {accommodation.longitude.toFixed(4)}
+                      {accommodation.latitude &&
+                      accommodation.longitude &&
+                      (accommodation.latitude !== 0 ||
+                        accommodation.longitude !== 0) ? (
+                        <>
+                          Coordinates: {accommodation.latitude.toFixed(4)},{" "}
+                          {accommodation.longitude.toFixed(4)}
+                        </>
+                      ) : (
+                        <>Coordinates: Not available</>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1139,7 +1413,7 @@ export default function AccommodationDetail() {
               </button>
 
               <div className="text-center text-sm text-gray-500 mb-4">
-                You won't be charged yet
+                You won&apos;t be charged yet
               </div>
 
               {/* House Rules */}

@@ -228,6 +228,8 @@ export default function ListPropertyCategories({
     setSelectedMainCategory(category);
     if (category === "tours") {
       onCategorySelect?.(category);
+    } else if (category === "accommodations") {
+      onCategorySelect?.(category, "default");
     }
   };
 

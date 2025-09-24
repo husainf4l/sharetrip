@@ -21,10 +21,15 @@ class ApiService {
       ...options,
     };
 
-    // Add authorization header if token exists
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      (config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+    // Add authorization header if token exists (only on client-side)
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        (config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+        console.log('API Request with token:', url);
+      } else {
+        console.log('API Request without token:', url);
+      }
     }
 
     try {
@@ -32,8 +37,8 @@ class ApiService {
       const data = await response.json();
 
       if (!response.ok) {
-        // Handle token expiration - try to refresh token once
-        if (response.status === 401 && !isRetry) {
+        // Handle token expiration - try to refresh token once (only on client-side)
+        if (response.status === 401 && !isRetry && typeof window !== 'undefined') {
           const refreshToken = localStorage.getItem('refreshToken');
           if (refreshToken) {
             try {
@@ -57,12 +62,17 @@ class ApiService {
 
         if (response.status === 401) {
           errorMessage = data.message || "Token has expired. Please log in again.";
+          // Clear tokens on 401 if we're on client-side
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+          }
         } else if (response.status === 403) {
           errorMessage = data.message || "Forbidden - You don't have permission";
         } else if (response.status === 404) {
-          // For tour-related endpoints, don't throw errors as they have demo fallbacks
-          if (url.includes('/tours')) {
-            console.warn(`API 404 for tour endpoint ${url}, will use demo data`);
+          // For tour and accommodation endpoints, don't throw errors as they have demo fallbacks
+          if (url.includes('/tours') || url.includes('/accommodations')) {
+            console.warn(`API 404 for ${url.includes('/tours') ? 'tour' : 'accommodation'} endpoint ${url}, will use demo data`);
             return null; // Return null instead of throwing
           }
           errorMessage = data.message || "Resource not found - The requested endpoint may not be available";
@@ -72,7 +82,7 @@ class ApiService {
 
         // Log the error details for debugging but don't expose internal details to users
         console.warn(`API Error ${response.status} for ${url}:`, data);
-        
+
         throw new Error(errorMessage);
       }
 
@@ -120,6 +130,11 @@ class ApiService {
   }
 
   async refreshAccessToken() {
+    // Only run on client-side
+    if (typeof window === 'undefined') {
+      throw new Error('Refresh token not available on server-side');
+    }
+
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
       throw new Error('No refresh token available');

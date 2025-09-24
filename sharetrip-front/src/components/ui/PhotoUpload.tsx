@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { PhotoIcon, XMarkIcon, ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
+import {
+  PhotoIcon,
+  XMarkIcon,
+  ArrowUpOnSquareIcon,
+} from "@heroicons/react/24/outline";
+import { uploadService } from "@/services/upload.service";
 
 interface UploadedImage {
   id: string;
@@ -64,92 +69,89 @@ export default function PhotoUpload({
     return null;
   };
 
-  // Simulate file upload (replace with actual upload logic)
+  // Upload file to backend
   const uploadFile = async (file: File): Promise<string> => {
-    // Simulate upload delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-
-    // Simulate random upload failure (10% chance)
-    if (Math.random() < 0.1) {
-      throw new Error("Upload failed. Please try again.");
-    }
-
-    // In a real app, this would upload to a cloud service and return the URL
-    // For now, we'll return a mock URL based on the file name
-    return `/uploads/${Date.now()}-${file.name}`;
+    return await uploadService.uploadFile(file);
   };
 
   // Handle file selection
-  const handleFiles = useCallback(async (fileList: FileList) => {
-    const files = Array.from(fileList);
-    const totalImages = uploadedImages.length + images.length + files.length;
+  const handleFiles = useCallback(
+    async (fileList: FileList) => {
+      const files = Array.from(fileList);
+      const totalImages = uploadedImages.length + images.length + files.length;
 
-    if (totalImages > maxImages) {
-      setError(`Maximum ${maxImages} images allowed`);
-      return;
-    }
-
-    setError("");
-
-    // Process each file
-    for (const file of files) {
-      const validation = validateFile(file);
-      if (validation) {
-        setError(validation);
-        continue;
+      if (totalImages > maxImages) {
+        setError(`Maximum ${maxImages} images allowed`);
+        return;
       }
 
-      try {
-        const preview = await getFilePreview(file);
-        const imageId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+      setError("");
 
-        const newImage: UploadedImage = {
-          id: imageId,
-          file,
-          preview,
-          uploaded: false,
-          uploading: true,
-        };
-
-        // Add to state immediately with uploading status
-        setUploadedImages(prev => [...prev, newImage]);
-
-        // Start upload
-        try {
-          const uploadedUrl = await uploadFile(file);
-
-          // Update state with successful upload
-          setUploadedImages(prev =>
-            prev.map(img =>
-              img.id === imageId
-                ? { ...img, uploaded: true, uploading: false }
-                : img
-            )
-          );
-
-          // Add to the main images array
-          onImagesChange([...images, uploadedUrl]);
-
-        } catch (uploadError) {
-          // Update state with upload error
-          setUploadedImages(prev =>
-            prev.map(img =>
-              img.id === imageId
-                ? {
-                    ...img,
-                    uploaded: false,
-                    uploading: false,
-                    error: uploadError instanceof Error ? uploadError.message : "Upload failed"
-                  }
-                : img
-            )
-          );
+      // Process each file
+      for (const file of files) {
+        const validation = validateFile(file);
+        if (validation) {
+          setError(validation);
+          continue;
         }
-      } catch (previewError) {
-        setError("Failed to process file");
+
+        try {
+          const preview = await getFilePreview(file);
+          const imageId =
+            Date.now().toString() + Math.random().toString(36).substr(2, 9);
+
+          const newImage: UploadedImage = {
+            id: imageId,
+            file,
+            preview,
+            uploaded: false,
+            uploading: true,
+          };
+
+          // Add to state immediately with uploading status
+          setUploadedImages((prev) => [...prev, newImage]);
+
+          // Start upload
+          try {
+            const uploadedUrl = await uploadFile(file);
+
+            // Update state with successful upload
+            setUploadedImages((prev) =>
+              prev.map((img) =>
+                img.id === imageId
+                  ? { ...img, uploaded: true, uploading: false }
+                  : img
+              )
+            );
+
+            // Add to the main images array
+            onImagesChange([...images, uploadedUrl]);
+            console.log("Photo uploaded successfully:", uploadedUrl);
+          } catch (uploadError) {
+            // Update state with upload error
+            setUploadedImages((prev) =>
+              prev.map((img) =>
+                img.id === imageId
+                  ? {
+                      ...img,
+                      uploaded: false,
+                      uploading: false,
+                      error:
+                        uploadError instanceof Error
+                          ? uploadError.message
+                          : "Upload failed",
+                    }
+                  : img
+              )
+            );
+          }
+        } catch (previewError) {
+          setError("Failed to process file");
+        }
       }
-    }
-  }, [uploadedImages, images, maxImages, onImagesChange]);
+    },
+    [uploadedImages, images, maxImages, onImagesChange]
+  );
 
   // Handle drag events
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -163,18 +165,25 @@ export default function PhotoUpload({
   }, []);
 
   // Handle drop
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log("File drop triggered", e.dataTransfer.files);
+      setDragActive(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFiles(e.dataTransfer.files);
-    }
-  }, [handleFiles]);
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleFiles(e.dataTransfer.files);
+      }
+    },
+    [handleFiles]
+  );
 
   // Handle file input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("File input change triggered", e.target.files);
+    e.preventDefault();
+    e.stopPropagation();
     if (e.target.files && e.target.files[0]) {
       handleFiles(e.target.files);
     }
@@ -182,7 +191,7 @@ export default function PhotoUpload({
 
   // Remove uploaded image
   const removeUploadedImage = (imageId: string) => {
-    setUploadedImages(prev => prev.filter(img => img.id !== imageId));
+    setUploadedImages((prev) => prev.filter((img) => img.id !== imageId));
   };
 
   // Remove existing image
@@ -193,22 +202,20 @@ export default function PhotoUpload({
 
   // Retry upload
   const retryUpload = async (imageId: string) => {
-    const image = uploadedImages.find(img => img.id === imageId);
+    const image = uploadedImages.find((img) => img.id === imageId);
     if (!image) return;
 
-    setUploadedImages(prev =>
-      prev.map(img =>
-        img.id === imageId
-          ? { ...img, uploading: true, error: undefined }
-          : img
+    setUploadedImages((prev) =>
+      prev.map((img) =>
+        img.id === imageId ? { ...img, uploading: true, error: undefined } : img
       )
     );
 
     try {
       const uploadedUrl = await uploadFile(image.file);
 
-      setUploadedImages(prev =>
-        prev.map(img =>
+      setUploadedImages((prev) =>
+        prev.map((img) =>
           img.id === imageId
             ? { ...img, uploaded: true, uploading: false }
             : img
@@ -216,15 +223,14 @@ export default function PhotoUpload({
       );
 
       onImagesChange([...images, uploadedUrl]);
-
     } catch (error) {
-      setUploadedImages(prev =>
-        prev.map(img =>
+      setUploadedImages((prev) =>
+        prev.map((img) =>
           img.id === imageId
             ? {
                 ...img,
                 uploading: false,
-                error: error instanceof Error ? error.message : "Upload failed"
+                error: error instanceof Error ? error.message : "Upload failed",
               }
             : img
         )
@@ -241,7 +247,8 @@ export default function PhotoUpload({
         <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
         <p className="text-gray-600 text-sm">{subtitle}</p>
         <p className="text-gray-500 text-xs mt-1">
-          Maximum {maxImages} images • Up to {maxSizeInMB}MB each • {acceptedFormats.join(", ")}
+          Maximum {maxImages} images • Up to {maxSizeInMB}MB each •{" "}
+          {acceptedFormats.join(", ")}
         </p>
       </div>
 
@@ -259,10 +266,26 @@ export default function PhotoUpload({
               ? "border-green-400 bg-green-50"
               : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
           }`}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
+          onDragEnter={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDrag(e);
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDrag(e);
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDrag(e);
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDrop(e);
+          }}
         >
           <input
             ref={fileInputRef}
@@ -271,6 +294,7 @@ export default function PhotoUpload({
             accept={acceptedFormats.join(",")}
             onChange={handleInputChange}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            form="none"
           />
 
           <div className="space-y-4">
@@ -378,8 +402,16 @@ export default function PhotoUpload({
 
                   {image.uploaded && (
                     <div className="absolute top-2 left-2 p-1 bg-green-500 text-white rounded-full">
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      <svg
+                        className="w-3 h-3"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </div>
                   )}
@@ -400,8 +432,9 @@ export default function PhotoUpload({
           {images.length === 0 && uploadedImages.length > 0 && (
             <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-sm text-blue-700">
-                <strong>Tip:</strong> The first photo will be used as your cover photo.
-                You can reorder photos by uploading them in your preferred order.
+                <strong>Tip:</strong> The first photo will be used as your cover
+                photo. You can reorder photos by uploading them in your
+                preferred order.
               </p>
             </div>
           )}

@@ -247,9 +247,9 @@ export default function GeniusLoyaltyProgram() {
   const availableBenefits = getBenefitsForTier(loyaltyData.currentTier);
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-4">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-yellow-500 rounded-3xl p-8 text-white mb-8">
+      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-yellow-500 rounded-3xl p-6 text-white mb-6">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center mb-4">
@@ -257,7 +257,7 @@ export default function GeniusLoyaltyProgram() {
                 {currentTierInfo.icon}
               </div>
               <div>
-                <h1 className="text-3xl font-bold mb-2">
+                <h1 className="text-2xl font-bold mb-2">
                   ShareTrip {currentTierInfo.name}
                 </h1>
                 <p className="text-blue-100">
@@ -274,7 +274,7 @@ export default function GeniusLoyaltyProgram() {
             </div>
           </div>
           <div className="text-right">
-            <div className="text-4xl font-bold mb-2">
+            <div className="text-3xl font-bold mb-2">
               ${loyaltyData.totalSavings}
             </div>
             <div className="text-blue-100">Total Saved</div>
@@ -283,7 +283,7 @@ export default function GeniusLoyaltyProgram() {
 
         {/* Progress to Next Level */}
         {loyaltyData.currentTier !== "genius3" && (
-          <div className="mt-8 p-6 bg-white/10 backdrop-blur-sm rounded-2xl">
+          <div className="mt-6 p-4 bg-white/10 backdrop-blur-sm rounded-2xl">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-lg font-semibold">
@@ -347,14 +347,14 @@ export default function GeniusLoyaltyProgram() {
         <div className="space-y-6">
           {/* Current Benefits */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
               Your {currentTierInfo.name} Benefits
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {availableBenefits.map((benefit) => (
                 <div
                   key={benefit.id}
-                  className={`p-6 rounded-2xl border-2 transition-all duration-200 ${
+                  className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
                     benefit.available
                       ? "border-green-200 bg-green-50 hover:shadow-lg"
                       : "border-gray-200 bg-gray-50"
@@ -518,8 +518,8 @@ export default function GeniusLoyaltyProgram() {
       {activeTab === "deals" && (
         <div className="space-y-6">
           {/* Exclusive Genius Deals */}
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-gray-900">
                 Exclusive Genius Deals
               </h2>
@@ -528,7 +528,7 @@ export default function GeniusLoyaltyProgram() {
                 <ChevronRightIcon className="w-5 h-5 ml-1" />
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {recentDeals.map((deal) => (
                 <div
                   key={deal.id}

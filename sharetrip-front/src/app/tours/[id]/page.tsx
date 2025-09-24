@@ -101,18 +101,25 @@ export default function TourDetail() {
           } else {
             setError("Tour not found");
           }
-        } catch (err: any) {
+        } catch (err: unknown) {
           console.error("Error fetching tour:", err);
           // Check if it's a specific "not found" error
-          if (
-            err?.message?.includes("Tour not found") ||
-            err?.message?.includes("Resource not found") ||
-            err?.message?.includes("404") ||
-            err?.status === 404
-          ) {
+          const errorMessage = err instanceof Error ? err.message : String(err);
+          const isNotFoundError =
+            errorMessage.includes("Tour not found") ||
+            errorMessage.includes("Resource not found") ||
+            errorMessage.includes("404") ||
+            (typeof err === "object" &&
+              err !== null &&
+              "status" in err &&
+              (err as { status?: number }).status === 404);
+
+          if (isNotFoundError) {
             setError("Tour not found");
-          } else if (err?.message?.includes("Network")) {
-            setError("Network error - please check your connection and try again");
+          } else if (errorMessage.includes("Network")) {
+            setError(
+              "Network error - please check your connection and try again"
+            );
           } else {
             setError("Failed to load tour details");
           }
@@ -237,7 +244,8 @@ export default function TourDetail() {
             {error || "Tour not found"}
           </h1>
           <p className="text-gray-600 mb-4">
-            The tour you're looking for doesn't exist or has been removed.
+            The tour you&apos;re looking for doesn&apos;t exist or has been
+            removed.
           </p>
           <button
             onClick={() => window.history.back()}
@@ -574,7 +582,7 @@ export default function TourDetail() {
                   {tour.whatsIncluded && tour.whatsIncluded.length > 0 && (
                     <div>
                       <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                        What's Included
+                        What&apos;s Included
                       </h3>
                       <div className="grid gap-3">
                         {tour.whatsIncluded.map((item, index) => (
@@ -591,7 +599,7 @@ export default function TourDetail() {
                   {tour.whatsExcluded && tour.whatsExcluded.length > 0 && (
                     <div>
                       <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                        What's Not Included
+                        What&apos;s Not Included
                       </h3>
                       <div className="grid gap-3">
                         {tour.whatsExcluded.map((item, index) => (

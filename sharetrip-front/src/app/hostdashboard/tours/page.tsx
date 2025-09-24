@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/providers/AuthContext";
+import { tourService } from "@/services/tour.service";
 
 interface Tour {
   id: string;
@@ -19,57 +21,9 @@ interface Tour {
   bookings: number;
 }
 
-// Demo data for development when backend is not available
-const demoHostTours: Tour[] = [
-  {
-    id: "demo-1",
-    title: "Historic Cyprus Cultural Walking Tour",
-    description: "Discover the rich history and culture of Cyprus's capital city through hidden alleys, ancient architecture, and local stories.",
-    category: "SHARE_TRIP",
-    location: "Nicosia, Cyprus",
-    price: 25,
-    currency: "USD",
-    duration: 180,
-    maxGroup: 12,
-    images: ["/hero/apartment.webp"],
-    status: "active",
-    createdAt: "2025-09-18",
-    bookings: 8,
-  },
-  {
-    id: "demo-2",
-    title: "Wadi Rum Desert Safari Adventure",
-    description: "Experience the stunning red dunes and ancient rock formations of Wadi Rum with expert local guides.",
-    category: "PRIVATE",
-    location: "Wadi Rum, Jordan",
-    price: 145,
-    currency: "USD",
-    duration: 480,
-    maxGroup: 8,
-    images: ["/hero/villa.webp"],
-    status: "active",
-    createdAt: "2025-09-15",
-    bookings: 12,
-  },
-  {
-    id: "demo-3",
-    title: "Tokyo Food and Culture Experience",
-    description: "Explore Tokyo's vibrant food scene and learn about traditional Japanese cuisine from local chefs.",
-    category: "GROUP",
-    location: "Tokyo, Japan",
-    price: 85,
-    currency: "USD",
-    duration: 240,
-    maxGroup: 10,
-    images: ["/hero/hotel.webp"],
-    status: "draft",
-    createdAt: "2025-09-20",
-    bookings: 0,
-  },
-];
-
 export default function HostDashboardToursPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [tours, setTours] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
@@ -79,69 +33,80 @@ export default function HostDashboardToursPage() {
     const fetchTours = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem("accessToken");
 
         if (!token) {
-          console.error('No auth token found');
+          console.error("No auth token found");
           setLoading(false);
           return;
         }
 
-        let response;
+        let backendTours;
         try {
-          response = await fetch('http://localhost:4009/tours/my-tours', {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          });
+          backendTours = await tourService.getTours();
         } catch (fetchError) {
-          console.log('Backend unavailable, falling back to demo host tours data');
-          setTours(demoHostTours);
+          console.log("API unavailable, falling back to demo host tours data");
           setLoading(false);
           return;
         }
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Fetched tours:', data);
+        console.log("Fetched tours:", backendTours);
 
-          // Transform backend data to match frontend interface
-          const transformedData: Tour[] = (data.data || data).map((tour: any) => ({
-            id: tour.id,
-            title: tour.title,
-            description: tour.description || '',
-            category: tour.category || 'general',
-            location: `${tour.city}, ${tour.country}`,
-            price: Math.round(tour.basePrice / 100), // Convert from cents
-            currency: tour.currency,
-            duration: tour.durationMins || 0,
-            maxGroup: tour.maxGroup || 0,
-            images: tour.media?.map((m: any) => m.url) || [],
-            status: tour.status === 'draft' ? 'draft' : 'active' as "active" | "draft" | "paused",
-            createdAt: new Date(tour.createdAt).toISOString().split('T')[0],
-            bookings: tour.bookings?.length || 0,
-          }));
+        // Transform backend data to match frontend interface
+        let transformedData: Tour[] = backendTours.map((tour: any) => ({
+          id: tour.id,
+          title: tour.title,
+          description: tour.description || "",
+          category: tour.category || "general",
+          location: `${tour.city}, ${tour.country}`,
+          price: tour.basePrice,
+          currency: tour.currency,
+          duration: tour.durationMins || 0,
+          maxGroup: tour.maxGroup || tour.maxParticipants || 0,
+          images: tour.media?.map((m: any) => m.url) || tour.images || [],
+          status: tour.status as "active" | "draft" | "paused",
+          createdAt: new Date(tour.createdAt).toISOString().split("T")[0],
+          bookings: tour._count?.bookings || 0,
+        }));
 
-          setTours(transformedData);
+        // Filter tours by current user's guideId if user is logged in
+        if (user && user.id) {
+          console.log("Filtering tours for user:", user.id);
+          console.log(
+            "API tours data:",
+            backendTours.map((t: any) => ({ id: t.id, guideId: t.guideId }))
+          );
+          transformedData = transformedData.filter((tour) => {
+            // For demo purposes, we'll check if the tour's guideId matches the user ID
+            // In a real app, this filtering should happen on the backend
+            const tourData = backendTours.find(
+              (apiTour: any) => apiTour.id === tour.id
+            );
+            const matches = tourData && tourData.guideId === user.id;
+            console.log(
+              `Tour ${tour.id}: guideId=${tourData?.guideId}, userId=${user.id}, matches=${matches}`
+            );
+            return matches;
+          });
+          console.log("Filtered tours:", transformedData.length);
         } else {
-          console.error('Failed to fetch tours:', response.statusText);
-          // Fallback to demo data for development
-          console.log('Falling back to demo host tours data');
-          setTours(demoHostTours);
+          console.log("No user logged in, showing all tours");
         }
+
+        setTours(transformedData);
       } catch (error) {
-        console.error('Error fetching tours:', error);
+        console.error("Error fetching tours:", error);
         // Fallback to demo data for development when backend is unavailable
-        console.log('Backend unavailable, falling back to demo host tours data');
-        setTours(demoHostTours);
+        console.log(
+          "Backend unavailable, falling back to demo host tours data"
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchTours();
-  }, []);
+  }, [user]);
 
   const filteredTours = tours.filter(
     (tour) => selectedStatus === "all" || tour.status === selectedStatus

@@ -31,80 +31,260 @@ const defaultCategories: Category[] = [
     id: "for-you",
     label: "For you",
     items: [
-      { href: "/experiences/trending", title: "Trending Now", img: "/hero/travelhero.webp", alt: "Trending experiences" },
-      { href: "/experiences/popular", title: "Most Popular", img: "/hero/hero1.webp", alt: "Popular experiences" },
-      { href: "/experiences/new", title: "New Experiences", img: "/hero/apartment.webp", alt: "New experiences" },
-      { href: "/experiences/deals", title: "Special Deals", img: "/hero/hotel.webp", alt: "Special deal experiences" },
-      { href: "/experiences/local-favorites", title: "Local Favorites", img: "/hero/villa.webp", alt: "Local favorite experiences" },
-      { href: "/experiences/weekend", title: "Weekend Getaways", img: "/hero/resort.webp", alt: "Weekend getaway experiences" }
-    ]
+      {
+        href: "/experiences/trending",
+        title: "Trending Now",
+        img: "/hero/travelhero.webp",
+        alt: "Trending experiences",
+      },
+      {
+        href: "/experiences/popular",
+        title: "Most Popular",
+        img: "/hero/hero1.webp",
+        alt: "Popular experiences",
+      },
+      {
+        href: "/experiences/new",
+        title: "New Experiences",
+        img: "/hero/apartment.webp",
+        alt: "New experiences",
+      },
+      {
+        href: "/experiences/deals",
+        title: "Special Deals",
+        img: "/hero/hotel.webp",
+        alt: "Special deal experiences",
+      },
+      {
+        href: "/experiences/local-favorites",
+        title: "Local Favorites",
+        img: "/hero/villa.webp",
+        alt: "Local favorite experiences",
+      },
+      {
+        href: "/experiences/weekend",
+        title: "Weekend Getaways",
+        img: "/hero/resort.webp",
+        alt: "Weekend getaway experiences",
+      },
+    ],
   },
   {
     id: "culture",
     label: "Culture",
     items: [
-      { href: "/culture", title: "All Cultural Experiences", img: "/hero/apartment.webp", alt: "All cultural experiences" },
-      { href: "/culture#museums", title: "Museums & Galleries", img: "/hero/apartment.webp", alt: "Museums and galleries" },
-      { href: "/culture#historical", title: "Historical Sites", img: "/hero/villa.webp", alt: "Historical sites" },
-      { href: "/culture#architecture", title: "Architecture Tours", img: "/hero/hotel.webp", alt: "Architecture tours" },
-      { href: "/culture#art", title: "Art Experiences", img: "/hero/resort.webp", alt: "Art experiences" },
-      { href: "/culture#festivals", title: "Local Festivals", img: "/hero/chalets.webp", alt: "Local festivals" }
-    ]
+      {
+        href: "/culture",
+        title: "All Cultural Experiences",
+        img: "/hero/apartment.webp",
+        alt: "All cultural experiences",
+      },
+      {
+        href: "/culture#museums",
+        title: "Museums & Galleries",
+        img: "/hero/apartment.webp",
+        alt: "Museums and galleries",
+      },
+      {
+        href: "/culture#historical",
+        title: "Historical Sites",
+        img: "/hero/villa.webp",
+        alt: "Historical sites",
+      },
+      {
+        href: "/culture#architecture",
+        title: "Architecture Tours",
+        img: "/hero/hotel.webp",
+        alt: "Architecture tours",
+      },
+      {
+        href: "/culture#art",
+        title: "Art Experiences",
+        img: "/hero/resort.webp",
+        alt: "Art experiences",
+      },
+      {
+        href: "/culture#festivals",
+        title: "Local Festivals",
+        img: "/hero/chalets.webp",
+        alt: "Local festivals",
+      },
+    ],
   },
   {
     id: "food",
     label: "Food",
     items: [
-      { href: "/food", title: "All Food Experiences", img: "/hero/villa.webp", alt: "All food experiences" },
-      { href: "/food#cooking", title: "Cooking Classes", img: "/hero/villa.webp", alt: "Cooking classes" },
-      { href: "/food#tours", title: "Food Tours", img: "/hero/hotel.webp", alt: "Food tours" },
-      { href: "/food#wine", title: "Wine Tasting", img: "/hero/resort.webp", alt: "Wine tasting experiences" },
-      { href: "/food#street-food", title: "Street Food Adventures", img: "/hero/apartment.webp", alt: "Street food adventures" },
-      { href: "/food#markets", title: "Local Markets", img: "/hero/chalets.webp", alt: "Local market tours" }
-    ]
+      {
+        href: "/food",
+        title: "All Food Experiences",
+        img: "/hero/villa.webp",
+        alt: "All food experiences",
+      },
+      {
+        href: "/food#cooking",
+        title: "Cooking Classes",
+        img: "/hero/villa.webp",
+        alt: "Cooking classes",
+      },
+      {
+        href: "/food#tours",
+        title: "Food Tours",
+        img: "/hero/hotel.webp",
+        alt: "Food tours",
+      },
+      {
+        href: "/food#wine",
+        title: "Wine Tasting",
+        img: "/hero/resort.webp",
+        alt: "Wine tasting experiences",
+      },
+      {
+        href: "/food#street-food",
+        title: "Street Food Adventures",
+        img: "/hero/apartment.webp",
+        alt: "Street food adventures",
+      },
+      {
+        href: "/food#markets",
+        title: "Local Markets",
+        img: "/hero/chalets.webp",
+        alt: "Local market tours",
+      },
+    ],
   },
   {
     id: "nature",
     label: "Nature",
     items: [
-      { href: "/nature", title: "All Nature Experiences", img: "/hero/treehouses.webp", alt: "All nature experiences" },
-      { href: "/nature#hiking", title: "Hiking Adventures", img: "/hero/treehouses.webp", alt: "Hiking adventures" },
-      { href: "/nature#wildlife", title: "Wildlife Watching", img: "/hero/resort.webp", alt: "Wildlife watching" },
-      { href: "/nature#beaches", title: "Beach Experiences", img: "/hero/villa.webp", alt: "Beach experiences" },
-      { href: "/nature#mountains", title: "Mountain Adventures", img: "/hero/chalets.webp", alt: "Mountain adventures" },
-      { href: "/nature#water-sports", title: "Water Sports", img: "/hero/hotel.webp", alt: "Water sports" }
-    ]
+      {
+        href: "/nature",
+        title: "All Nature Experiences",
+        img: "/hero/treehouses.webp",
+        alt: "All nature experiences",
+      },
+      {
+        href: "/nature#hiking",
+        title: "Hiking Adventures",
+        img: "/hero/treehouses.webp",
+        alt: "Hiking adventures",
+      },
+      {
+        href: "/nature#wildlife",
+        title: "Wildlife Watching",
+        img: "/hero/resort.webp",
+        alt: "Wildlife watching",
+      },
+      {
+        href: "/nature#beaches",
+        title: "Beach Experiences",
+        img: "/hero/villa.webp",
+        alt: "Beach experiences",
+      },
+      {
+        href: "/nature#mountains",
+        title: "Mountain Adventures",
+        img: "/hero/chalets.webp",
+        alt: "Mountain adventures",
+      },
+      {
+        href: "/nature#water-sports",
+        title: "Water Sports",
+        img: "/hero/hotel.webp",
+        alt: "Water sports",
+      },
+    ],
   },
   {
     id: "adventure",
     label: "Adventure",
     items: [
-      { href: "/adventure", title: "All Adventure Experiences", img: "/hero/resort.webp", alt: "All adventure experiences" },
-      { href: "/adventure#extreme", title: "Extreme Sports", img: "/hero/treehouses.webp", alt: "Extreme sports" },
-      { href: "/adventure#skydiving", title: "Skydiving", img: "/hero/resort.webp", alt: "Skydiving experiences" },
-      { href: "/adventure#climbing", title: "Rock Climbing", img: "/hero/chalets.webp", alt: "Rock climbing" },
-      { href: "/adventure#bungee", title: "Bungee Jumping", img: "/hero/villa.webp", alt: "Bungee jumping" },
-      { href: "/adventure#rafting", title: "White Water Rafting", img: "/hero/apartment.webp", alt: "White water rafting" }
-    ]
+      {
+        href: "/adventure",
+        title: "All Adventure Experiences",
+        img: "/hero/resort.webp",
+        alt: "All adventure experiences",
+      },
+      {
+        href: "/adventure#extreme",
+        title: "Extreme Sports",
+        img: "/hero/treehouses.webp",
+        alt: "Extreme sports",
+      },
+      {
+        href: "/adventure#skydiving",
+        title: "Skydiving",
+        img: "/hero/resort.webp",
+        alt: "Skydiving experiences",
+      },
+      {
+        href: "/adventure#climbing",
+        title: "Rock Climbing",
+        img: "/hero/chalets.webp",
+        alt: "Rock climbing",
+      },
+      {
+        href: "/adventure#bungee",
+        title: "Bungee Jumping",
+        img: "/hero/villa.webp",
+        alt: "Bungee jumping",
+      },
+      {
+        href: "/adventure#rafting",
+        title: "White Water Rafting",
+        img: "/hero/apartment.webp",
+        alt: "White water rafting",
+      },
+    ],
   },
   {
     id: "accommodations",
     label: "Accommodations",
     items: [
-      { href: "/accommodations", title: "All Accommodations", img: "/hero/hotel.webp", alt: "All accommodations" },
-      { href: "/accommodations#hotels", title: "Hotels & Resorts", img: "/hero/hotel.webp", alt: "Hotels and resorts" },
-      { href: "/accommodations#villas", title: "Villas & Houses", img: "/hero/villa.webp", alt: "Villas and houses" },
-      { href: "/accommodations#apartments", title: "Apartments", img: "/hero/apartment.webp", alt: "Apartments" },
-      { href: "/accommodations#unique", title: "Unique Stays", img: "/hero/treehouses.webp", alt: "Unique accommodations" },
-      { href: "/accommodations#luxury", title: "Luxury Properties", img: "/hero/resort.webp", alt: "Luxury properties" }
-    ]
-  }
+      {
+        href: "/accommodations",
+        title: "All Accommodations",
+        img: "/hero/hotel.webp",
+        alt: "All accommodations",
+      },
+      {
+        href: "/accommodations#hotels",
+        title: "Hotels & Resorts",
+        img: "/hero/hotel.webp",
+        alt: "Hotels and resorts",
+      },
+      {
+        href: "/accommodations#villas",
+        title: "Villas & Houses",
+        img: "/hero/villa.webp",
+        alt: "Villas and houses",
+      },
+      {
+        href: "/accommodations#apartments",
+        title: "Apartments",
+        img: "/hero/apartment.webp",
+        alt: "Apartments",
+      },
+      {
+        href: "/accommodations#unique",
+        title: "Unique Stays",
+        img: "/hero/treehouses.webp",
+        alt: "Unique accommodations",
+      },
+      {
+        href: "/accommodations#luxury",
+        title: "Luxury Properties",
+        img: "/hero/resort.webp",
+        alt: "Luxury properties",
+      },
+    ],
+  },
 ];
 
 // Hook for managing hover intent with delay
 function useHoverIntent(delay = 150) {
   const [isHovered, setIsHovered] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const onMouseEnter = () => {
     if (timeoutRef.current) {
@@ -144,7 +324,15 @@ const CategoryPill: React.FC<{
   onKeyDown: (e: React.KeyboardEvent) => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
-}> = ({ category, isActive, isOpen, onClick, onKeyDown, onMouseEnter, onMouseLeave }) => {
+}> = ({
+  category,
+  isActive,
+  isOpen,
+  onClick,
+  onKeyDown,
+  onMouseEnter,
+  onMouseLeave,
+}) => {
   return (
     <button
       role="menuitem"
@@ -198,7 +386,9 @@ const MegaMenuPanel: React.FC<{
 
   useEffect(() => {
     if (isOpen && panelRef.current) {
-      const firstItem = panelRef.current.querySelector('[role="menuitem"]') as HTMLElement;
+      const firstItem = panelRef.current.querySelector(
+        '[role="menuitem"]'
+      ) as HTMLElement;
       if (firstItem) {
         firstItem.focus();
       }
@@ -216,7 +406,7 @@ const MegaMenuPanel: React.FC<{
         aria-label={`${category.label} menu`}
         className="absolute left-1/2 top-full mt-4 bg-white rounded-2xl shadow-xl ring-1 ring-black/5 p-8 z-[9999] w-full max-w-4xl"
         style={{
-          x: "-50%"
+          x: "-50%",
         }}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -270,8 +460,18 @@ const MegaMenuPanel: React.FC<{
               </div>
 
               <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </div>
             </Link>
@@ -284,8 +484,18 @@ const MegaMenuPanel: React.FC<{
             className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors"
           >
             View all {category.label.toLowerCase()} experiences
-            <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="ml-1 w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </Link>
         </div>
@@ -301,7 +511,9 @@ const MobileDrawer: React.FC<{
   isOpen: boolean;
   onClose: () => void;
 }> = ({ categories, activeId, isOpen, onClose }) => {
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(activeId || null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(
+    activeId || null
+  );
 
   useEffect(() => {
     if (isOpen) {
@@ -336,37 +548,63 @@ const MobileDrawer: React.FC<{
         >
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">Categories</h2>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Categories
+              </h2>
               <button
                 onClick={onClose}
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                 aria-label="Close menu"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
 
             <div className="space-y-4">
               {categories.map((category) => (
-                <div key={category.id} className="border-b border-gray-100 pb-4 last:border-b-0">
+                <div
+                  key={category.id}
+                  className="border-b border-gray-100 pb-4 last:border-b-0"
+                >
                   <button
                     className="flex items-center justify-between w-full py-2 text-left"
-                    onClick={() => setExpandedCategory(
-                      expandedCategory === category.id ? null : category.id
-                    )}
+                    onClick={() =>
+                      setExpandedCategory(
+                        expandedCategory === category.id ? null : category.id
+                      )
+                    }
                   >
-                    <span className="font-medium text-gray-900">{category.label}</span>
+                    <span className="font-medium text-gray-900">
+                      {category.label}
+                    </span>
                     <motion.svg
                       className="w-5 h-5 text-gray-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
-                      animate={{ rotate: expandedCategory === category.id ? 180 : 0 }}
+                      animate={{
+                        rotate: expandedCategory === category.id ? 180 : 0,
+                      }}
                       transition={{ duration: 0.2 }}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
                     </motion.svg>
                   </button>
 
@@ -399,7 +637,9 @@ const MobileDrawer: React.FC<{
                                   loading="lazy"
                                 />
                               </div>
-                              <span className="text-sm text-gray-700">{item.title}</span>
+                              <span className="text-sm text-gray-700">
+                                {item.title}
+                              </span>
                             </Link>
                           ))}
                         </div>
@@ -417,19 +657,29 @@ const MobileDrawer: React.FC<{
 };
 
 // Main HeroSection component with integrated mega menu
-export default function HeroSection({ categories = defaultCategories, activeId }: HeroSectionProps) {
+export default function HeroSection({
+  categories = defaultCategories,
+  activeId,
+}: HeroSectionProps) {
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Hover intent for desktop
-  const { isHovered: isMenuHovered, onMouseEnter: onMenuEnter, onMouseLeave: onMenuLeave } = useHoverIntent(100);
+  const {
+    isHovered: isMenuHovered,
+    onMouseEnter: onMenuEnter,
+    onMouseLeave: onMenuLeave,
+  } = useHoverIntent(100);
 
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setOpenCategory(null);
       }
     };
@@ -463,18 +713,20 @@ export default function HeroSection({ categories = defaultCategories, activeId }
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent, categoryId: string) => {
-    const currentIndex = categories.findIndex(cat => cat.id === categoryId);
+    const currentIndex = categories.findIndex((cat) => cat.id === categoryId);
 
     switch (e.key) {
       case "ArrowLeft":
         e.preventDefault();
-        const prevIndex = currentIndex > 0 ? currentIndex - 1 : categories.length - 1;
+        const prevIndex =
+          currentIndex > 0 ? currentIndex - 1 : categories.length - 1;
         setFocusedIndex(prevIndex);
         setOpenCategory(categories[prevIndex].id);
         break;
       case "ArrowRight":
         e.preventDefault();
-        const nextIndex = currentIndex < categories.length - 1 ? currentIndex + 1 : 0;
+        const nextIndex =
+          currentIndex < categories.length - 1 ? currentIndex + 1 : 0;
         setFocusedIndex(nextIndex);
         setOpenCategory(categories[nextIndex].id);
         break;
@@ -500,7 +752,7 @@ export default function HeroSection({ categories = defaultCategories, activeId }
 
   return (
     <>
-      <section className="relative h-[70vh] flex items-center justify-center">
+      <section className="relative h-[70vh] flex items-start justify-center pt-48">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
@@ -517,6 +769,37 @@ export default function HeroSection({ categories = defaultCategories, activeId }
           <p className="text-xl md:text-2xl mb-8 opacity-90 animate-fade-up text-amber-50">
             Find your travel crew. Share tours. Save more.
           </p>
+
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto mb-8 animate-fade-up">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                <svg
+                  className="h-5 w-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <input
+                type="text"
+                placeholder="Where do you want to go?"
+                className="w-full pl-14 pr-4 py-4 text-lg bg-white/95 backdrop-blur-sm border border-white/20 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500 text-gray-900"
+              />
+              <button className="absolute inset-y-0 right-0 pr-2 flex items-center">
+                <div className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-colors duration-200 shadow-lg hover:shadow-xl">
+                  Search
+                </div>
+              </button>
+            </div>
+          </div>
 
           {/* Hero Mega Menu */}
           <div
@@ -568,7 +851,7 @@ export default function HeroSection({ categories = defaultCategories, activeId }
             {/* Desktop Mega Menu Panel */}
             {openCategory && (
               <MegaMenuPanel
-                category={categories.find(cat => cat.id === openCategory)!}
+                category={categories.find((cat) => cat.id === openCategory)!}
                 isOpen={openCategory !== null}
                 onClose={() => setOpenCategory(null)}
                 onMouseEnter={onMenuEnter}
