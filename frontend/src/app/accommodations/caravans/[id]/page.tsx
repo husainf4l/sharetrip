@@ -567,7 +567,7 @@ export default function CaravanDetailPage() {
             Caravan Not Found
           </h1>
           <p className="text-gray-600 mb-6">
-            The caravan you're looking for doesn't exist.
+            The caravan you&apos;re looking for doesn&apos;t exist.
           </p>
           <Link
             href="/accommodations/caravans"
@@ -925,7 +925,7 @@ export default function CaravanDetailPage() {
                 Book Now - {caravan.price}
               </button>
               <p className="text-center text-sm text-gray-500 mt-3">
-                You won't be charged yet
+                You won&apos;t be charged yet
               </p>
             </div>
 

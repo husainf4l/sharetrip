@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { getUserBookings } from "../../../services/booking";
 import {
   CalendarIcon,
@@ -102,12 +103,12 @@ export default function BookingsPage() {
             <p className="text-gray-600 mb-6">
               Start your adventure by booking a tour!
             </p>
-            <a
+            <Link
               href="/tours"
               className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
             >
               Browse Tours
-            </a>
+            </Link>
           </div>
         ) : (
           <div className="space-y-6">

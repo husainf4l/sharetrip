@@ -94,7 +94,7 @@ export default function BookingConfirmation({
 
           {/* Next Steps */}
           <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="font-semibold text-blue-900 mb-2">What&apos;s Next?</h4>
+            <h4 className="font-semibold text-blue-900 mb-2">What's Next?</h4>
             <ul className="text-sm text-blue-800 space-y-1">
               <li>• Check your email for confirmation details</li>
               <li>• Save the tour date in your calendar</li>

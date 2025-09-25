@@ -16,6 +16,18 @@ interface TourFilters {
 }
 
 class TourService {
+  private getErrorMessage(errorData: unknown): string {
+    if (errorData && typeof errorData === 'object') {
+      if ('error' in errorData) {
+        return (errorData as any).error;
+      }
+      if ('message' in errorData) {
+        return (errorData as any).message;
+      }
+    }
+    return 'Unknown error';
+  }
+
   private baseUrl: string;
 
   constructor() {
@@ -31,7 +43,7 @@ class TourService {
       });
       
       if (!response.ok) {
-        let errorData: any = null;
+        let errorData: unknown = null;
         
         try {
           errorData = await response.json();
@@ -45,7 +57,7 @@ class TourService {
           }
         }
         
-        const apiError = createApiError(response, errorData.error || errorData.message);
+        const apiError = createApiError(response, this.getErrorMessage(errorData));
         throw new Error(handleApiError(apiError));
       }
 
@@ -61,7 +73,7 @@ class TourService {
       const response = await fetch(`${this.baseUrl}/tours/share-tours/quickfilters`);
       
       if (!response.ok) {
-        let errorData: any = null;
+        let errorData: unknown = null;
         
         try {
           errorData = await response.json();
@@ -75,7 +87,7 @@ class TourService {
           }
         }
         
-        const apiError = createApiError(response, errorData.error || errorData.message);
+        const apiError = createApiError(response, this.getErrorMessage(errorData));
         throw new Error(handleApiError(apiError));
       }
 
@@ -91,7 +103,7 @@ class TourService {
       const response = await fetch(`${this.baseUrl}/tours/${tourId}`);
       
       if (!response.ok) {
-        let errorData: any = null;
+        let errorData: unknown = null;
         
         try {
           errorData = await response.json();
@@ -105,7 +117,7 @@ class TourService {
           }
         }
         
-        const apiError = createApiError(response, errorData.error || errorData.message);
+        const apiError = createApiError(response, this.getErrorMessage(errorData));
         throw new Error(handleApiError(apiError));
       }
 
@@ -156,7 +168,7 @@ class TourService {
       const response = await fetch(`${this.baseUrl}${url}`);
       
       if (!response.ok) {
-        let errorData: any = null;
+        let errorData: unknown = null;
         
         try {
           errorData = await response.json();
@@ -170,7 +182,7 @@ class TourService {
           }
         }
         
-        const apiError = createApiError(response, errorData.error || errorData.message);
+        const apiError = createApiError(response, this.getErrorMessage(errorData));
         throw new Error(handleApiError(apiError));
       }
 
@@ -262,7 +274,7 @@ class TourService {
         });
         console.log('FormData contents:');
         // Iterate over FormData entries manually for better compatibility
-        const formDataObj: { [key: string]: any } = {};
+        const formDataObj: { [key: string]: unknown } = {};
         formData.forEach((value, key) => {
           formDataObj[key] = value;
           if (value instanceof File) {
@@ -277,7 +289,7 @@ class TourService {
           console.log('Response status text:', response.statusText);
           console.log('Response headers: [Headers object - detailed logging disabled for compatibility]');
           
-          let errorData: any = null;
+          let errorData: unknown = null;
           let rawResponse: string = '';
           
           try {
@@ -295,7 +307,7 @@ class TourService {
           }
           
           if (errorData) {
-            const apiError = createApiError(response, errorData.error || errorData.message);
+            const apiError = createApiError(response, this.getErrorMessage(errorData));
             throw new Error(handleApiError(apiError));
           } else if (rawResponse) {
             throw new Error(`HTTP ${response.status}: ${response.statusText} - ${rawResponse}`);
@@ -328,7 +340,7 @@ class TourService {
           console.log('Response status text:', response.statusText);
           console.log('Response headers: [Headers object - detailed logging disabled for compatibility]');
           
-          let errorData: any = null;
+          let errorData: unknown = null;
           let rawResponse: string = '';
           
           try {
@@ -346,7 +358,7 @@ class TourService {
           }
           
           if (errorData) {
-            const apiError = createApiError(response, errorData.error || errorData.message);
+            const apiError = createApiError(response, this.getErrorMessage(errorData));
             throw new Error(handleApiError(apiError));
           } else if (rawResponse) {
             throw new Error(`HTTP ${response.status}: ${response.statusText} - ${rawResponse}`);
@@ -380,7 +392,7 @@ class TourService {
       });
       
       if (!response.ok) {
-        let errorData: any = null;
+        let errorData: unknown = null;
         
         try {
           errorData = await response.json();
@@ -394,7 +406,7 @@ class TourService {
           }
         }
         
-        const apiError = createApiError(response, errorData.error || errorData.message);
+        const apiError = createApiError(response, this.getErrorMessage(errorData));
         throw new Error(handleApiError(apiError));
       }
 
@@ -405,7 +417,7 @@ class TourService {
     }
   }
 
-  async getMyTours(): Promise<{data: Tour[], meta: any}> {
+  async getMyTours(): Promise<{data: Tour[], meta: unknown}> {
     try {
       const token = localStorage.getItem('accessToken');
       if (!token) {
@@ -420,7 +432,7 @@ class TourService {
       });
       
       if (!response.ok) {
-        let errorData: any = null;
+        let errorData: unknown = null;
         
         try {
           errorData = await response.json();
@@ -434,7 +446,7 @@ class TourService {
           }
         }
         
-        const apiError = createApiError(response, errorData.error || errorData.message);
+        const apiError = createApiError(response, this.getErrorMessage(errorData));
         throw new Error(handleApiError(apiError));
       }
 
@@ -450,7 +462,7 @@ class TourService {
       const response = await fetch(`${this.baseUrl}/bookings/availability/${tourId}?headcount=${headcount}`);
       
       if (!response.ok) {
-        let errorData: any = null;
+        let errorData: unknown = null;
         
         try {
           errorData = await response.json();
@@ -464,7 +476,7 @@ class TourService {
           }
         }
         
-        const apiError = createApiError(response, errorData.error || errorData.message);
+        const apiError = createApiError(response, this.getErrorMessage(errorData));
         throw new Error(handleApiError(apiError));
       }
 

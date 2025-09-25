@@ -437,7 +437,7 @@ export default function TourDetailPage({
             Tour not found
           </h2>
           <p className="text-gray-600 mb-4">
-            The tour you&apos;re looking for doesn&apos;t exist.
+            The tour you're looking for doesn't exist.
           </p>
           <Link
             href="/tours"

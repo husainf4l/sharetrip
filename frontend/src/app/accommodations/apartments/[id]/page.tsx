@@ -544,7 +544,7 @@ export default function ApartmentDetailPage() {
                 <span className="text-gray-500">Map placeholder</span>
               </div>
               <div className="mt-4">
-                <h3 className="font-semibold mb-2">What's nearby</h3>
+                <h3 className="font-semibold mb-2">What&apos;s nearby</h3>
                 <ul className="space-y-1">
                   {apartment.locationDetails.nearby.map(
                     (place: string, index: number) => (
@@ -669,7 +669,7 @@ export default function ApartmentDetailPage() {
               </button>
 
               <p className="text-center text-sm text-gray-500">
-                You won't be charged yet
+                You won&apos;t be charged yet
               </p>
 
               <div className="mt-6 pt-6 border-t border-gray-200">

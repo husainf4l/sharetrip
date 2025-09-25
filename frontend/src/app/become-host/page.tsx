@@ -194,7 +194,7 @@ export default function BecomeHostPage() {
     { id: 6, name: "Verification", icon: ShieldCheckIcon },
   ];
 
-  const updateHostDetails = (field: string, value: any) => {
+  const updateHostDetails = (field: string, value: unknown) => {
     setHostDetails((prev) => ({
       ...prev,
       [field]: value,
@@ -575,7 +575,7 @@ export default function BecomeHostPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-4">
-                What&apos;s Included
+                What's Included
               </label>
               <div className="space-y-2">
                 {hostDetails.whatsIncluded.map((item, index) => (
@@ -612,7 +612,7 @@ export default function BecomeHostPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-4">
-                What&apos;s Excluded
+                What's Excluded
               </label>
               <div className="space-y-2">
                 {hostDetails.whatsExcluded.map((item, index) => (
@@ -1156,13 +1156,12 @@ export default function BecomeHostPage() {
                 <li>
                   • Our team will review your application within 24-48 hours
                 </li>
-                <li>• You&apos;ll receive an email with the review results</li>
+                <li>• You'll receive an email with the review results</li>
                 <li>
-                  • If approved, you&apos;ll be able to start accepting bookings
+                  • If approved, you'll be able to start accepting bookings
                 </li>
                 <li>
-                  • You&apos;ll need to complete payment setup to receive
-                  earnings
+                  • You'll need to complete payment setup to receive earnings
                 </li>
               </ul>
             </div>
@@ -1707,8 +1706,8 @@ export default function BecomeHostPage() {
             <div>
               <h4 className="font-medium text-blue-900 mb-2">💡 Tips</h4>
               <p className="text-sm text-blue-800">
-                Focus on unique, authentic experiences that travelers can&apos;t
-                find elsewhere.
+                Focus on unique, authentic experiences that travelers can't find
+                elsewhere.
               </p>
             </div>
           </div>

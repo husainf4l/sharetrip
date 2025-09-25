@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
 
     // In a real application, you would fetch from your database
     // For now, return empty array
-    const media: any[] = [];
+    const media: unknown[] = [];
 
     return NextResponse.json({
       media,

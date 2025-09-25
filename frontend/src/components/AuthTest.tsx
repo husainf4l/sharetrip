@@ -22,18 +22,23 @@ export default function AuthTest() {
       }
 
       if (token === "test-token-123") {
-        setError("Test token detected. Please use a real JWT token from login.");
+        setError(
+          "Test token detected. Please use a real JWT token from login."
+        );
         return;
       }
 
-      console.log("Testing API call to:", `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`);
+      console.log(
+        "Testing API call to:",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`
+      );
       console.log("Using token:", token.substring(0, 20) + "...");
 
       const userData = await apiService.getCurrentUser();
       setResult(userData);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Full error details:", err);
-      setError(err.message || "Authentication failed");
+      setError(err instanceof Error ? err.message : "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -45,12 +50,15 @@ export default function AuthTest() {
 
     try {
       // Test basic connectivity to backend
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/theme`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/theme`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -58,8 +66,12 @@ export default function AuthTest() {
       } else {
         setError(`Backend responded with status: ${response.status}`);
       }
-    } catch (err: any) {
-      setError(`Connection failed: ${err.message}`);
+    } catch (err: unknown) {
+      setError(
+        `Connection failed: ${
+          err instanceof Error ? err.message : "Unknown error"
+        }`
+      );
       console.error("Backend connection test failed:", err);
     } finally {
       setLoading(false);

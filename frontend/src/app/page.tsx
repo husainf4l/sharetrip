@@ -839,7 +839,7 @@ export default function Home() {
 
         <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-6">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-up text-white">
-            Travel memories you&apos;ll never forget
+            Travel memories you'll never forget
           </h1>
           <p className="text-xl md:text-2xl mb-8 opacity-90 animate-fade-up text-amber-50">
             Find your travel crew. Share tours. Save more.

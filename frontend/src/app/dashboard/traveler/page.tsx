@@ -301,7 +301,7 @@ export default function TravelerDashboard() {
             <p className="text-gray-600 mb-6">
               {searchQuery
                 ? "Try adjusting your search terms"
-                : `You don&apos;t have any ${activeTab} tours yet`}
+                : `You don't have any ${activeTab} tours yet`}
             </p>
             {!searchQuery && activeTab === "upcoming" && (
               <Link href="/tours" className="btn btn-primary hover-glow">

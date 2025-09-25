@@ -328,7 +328,7 @@ export default function BookingDetailsPage() {
             Booking Not Found
           </h2>
           <p className="text-gray-600 mb-4">
-            The booking you&apos;re looking for doesn&apos;t exist.
+            The booking you're looking for doesn't exist.
           </p>
           <Link href="/bookings" className="btn btn-primary">
             Back to My Bookings
@@ -452,7 +452,7 @@ export default function BookingDetailsPage() {
               {/* What's Included */}
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  What&apos;s Included
+                  What's Included
                 </h3>
                 <ul className="space-y-2">
                   {booking.included.map((item, index) => (
@@ -467,7 +467,7 @@ export default function BookingDetailsPage() {
               {/* What's Not Included */}
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  What&apos;s Not Included
+                  What's Not Included
                 </h3>
                 <ul className="space-y-2">
                   {booking.notIncluded.map((item, index) => (

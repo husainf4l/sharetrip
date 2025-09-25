@@ -1067,7 +1067,7 @@ export default function CreateTourPage() {
                   htmlFor="payWhatYouWant"
                   className="ml-2 block text-sm text-gray-900"
                 >
-                  Enable &quot;Pay What You Want&quot; pricing
+                  Enable "Pay What You Want" pricing
                 </label>
               </div>
             </div>
@@ -1261,10 +1261,10 @@ export default function CreateTourPage() {
                 </div>
               </div>
 
-              {/* What&apos;s Included */}
+              {/* What's Included */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  What&apos;s Included
+                  What's Included
                 </label>
                 <div className="flex gap-2 mb-3">
                   <input
@@ -1303,10 +1303,10 @@ export default function CreateTourPage() {
                 </div>
               </div>
 
-              {/* What&apos;s Excluded */}
+              {/* What's Excluded */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  What&apos;s Excluded
+                  What's Excluded
                 </label>
                 <div className="flex gap-2 mb-3">
                   <input
